@@ -9,7 +9,9 @@ public class User  implements Comparable<User>{
 
     // Primary Variables used and help by the User
     private String userName;
-    private ItemManager itemManager;
+    private String password;
+    private String emailAdress;
+    //private ItemManager itemManager;
     private Item selectedItem;      
 
     /**
@@ -18,18 +20,21 @@ public class User  implements Comparable<User>{
      */
     public User(String userName) {
         this.userName = userName;
-        itemManager = new ItemManager();
+        //itemManager = new ItemManager();
     }
 
 
     public Item viewItem(String itemName){
         // Get the desired item from the itemManager, based on the given name
-        selectedItem = ItemManager.getItem(itemName);
+        //selectedItem = ItemManager.getItem(itemName);
         // we can now do funcionality with the item we have selected
+        return selectedItem;
     }
 
     public ArrayList<Item> viewAllItems(){
         // Returns the list of all of the items within the ItemManager
+        // this is temporary, as the main one will need to be attached to the UI
+        return new ArrayList<Item>();
     }
 
     /**
@@ -43,7 +48,6 @@ public class User  implements Comparable<User>{
     @Override public int compareTo(User userToCompare) {
         return this.userName.compareTo(userToCompare.getUserName());
     }
-
 
     // Getters and Setters
     public String getUserName() {return userName;}
