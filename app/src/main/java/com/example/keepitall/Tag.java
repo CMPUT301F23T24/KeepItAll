@@ -4,9 +4,8 @@ package com.example.keepitall;
 /**
  * Used for tags that would be used to categorize items
  */
-public class Tag {
+public class Tag implements Comparable<Tag> {
     private String tagName;
-
 
     /**
      * Constructor for Tag
@@ -17,9 +16,24 @@ public class Tag {
     }
 
     /**
-     * Changes tagName
-     * @param tagName
+     * Compares two tags to one another; tag1.compareTo(tag2)
+     * Will be used for sorting
+     * @param tag the object to be compared.
+     * @return
+     * 1 = if tag1 < tag2;
+     * 0 = if tag1 == tag2
+     * -1 = if tag1 > tag2
      */
+    @Override
+    public int compareTo(Tag tag) {
+        return this.tagName.compareTo(tag.getTagName());
+    }
+
+    // getters and setters
+    public String getTagName() {
+        return tagName;
+    }
+
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
