@@ -23,7 +23,11 @@ public class User  implements Comparable<User>{
         //itemManager = new ItemManager();
     }
 
-
+    /**
+     * View the details of a given item, based on its name
+     * @param itemName
+     * @return
+     */
     public Item viewItem(String itemName){
         // Get the desired item from the itemManager, based on the given name
         //selectedItem = ItemManager.getItem(itemName);
@@ -31,6 +35,10 @@ public class User  implements Comparable<User>{
         return selectedItem;
     }
 
+    /**
+     * Get access to the arraylist of items from the ItemManager
+     * @return
+     */
     public ArrayList<Item> viewAllItems(){
         // Returns the list of all of the items within the ItemManager
         // this is temporary, as the main one will need to be attached to the UI
