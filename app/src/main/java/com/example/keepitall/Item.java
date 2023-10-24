@@ -45,7 +45,7 @@ public class Item {
         this.purchaseDate = purchaseDate;
     }
 
-    public String getDescription(String description) {
+    public String getDescription() {
         return description;
     }
 
