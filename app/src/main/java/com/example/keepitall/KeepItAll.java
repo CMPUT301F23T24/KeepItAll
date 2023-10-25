@@ -1,3 +1,5 @@
+package com.example.keepitall;
+
 public class KeepItAll {
   private ArrayList<User> list_of_users;
   public KeepItAll(){
