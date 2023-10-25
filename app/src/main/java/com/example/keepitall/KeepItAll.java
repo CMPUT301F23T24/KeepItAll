@@ -5,4 +5,12 @@ public class KeepItAll {
   public KeepItAll(){
     list_of_users = new ArrayList<User>;
   }
+
+  public add_user(User user){
+    list_of_users.add(user);
+  }
+
+  public return_array(){
+    return list_of_users;
+  }
 }
