@@ -54,7 +54,11 @@ public class User  implements Comparable<User>{
      * -1 -> if they are not
      */
     @Override public int compareTo(User userToCompare) {
-        return this.userName.compareTo(userToCompare.getUserName());
+        if(this.userName == userToCompare.getUserName()) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     // Getters and Setters
