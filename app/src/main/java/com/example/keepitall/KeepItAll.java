@@ -13,7 +13,7 @@ public class KeepItAll {
     list_of_users.add(user);
   }
 
-  public ArrayList<User> return_array(){
+  public ArrayList<User> get_users(){
     return list_of_users;
   }
 
