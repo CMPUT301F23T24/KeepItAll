@@ -7,6 +7,9 @@ public class KeepItAll {
   }
 
   public void add_user(User user){
+    if (list_of_users.contains(user)){
+      return;
+    }
     list_of_users.add(user);
   }
 
@@ -15,8 +18,9 @@ public class KeepItAll {
   }
 
   public void delete_user(User user){
-    if (!list_of_users(user)){
+    if (!list_of_users.contains(user)){
       return;
+    list_of_users.remove(user);
     }
   }
 }
