@@ -1,5 +1,7 @@
 package com.example.keepitall;
 
+import java.util.ArrayList;
+
 public class KeepItAll {
   private ArrayList<User> list_of_users;
   public KeepItAll(){
