@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
+
+
 /**
  * Represents an item with various attributes and tags.
  */
@@ -17,6 +19,8 @@ public class Item {
     private Integer serialNumber;
     private Float value;
     private List<Tag> tags;
+    private String name;
+
 
     /**
      * Constructs an Item object with all attributes.
@@ -95,5 +99,12 @@ public class Item {
 
     public void removeTag(Tag tag) {
         tags.remove(tag);
+    }
+     public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
