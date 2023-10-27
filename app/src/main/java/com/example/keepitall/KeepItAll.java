@@ -24,5 +24,9 @@ public class KeepItAll {
       return;
     list_of_users.remove(user);
     }
+
+    public int compare_users(User user1, User user2){
+      return (user1 == user2);
+    }
   }
 }
