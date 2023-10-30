@@ -116,7 +116,7 @@
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="tagButton"
+            android:id="@+id/tagButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/white_button"
