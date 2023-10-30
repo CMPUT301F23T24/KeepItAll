@@ -44,8 +44,8 @@
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginBottom="15dp"
-                android:text="Delete"
                 android:background="@drawable/white_button"
+                android:text="Delete"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -54,8 +54,8 @@
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginBottom="15dp"
-                android:text="Add"
                 android:background="@drawable/white_button"
+                android:text="Add"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/deleteButton"
@@ -87,12 +87,12 @@
         android:paddingHorizontal="15dp"
         android:verticalSpacing="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="180dp"
         android:background="@color/dark_green"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -107,14 +107,14 @@
                 android:id="@+id/totalValueText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Total Estimated Value: $2121"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="10dp"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/searchText"
@@ -123,32 +123,54 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="95dp"
+                android:autofillHints="name"
                 android:background="@drawable/white_button"
                 android:drawableStart="@android:drawable/ic_search_category_default"
                 android:hint="Search"
-                android:autofillHints="name"
                 android:inputType="text"
                 android:padding="8dp"
                 android:textColor="#9AA2AA"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/totalValueText" />
+                app:layout_constraintTop_toBottomOf="@+id/totalValueText"
+                app:layout_constraintVertical_bias="0.0" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/backButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/back_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/searchText">
+                app:layout_constraintTop_toTopOf="@+id/sortButton" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/sortButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="107dp"
+                android:layout_marginEnd="23dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/white_button"
+                android:text="Sort By:"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/filterButton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backButton" />
 
-            </androidx.appcompat.widget.AppCompatButton>
-
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/filterButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/white_button"
+                android:text="Filter By:"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
