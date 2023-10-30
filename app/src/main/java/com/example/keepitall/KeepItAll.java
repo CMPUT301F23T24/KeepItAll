@@ -35,12 +35,12 @@ public class KeepItAll {
     list_of_users.remove(user);
     }
 
-    public int compare_users(User user1, User user2){
-      if (user1.getUserName() == user2.getUserName()){
-        return 1;
-      }
-
-      return 0;
+  public int compare_users(User user1, User user2){
+    if (user1.getUserName() == user2.getUserName()){
+      return 1;
     }
+
+    return 0;
   }
+}
 }
