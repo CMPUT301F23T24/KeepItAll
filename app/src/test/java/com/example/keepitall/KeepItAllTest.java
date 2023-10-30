@@ -1,5 +1,4 @@
 package com.example.keepitall;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -39,9 +38,13 @@ public class KeepItAllTest {
         User tempUser = new User("Temp User");
         Data.addUser(tempUser);
         assertEquals(3, Data.getUsers().size());
+        // Tests removing by class type
         Data.removeUser(tempUser);
         assertEquals(2, Data.getUsers().size());
+        // Tests removing by user name
         Data.removeUser("User One");
         assertEquals(1, Data.getUsers().size());
     }
+
+
 }

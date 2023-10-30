@@ -8,23 +8,38 @@ import java.util.ArrayList;
 public class KeepItAll {
     private ArrayList<User> users;
 
+    /**
+     * Constructor used for the main data class
+     * Holds an ArrayList of User classes
+     */
     public KeepItAll() {
         this.users = new ArrayList<User>();
     }
 
-
+    /**
+     * Adds a user to the list of users if it isn't already present
+     * @param user - remove
+     */
     public void addUser(User user){
         if(!users.contains(user)){
             users.add(user);
         }
     }
 
+    /**
+     * Removes a user from the list of users if it is already present
+     * @param user - user to remove
+     */
     public void removeUser(User user){
         if(users.contains(user)){
             users.remove(user);
         }
     }
 
+    /**
+     * Removes a user from a list of users, if it is already present
+     * @param username - the username of the user we wish to remove
+     */
     public void removeUser(String username){
         for (User user: users) {
             if(user.getUserName() == username){
@@ -34,6 +49,7 @@ public class KeepItAll {
     }
     /**
      * Checks an input string against all active userNames, to see if its avaliable
+     * (not currently the same username of another user)
      * @param userName
      * @return
      */
@@ -68,5 +84,10 @@ public class KeepItAll {
         throw new RuntimeException();
     }
 
+
+    /*
+        Getters and Setters
+     */
     public ArrayList<User> getUsers(){ return users;}
+
 }
