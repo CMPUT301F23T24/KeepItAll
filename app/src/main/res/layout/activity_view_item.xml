@@ -33,9 +33,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        android:background="#000000"
-        android:padding="1dp"/>
+        android:src="@drawable/app_icon"
+        android:background="@drawable/dark_green_border"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
