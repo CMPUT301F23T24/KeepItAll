@@ -133,4 +133,12 @@ public class loginActivity extends AppCompatActivity {
         return true;
     }
 
+
+    void createMocKeepItAll(){
+        keepItAll = new KeepItAll();
+        User user1 = new User("user1");
+        User user2 = new User("user2");
+        keepItAll.addUser(user1);
+        keepItAll.addUser(user2);
+    }
 }
