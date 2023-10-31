@@ -1,11 +1,15 @@
 package com.example.keepitall;
-
+import java.io.Serializable;
 import java.util.ArrayList;
+
+/*
+https://stackoverflow.com/questions/2736389/how-to-pass-an-object-from-one-activity-to-another-on-android
+ */
 
 /**
  * Main class uses by the App to organize users and Items
  */
-public class KeepItAll {
+public class KeepItAll{
     private ArrayList<User> users;
 
     /**
