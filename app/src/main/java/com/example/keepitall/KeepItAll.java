@@ -2,10 +2,6 @@ package com.example.keepitall;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/*
-https://stackoverflow.com/questions/2736389/how-to-pass-an-object-from-one-activity-to-another-on-android
- */
-
 /**
  * Main class uses by the App to organize users and Items
  */
@@ -21,8 +17,16 @@ public class KeepItAll{
     }
 
     /**
+     * Gets the list of users
+     * @return list of users
+     */
+    public ArrayList<User> getUsers(){
+        return users;
+    }
+
+    /**
      * Adds a user to the list of users if it isn't already present
-     * @param user - remove
+     * @param user - user to add
      */
     public void addUser(User user){
         if(!users.contains(user)){
@@ -34,62 +38,34 @@ public class KeepItAll{
      * @param user - user to remove
      */
     public void removeUser(User user){
-        if(users.contains(user)){
-            users.remove(user);
-        }
+        users.remove(user);
     }
     /**
      * Removes a user from a list of users, if it is already present
      * @param username - the username of the user we wish to remove
      */
     public void removeUser(String username){
-        for (User user: users) {
-            if(user.getUserName() == username){
-                users.remove(user);
-            }
-        }
+        users.removeIf(u -> u.getUserName().equals(username));
     }
+
     /**
-     * Checks an input string against all active userNames, to see if its avaliable
-     * (not currently the same username of another user)
-     * @param userName
-     * @return
+     * Checks an input string against all active usernames, to see if it's available
+     * @param userName - the username to check
+     * @return true if the username is unique, false otherwise
      */
     public boolean isUsernameUnique(String userName){
-        // Loop through the list of Users and make sure the user is
-        // not already in the system
-        for (User user: users) {
-            // the users are the same, return false
-            if(user.getUserName() == userName){
-                return false;
-            }
-        }
-        // otherwise, return true (its a unique userName)
-        return true;
+        return users.stream().noneMatch(u -> u.getUserName().equals(userName));
     }
 
     /**
      * Searches our list of users for a specific user, based off a given name input
      * @param userName - the name of the user we are looking for
-     * @return
+     * @return the found User object, or throws an exception if not found
      */
     public User getUserByName(String userName){
-        // Checks to see if that particular user is within our list
-        // if so, we return the user. if not we throw an exception
-        for (User user :users) {
-            // Check for the name of the user
-            if(user.getUserName() == userName){
-                return user;
-            }
-        }
-        // if we dont find a user, we throw an exception
-        throw new RuntimeException();
+        return users.stream()
+                .filter(u -> u.getUserName().equals(userName))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
     }
-
-
-    /*
-        Getters and Setters
-     */
-    public ArrayList<User> getUsers(){ return users;}
-
 }

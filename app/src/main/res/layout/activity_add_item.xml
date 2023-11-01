@@ -15,11 +15,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/deleteButton"
+        android:id="@+id/saveButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="15dp"
-        android:background="@drawable/delete_icon"
+        android:background="@drawable/save_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -111,7 +111,7 @@
             android:layout_weight="1"
             android:text="Description: "
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
