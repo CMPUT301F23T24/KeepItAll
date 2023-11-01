@@ -23,37 +23,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ImageView
         android:id="@+id/itemIcon"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="50dp"
-        android:background="#000000"
-        android:padding="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/dark_green_border"
+        android:src="@drawable/app_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="322dp"
-        android:layout_height="392dp"
-        android:layout_margin="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="76dp"
         android:background="@drawable/property_background"
         android:orientation="vertical"
         android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toBottomOf="@+id/itemIcon">
 
 
         <TextView
@@ -62,28 +58,28 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/item_properties"
+            android:text="Item Properties:"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/purchaseDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/date_of_purchase"
+            android:text="Date of Purchase:"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/makeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/item_make"
+            android:text="Item Make:"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -93,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/item_model"
+            android:text="Item Model:"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -103,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/estimated_value"
+            android:text="Estimated Value:"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -113,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/description"
+            android:text="Description: "
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -123,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/white_button"
-            android:text="@string/tags" />
+            android:text="TAGS" />
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -144,6 +140,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/galleryButton" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
