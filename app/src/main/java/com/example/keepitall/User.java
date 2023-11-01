@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Used for storing all of a users information, including their name and item manager
  */
-public class User  implements Comparable<User>{
+public class User{
 
     // Primary Variables used and help by the User
     private String userName;
@@ -43,22 +43,6 @@ public class User  implements Comparable<User>{
         // Returns the list of all of the items within the ItemManager
         // this is temporary, as the main one will need to be attached to the UI
         return new ArrayList<Item>();
-    }
-
-    /**
-     * Compares the Username of two different Users, returns 0 if they are equal
-     * This is primarily used if we ever need to sort users
-     * @param userToCompare
-     * @return
-     * 0 -> if they are equal
-     * -1 -> if they are not
-     */
-    @Override public int compareTo(User userToCompare) {
-        if(this.userName == userToCompare.getUserName()) {
-            return 0;
-        } else {
-            return -1;
-        }
     }
 
     // Getters and Setters
