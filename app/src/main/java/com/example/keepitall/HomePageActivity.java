@@ -1,6 +1,7 @@
 package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,13 +33,13 @@ public class HomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home_page);
+
         itemList.add(testItem);
         itemList.add(testItem2);
         itemList.add(testItem3);
         itemList.add(testItem4);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -67,6 +68,15 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
+        AppCompatButton addButton = findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // Go back to login screen if back button is pressed
         Button backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
@@ -80,4 +90,5 @@ public class HomePageActivity extends AppCompatActivity {
 
         //TODO: add functionality, sort by, filter by, search
     }
+
 }
