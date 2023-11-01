@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B8ABAB">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/viewBackButton2"
+        android:layout_width="122dp"
+        android:layout_height="111dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/back_icon"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/savebutton"
+        app:layout_constraintHorizontal_bias="0.106"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.09" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/galleryButton2"
+        android:layout_width="153dp"
+        android:layout_height="148dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="92dp"
+        android:background="@drawable/gallery_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/homeButton2"
+        android:layout_width="163dp"
+        android:layout_height="151dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="88dp"
+        android:background="@drawable/home_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/galleryButton2"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="560dp"
+        android:layout_height="656dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.416"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.58"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="224dp"
+        android:text="Change Item Icon:"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.041" />
+
+    <Button
+        android:id="@+id/savebutton"
+        android:layout_width="171dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="104dp"
+        android:text="Save"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/imageButton6"
+        android:layout_width="162dp"
+        android:layout_height="158dp"
+        android:layout_marginEnd="68dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

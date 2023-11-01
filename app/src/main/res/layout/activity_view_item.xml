@@ -28,14 +28,14 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="28dp"
+        android:background="#000000"
+        android:padding="1dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        android:background="#000000"
-        android:padding="1dp"/>
+        tools:srcCompat="@tools:sample/avatars" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -129,6 +129,8 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_margin="5dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/gallery_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -138,10 +140,12 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_margin="15dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/home_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/galleryButton" />
+        app:layout_constraintTop_toTopOf="@+id/galleryButton"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
