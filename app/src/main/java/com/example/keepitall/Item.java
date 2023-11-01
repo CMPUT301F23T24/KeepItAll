@@ -2,6 +2,7 @@ package com.example.keepitall;
 
 import android.nfc.Tag;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Represents an item with various attributes and tags.
  */
-public class Item {
+public class Item implements Serializable {
     private Date purchaseDate;
     private String description;
     private String make;

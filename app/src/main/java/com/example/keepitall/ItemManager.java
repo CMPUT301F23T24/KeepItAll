@@ -62,11 +62,11 @@ public class ItemManager {
      * @return item with the spec name or else null
      */
     public Item getItem(String itemName) {
-//        for (Item item : itemList) // need getName so that I can compare it with something
-//            if (item.something.equals(itemName)) {
-//                return item;
-//            }
-//        }
+      for (Item item : itemList) // need getName so that I can compare it with something
+          if (item.getName().equals(itemName)) {
+             return item;
+        }
+
         return null;
     }
     /**
