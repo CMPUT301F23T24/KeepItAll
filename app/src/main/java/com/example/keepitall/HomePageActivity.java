@@ -12,20 +12,24 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class HomePageActivity extends AppCompatActivity {
 
     GridView gridView;
 
-
     // testing purposes
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42);
-    Item[] items = {testItem, testItem, testItem, testItem, testItem, testItem};
+    ArrayList<Item> itemList = new ArrayList<>();
     int[] images = {R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon, R.drawable.app_icon};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        for (int i=0; i<6; i++) {
+            itemList.add(testItem);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
@@ -38,13 +42,13 @@ public class HomePageActivity extends AppCompatActivity {
         usernameView.setText(userName);
 
         gridView = findViewById(R.id.gridView);
-        HomePageAdapter homePageAdapter = new HomePageAdapter(this, items);
+        HomePageAdapter homePageAdapter = new HomePageAdapter(this, itemList);
         gridView.setAdapter(homePageAdapter);
 
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-            intent.putExtra("item", items[position]);
+            intent.putExtra("item", itemList.get(position));
             intent.putExtra("image", images[position]);
             startActivity(intent);
         });

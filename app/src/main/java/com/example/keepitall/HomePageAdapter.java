@@ -8,20 +8,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class HomePageAdapter extends BaseAdapter {
     Context context;
-    Item[] items;
+    ArrayList<Item> itemList;
     LayoutInflater inflater;
 
-    public HomePageAdapter(Context context, Item[] items) {
+    public HomePageAdapter(Context context, ArrayList<Item> itemList) {
         this.context = context;
-        this.items = items;
+        this.itemList = itemList;
         inflater = (LayoutInflater.from(context));
     }
 
     @Override
     public int getCount() {
-        return items.length;
+        return itemList.size();
     }
 
     @Override
@@ -39,7 +41,7 @@ public class HomePageAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.item_grid, null);
         TextView name = view.findViewById(R.id.gridDataName);
         ImageView image = view.findViewById(R.id.gridDataImage);
-        name.setText(items[position].getMake());
+        name.setText(itemList.get(position).getMake());
         image.setImageResource(R.drawable.app_icon);
         return view;
     }
