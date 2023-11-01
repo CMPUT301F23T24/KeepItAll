@@ -30,10 +30,6 @@ public class loginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.password_Input);
         loginButton = findViewById(R.id.login_Button);
 
-        ///TODO: Temporary code for keepItAll
-        keepItAll = new KeepItAll();
-
-
         // Login button listener that calls the login method
         loginButton.setOnClickListener(v -> Login());
 
@@ -79,9 +75,9 @@ public class loginActivity extends AppCompatActivity {
      * and if they are, it will go to the next activity.
      */
     private void Login(){
+        username = usernameInput.getText().toString();
         LoginMessages();
         // Temporary code just to get to the next activity
-        username = usernameInput.getText().toString();
         //Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
         // Go to the next activity
         //waitForSeconds(1.5f);
@@ -109,8 +105,40 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
-    ///TODO: check if the username is unique
-    private boolean checkUniqueUsername(String username){
-        return keepItAll.isUsernameUnique(username);
+    /**
+     * This method will check if the username is valid for a few cases:
+     * 1. the username is not taken
+     * 2. the username is greater than 3 characters
+     * 3. the username is less than 15 characters
+     * @param username the username to check
+     * @return true if the username is valid, false otherwise
+     */
+    private boolean checkValidUsername(String username){
+        // Case 1: the username is not taken
+        if(!keepItAll.isUsernameUnique(username)){
+            Toast.makeText(this, "Username is already taken", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // Case 2: the username is greater than 3 characters
+        if(username.length() < 3){
+            Toast.makeText(this, "Username must be greater than 3 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // Case 3: the username is less than 15 characters
+        if(username.length() > 15){
+            Toast.makeText(this, "Username must be less than 15 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // If all of the tests 'fail', then its a valid username
+        return true;
+    }
+
+
+    void createMocKeepItAll(){
+        keepItAll = new KeepItAll();
+        User user1 = new User("user1");
+        User user2 = new User("user2");
+        keepItAll.addUser(user1);
+        keepItAll.addUser(user2);
     }
 }

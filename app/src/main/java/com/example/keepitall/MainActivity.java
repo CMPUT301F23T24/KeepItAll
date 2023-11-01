@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         // Create the main KeepItAll Data class, which will
         // Hold the bulk of the class information
-        keepItAll = new KeepItAll();
 
         launchLogin();
     }

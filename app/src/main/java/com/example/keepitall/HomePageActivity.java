@@ -31,6 +31,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     ArrayList<Item> itemList = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

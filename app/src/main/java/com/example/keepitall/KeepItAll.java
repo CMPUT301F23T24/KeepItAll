@@ -33,7 +33,6 @@ public class KeepItAll{
             users.add(user);
         }
     }
-
     /**
      * Removes a user from the list of users if it is already present
      * @param user - user to remove
@@ -41,7 +40,6 @@ public class KeepItAll{
     public void removeUser(User user){
         users.remove(user);
     }
-
     /**
      * Removes a user from a list of users, if it is already present
      * @param username - the username of the user we wish to remove
