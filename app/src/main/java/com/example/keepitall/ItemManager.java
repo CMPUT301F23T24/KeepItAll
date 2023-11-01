@@ -58,17 +58,13 @@ public class ItemManager {
     }
     /**
      * the output is the  item you are searching for while comparing with name
-     * @param itemName to be searched
+     * @param position to be searched
      * @return item with the spec name or else null
      */
-    public Item getItem(String itemName) {
-      for (Item item : itemList) // need getName so that I can compare it with something
-          if (item.getName().equals(itemName)) {
-             return item;
-        }
-
-        return null;
+    public Item getItem(int position) {
+        return itemList.get(position);
     }
+
     /**
      * the output is the list containg all the items
      *
