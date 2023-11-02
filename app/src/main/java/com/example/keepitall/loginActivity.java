@@ -74,7 +74,8 @@ public class loginActivity extends AppCompatActivity {
         User userToLogin = keepItAll.getUserByName(username);
         // Check if the User is null
         if(userToLogin == null){
-            Toast.makeText(this, "Username or password is incorrect XXX", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+            return;
         }
         if(userToLogin.getPassword().equals(password)){
             Toast.makeText(this, "Login Successful, Welcome " + username, Toast.LENGTH_LONG).show();

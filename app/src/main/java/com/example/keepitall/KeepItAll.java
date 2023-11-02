@@ -61,13 +61,12 @@ public class KeepItAll{
     /**
      * Searches our list of users for a specific user, based off a given name input
      * @param userName - the name of the user we are looking for
-     * @return the found User object, or throws an exception if not found
+     * @return the found User object, or returns null if the user is not found
      */
     public User getUserByName(String userName){
         return users.stream()
                 .filter(u -> u.getUserName().equals(userName))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .findFirst().orElse(null);
     }
     // SMALL CHANGE
     // public static method to retrieve the singleton instance
