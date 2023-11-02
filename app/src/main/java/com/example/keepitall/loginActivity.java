@@ -18,6 +18,7 @@ public class loginActivity extends AppCompatActivity {
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
+    private Button registerButton;
 
     private KeepItAll keepItAll;
 
@@ -29,10 +30,11 @@ public class loginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.userName_Input);
         passwordInput = findViewById(R.id.password_Input);
         loginButton = findViewById(R.id.login_Button);
+        registerButton = findViewById(R.id.Register_Button);
 
         // Login button listener that calls the login method
         loginButton.setOnClickListener(v -> Login());
-
+        registerButton.setOnClickListener(v -> openRegisterAccount());
     }
 
     /**
@@ -83,6 +85,12 @@ public class loginActivity extends AppCompatActivity {
         //waitForSeconds(1.5f);
         //launchHomePage();
     }
+
+    private void openRegisterAccount(){
+        RegisterAccount registerAccount = new RegisterAccount();
+        registerAccount.show(getSupportFragmentManager(), "Register Account");
+    }
+
     /**
      * This method will launch the home page activity
      */
