@@ -28,11 +28,11 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // If item logo is clicked, go to change logo page
         ImageView logoImage = findViewById(R.id.itemIcon);
-        logoImage.setOnClickListener(v -> changeActivity(ChangeLogoActivity.class);
+        logoImage.setOnClickListener(v -> changeActivity(ChangeLogoActivity.class));
 
         // If gallery button is clicked, go to item gallery page
         Button galleryButton = findViewById(R.id.galleryButton);
-        galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class);
+        galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class));
 
                 // TODO: delete functionality, tag functionality, edit properties functionality
     }
