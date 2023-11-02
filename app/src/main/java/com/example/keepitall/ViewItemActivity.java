@@ -2,9 +2,11 @@ package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -23,6 +25,16 @@ public class ViewItemActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
         Button homeButton = findViewById(R.id.homeButton);
         homeButton.setOnClickListener(v -> finish());
+
+        ImageView logoImage = findViewById(R.id.itemIcon);
+        logoImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent intent = new Intent(this, ChangeLogoActivity.class);
+                // startActivity(intent);
+                //
+            }
+        });
 
         // DONE: back functionality, home functionality
         // TODO: delete functionality, gallery functionality, tag functionality, edit functionalities
