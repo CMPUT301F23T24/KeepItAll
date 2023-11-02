@@ -13,6 +13,12 @@
         android:theme="@style/Theme.KeepItAll"
         tools:targetApi="31">
         <activity
+            android:name=".ImageGalleryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeLogoActivity"
+            android:exported="false" />
+        <activity
             android:name=".ViewItemActivity"
             android:exported="false" />
         <activity
@@ -34,9 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddItemActivity">
-        </activity>
-
+        <activity android:name=".AddItemActivity" />
     </application>
 
 </manifest>

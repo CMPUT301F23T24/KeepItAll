@@ -89,7 +89,7 @@ public class HomePageActivity extends AppCompatActivity {
             Toast.makeText(HomePageActivity.this, "Select Item to be Deleted", Toast.LENGTH_SHORT).show();
         });
 
-        //TODO: add functionality, sort by, filter by, search
+        //TODO: sort by, filter by, search
     }
 
 }
