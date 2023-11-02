@@ -24,6 +24,18 @@ public class User{
     }
 
     /**
+     * Constructor for the User Object which takes in all of the variables
+     * @param userName
+     * @param password
+     * @param emailAdress
+     */
+    public User(String userName, String password, String emailAdress) {
+        this.userName = userName;
+        this.password = password;
+        this.emailAdress = emailAdress;
+    }
+
+    /**
      * View the details of a given item, based on its name
      * @param itemName
      * @return
@@ -47,6 +59,7 @@ public class User{
 
     // Getters and Setters
     public String getUserName() {return userName;}
+    public String getPassword() {return password;}
     public void setUserName(String userName) {this.userName = userName;}
     public Item getSelectedItem() {return selectedItem;}
 }

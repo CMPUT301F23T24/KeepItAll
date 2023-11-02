@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 public class RegisterAccount extends AppCompatDialogFragment {
 
     // Sets up the variables that will be used within the class
-    private KeepItAll keepItAll;
+    private KeepItAll keepItAll = KeepItAll.getInstance();
     private RegisterAccountListener Listener;
     private EditText editTextUsername;
     private EditText editTextPassword;
@@ -38,9 +38,6 @@ public class RegisterAccount extends AppCompatDialogFragment {
         editTextPassword = view.findViewById(R.id.Register_Password_Input);
         editTextConfirmPassword = view.findViewById(R.id.Register_Confirm_Password_Input);
         editTextEmail = view.findViewById(R.id.Register_Email_Input);
-        ///TODO: This is where the keepItAll object is created temporarily
-        keepItAll = new KeepItAll();
-
         // Set the default values of the variables
         // This is used for if the user entered some information and then pressed cancel
         // or if the user entered some information and then pressed confirm but the registration failed
@@ -100,9 +97,8 @@ public class RegisterAccount extends AppCompatDialogFragment {
 
                         // Check for a valid registration
                         if (ValidRegistration()) {
-                            // You can close the dialog here or do whatever is needed
+                            RegisterNewUser();
                             dialog.dismiss();
-                            //Listener.RegisterAccount(username, password, email);
                         }
                     }
                 });
@@ -176,6 +172,12 @@ public class RegisterAccount extends AppCompatDialogFragment {
         return true;
     }
 
+    private void RegisterNewUser(){
+        // creates a new user with the given information
+        User newUser = new User(username, password, email);
+        // adds the user to the database
+        keepItAll.addUser(newUser);
+    }
 
     // Creates the interface we will use to call this on the main class
     public interface RegisterAccountListener{
