@@ -26,18 +26,15 @@ public class ViewItemActivity extends AppCompatActivity {
         Button homeButton = findViewById(R.id.homeButton);
         homeButton.setOnClickListener(v -> finish());
 
+        // If item logo is clicked, go to change logo page
         ImageView logoImage = findViewById(R.id.itemIcon);
-        logoImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Intent intent = new Intent(this, ChangeLogoActivity.class);
-                // startActivity(intent);
-                //
-            }
-        });
+        logoImage.setOnClickListener(v -> changeActivity(ChangeLogoActivity.class);
 
-        // DONE: back functionality, home functionality
-        // TODO: delete functionality, gallery functionality, tag functionality, edit functionalities
+        // If gallery button is clicked, go to item gallery page
+        Button galleryButton = findViewById(R.id.galleryButton);
+        galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class);
+
+                // TODO: delete functionality, tag functionality, edit properties functionality
     }
 
     /**
@@ -65,5 +62,14 @@ public class ViewItemActivity extends AppCompatActivity {
         modelView.setText("Item Model: " + model);
         valueView.setText("Estimated Value: " + value.toString());
         descriptionView.setText("Description: " + description);
+    }
+
+    /**
+     * Changes the activity based on clicked button
+     * @param activity
+     */
+    public void changeActivity(Class activity) {
+        Intent intent = new Intent(ViewItemActivity.this, activity);
+        startActivity(intent);
     }
 }
