@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
+        android:windowSoftInputMode="adjustResize"
         app:cardCornerRadius="30dp"
         app:cardElevation="20dp">
 
@@ -23,13 +24,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="76dp"
-        android:layout_marginBottom="257dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginBottom="200dp"
         android:orientation="vertical"
         android:padding="24dp"
+        android:windowSoftInputMode="adjustResize"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Title_subText"
-        tools:layout_editor_absoluteX="-16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/loginText"
@@ -41,7 +46,8 @@
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="32dp"
-            android:textStyle="bold">
+            android:textStyle="bold"
+            android:windowSoftInputMode="adjustResize">
 
         </TextView>
 
@@ -67,6 +73,7 @@
             android:drawableLeft="@drawable/password_icon"
             android:drawablePadding="8dp"
             android:hint="password"
+            android:inputType="textPassword"
             android:padding="8dp"
             android:textColor="@color/black"
             android:textColorHint="@color/black"></EditText>
@@ -79,17 +86,17 @@
             android:text="Login"
             android:textColor="@color/black"
             android:textSize="18dp"
-            android:textStyle="bold"
-            android:theme="@style/CardView.Dark"></Button>
+            android:textStyle="bold"></Button>
 
         <TextView
             android:id="@+id/signUpText"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Don't have an account? Sign up"
-            android:textSize="14sp"
-            android:textAlignment="center">
+            android:clickable="true"
+            android:padding="1dp"
+            android:text="@string/need_an_account"
+            android:textAlignment="gravity"
+            android:textSize="14sp">
 
         </TextView>
 
@@ -133,20 +140,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/AppName"
         app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/Register_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="168dp"
-        android:text="Register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.447" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

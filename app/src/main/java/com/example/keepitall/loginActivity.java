@@ -2,25 +2,32 @@ package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * The class that holds the main functionality of the login page
+ * We either login or register from this page
+ * Registering will open a dialog box
+ # login will send us to the home page
+ */
 public class loginActivity extends AppCompatActivity {
 
-    /**
-     * The username of the user who currently logged in.
-     * This will get passed to the next activity.
-     */
     private String username;
     private String password;
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
-    private Button registerButton;
     private KeepItAll keepItAll = KeepItAll.getInstance();
+    private TextView signUpText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +37,17 @@ public class loginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.userName_Input);
         passwordInput = findViewById(R.id.password_Input);
         loginButton = findViewById(R.id.login_Button);
-        registerButton = findViewById(R.id.Register_Button);
-
+        signUpText = findViewById(R.id.signUpText);
         // Login button listener that calls the login method
         loginButton.setOnClickListener(v -> Login());
-        registerButton.setOnClickListener(v -> openRegisterAccount());
-
+        signUpText.setOnClickListener(v -> openRegisterAccount());
         ///TODO: Make this part of the database
         createMocKeepItAll();
+
+
     }
+
+
 
     /**
      * Various messages that will be displayed if the user
