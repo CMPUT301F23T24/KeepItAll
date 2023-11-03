@@ -14,7 +14,7 @@ public class ItemTest {
     @org.junit.Test
     public void testItemAttributes() {
         Date testDate = new Date();
-        Item item = new Item(testDate, "TestItem", "TestMake", "TestModel", 12345, 10.5f);
+        Item item = new Item(testDate, "TestItem", "TestMake", "TestModel", 12345, 10.5f, "Name");
 
         // Test attributes
         assertEquals(testDate, item.getPurchaseDate());

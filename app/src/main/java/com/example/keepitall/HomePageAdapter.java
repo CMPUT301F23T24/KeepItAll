@@ -41,7 +41,7 @@ public class HomePageAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.item_grid, null);
         TextView name = view.findViewById(R.id.gridDataName);
         ImageView image = view.findViewById(R.id.gridDataImage);
-        name.setText(itemList.getItem(position).getMake());
+        name.setText(itemList.getItem(position).getName());
         image.setImageResource(R.drawable.app_icon);
         return view;
     }

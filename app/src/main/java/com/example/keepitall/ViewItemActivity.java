@@ -61,7 +61,7 @@ public class ViewItemActivity extends AppCompatActivity {
         TextView descriptionView = findViewById(R.id.descriptionText);
 
         // Set text based on item properties
-        nameView.setText(name + ": ");
+        nameView.setText(name);
         dateView.setText("Date of Purchase: " + date.toString());
         makeView.setText("Item Make: " + make);
         modelView.setText("Item Model: " + model);
