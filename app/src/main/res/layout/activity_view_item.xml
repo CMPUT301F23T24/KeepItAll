@@ -107,13 +107,23 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/serialNumberText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Serial Number: "
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/descriptionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Description: "
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton

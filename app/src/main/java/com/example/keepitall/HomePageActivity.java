@@ -22,6 +22,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     GridView gridView;
     boolean deleteMode = false;
+    ItemManager itemList = new ItemManager();
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42);
@@ -29,18 +30,16 @@ public class HomePageActivity extends AppCompatActivity {
     Item testItem3 = new Item(new Date(), "Description Example", "Toyotad", "Rav-4", 1234, (float)24.42);
     Item testItem4 = new Item(new Date(), "Description Example", "Toyotab", "Rav-4", 1234, (float)24.42);
 
-    ArrayList<Item> itemList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        itemList.add(testItem);
-        itemList.add(testItem2);
-        itemList.add(testItem3);
-        itemList.add(testItem4);
+        itemList.addItem(testItem);
+        itemList.addItem(testItem2);
+        itemList.addItem(testItem3);
+        itemList.addItem(testItem4);
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -56,14 +55,14 @@ public class HomePageActivity extends AppCompatActivity {
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             if (deleteMode == true) {
-                itemList.remove(itemList.get(position));
+                itemList.deleteItem(itemList.getItem(position));
                 homePageAdapter.notifyDataSetChanged();
                 deleteMode = false;
             }
 
             else {
                 Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-                intent.putExtra("item", itemList.get(position));
+                intent.putExtra("item", itemList.getItem(position));
                 intent.putExtra("image", R.drawable.app_icon);
                 startActivity(intent);
             }

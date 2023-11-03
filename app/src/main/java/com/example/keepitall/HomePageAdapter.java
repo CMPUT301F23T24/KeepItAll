@@ -12,10 +12,10 @@ import java.util.ArrayList;
 
 public class HomePageAdapter extends BaseAdapter {
     Context context;
-    ArrayList<Item> itemList;
+    ItemManager itemList;
     LayoutInflater inflater;
 
-    public HomePageAdapter(Context context, ArrayList<Item> itemList) {
+    public HomePageAdapter(Context context, ItemManager itemList) {
         this.context = context;
         this.itemList = itemList;
         inflater = (LayoutInflater.from(context));
@@ -23,7 +23,7 @@ public class HomePageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return itemList.size();
+        return itemList.getAllItems().size();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class HomePageAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.item_grid, null);
         TextView name = view.findViewById(R.id.gridDataName);
         ImageView image = view.findViewById(R.id.gridDataImage);
-        name.setText(itemList.get(position).getMake());
+        name.setText(itemList.getItem(position).getMake());
         image.setImageResource(R.drawable.app_icon);
         return view;
     }
