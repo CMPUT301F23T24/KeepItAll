@@ -24,10 +24,10 @@ public class HomePageActivity extends AppCompatActivity {
     boolean deleteMode = false;
 
     // test data (REMOVE THIS AFTER)
-    Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42);
-    Item testItem2 = new Item(new Date(), "Description Example", "Toyotar", "Rav-4", 1234, (float)24.42);
-    Item testItem3 = new Item(new Date(), "Description Example", "Toyotad", "Rav-4", 1234, (float)24.42);
-    Item testItem4 = new Item(new Date(), "Description Example", "Toyotab", "Rav-4", 1234, (float)24.42);
+    Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "");
+    Item testItem2 = new Item(new Date(), "Description Example", "Toyotar", "Rav-4", 1234, (float)24.42, "");
+    Item testItem3 = new Item(new Date(), "Description Example", "Toyotad", "Rav-4", 1234, (float)24.42, "");
+    Item testItem4 = new Item(new Date(), "Description Example", "Toyotab", "Rav-4", 1234, (float)24.42, "");
 
     ArrayList<Item> itemList = new ArrayList<>();
 
