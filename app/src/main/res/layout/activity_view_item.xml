@@ -55,12 +55,12 @@
 
 
         <TextView
-            android:id="@+id/itemPropertyTitle"
+            android:id="@+id/itemNameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Item Properties:"
+            android:text="Name:"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="22sp"
