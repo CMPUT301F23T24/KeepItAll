@@ -168,6 +168,11 @@ public class RegisterAccount extends AppCompatDialogFragment {
             Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
             return false;
         }
+        // make sure the username is within the correct length (3-15 characters)
+        if(username.length() < 3 || username.length() > 15){
+            Toast.makeText(getContext(), "Username must be between 3 and 15 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT).show();
         return true;
     }
