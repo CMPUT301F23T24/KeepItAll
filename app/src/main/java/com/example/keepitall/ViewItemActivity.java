@@ -43,24 +43,30 @@ public class ViewItemActivity extends AppCompatActivity {
     public void displayText() {
         // Get item properties
         Item item = (Item) getIntent().getSerializableExtra("item");
+        String name = item.getName();
         Date date = item.getPurchaseDate();
         String make = item.getMake();
         String model = item.getModel();
         Float value = item.getValue();
+        Integer serialNum = item.getSerialNumber();
         String description = item.getDescription();
 
         // Get text views
+        TextView nameView = findViewById(R.id.itemNameText);
         TextView dateView = findViewById(R.id.purchaseDateText);
         TextView makeView = findViewById(R.id.makeText);
         TextView modelView = findViewById(R.id.modelText);
         TextView valueView = findViewById(R.id.valueText);
+        TextView serialNumView = findViewById(R.id.serialNumberText);
         TextView descriptionView = findViewById(R.id.descriptionText);
 
         // Set text based on item properties
+        nameView.setText(name);
         dateView.setText("Date of Purchase: " + date.toString());
         makeView.setText("Item Make: " + make);
         modelView.setText("Item Model: " + model);
         valueView.setText("Estimated Value: " + value.toString());
+        serialNumView.setText("Serial Number: " + serialNum.toString());
         descriptionView.setText("Description: " + description);
     }
 
