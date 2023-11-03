@@ -14,7 +14,7 @@ public class ItemManagerTest {
     @Test
     public void testAddItem() {
         itemManager = new ItemManager();
-        Item item = new Item(new Date(), "Test Item", "Test Make", "Test Model", 001, 10.0f);
+        Item item = new Item(new Date(), "Test Item", "Test Make", "Test Model", 001, 10.0f, "Name");
         itemManager.addItem(item);
         assertTrue(itemManager.getAllItems().contains(item));
     }
@@ -22,7 +22,7 @@ public class ItemManagerTest {
     @Test
     public void testDeleteItem() {
         itemManager = new ItemManager();
-        Item item = new Item(new Date(), "Test Item", "Test Make", "Test Model", 002, 30.0f);
+        Item item = new Item(new Date(), "Test Item", "Test Make", "Test Model", 002, 30.0f, "Name");
         itemManager.addItem(item);
         itemManager.deleteItem(item);
         assertFalse(itemManager.getAllItems().contains(item));
@@ -31,7 +31,7 @@ public class ItemManagerTest {
     @Test
     public void testEditItem() {
         itemManager = new ItemManager();
-        Item item = new Item(new Date(), " test desc", " Vintage", "Bond007", 143, 70.0f);
+        Item item = new Item(new Date(), " test desc", " Vintage", "Bond007", 143, 70.0f, "Name");
         itemManager.addItem(item);
 
         Date PurchaseDate_new = new Date();
