@@ -32,7 +32,7 @@ public class Item implements Serializable {
      * @param serialNumber The serial number of the item.
      * @param value The value of the item.
      */
-    public Item(Date purchaseDate, String description, String make, String model, Integer serialNumber, Float value) {
+    public Item(Date purchaseDate, String description, String make, String model, Integer serialNumber, Float value, String name) {
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -40,6 +40,7 @@ public class Item implements Serializable {
         this.serialNumber = serialNumber;
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
+        this.name = name;
     }
 
     public Date getPurchaseDate() {
