@@ -15,11 +15,12 @@ public class loginActivity extends AppCompatActivity {
      * This will get passed to the next activity.
      */
     private String username;
+    private String password;
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
-
-    private KeepItAll keepItAll;
+    private Button registerButton;
+    private KeepItAll keepItAll = KeepItAll.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +30,14 @@ public class loginActivity extends AppCompatActivity {
         usernameInput = findViewById(R.id.userName_Input);
         passwordInput = findViewById(R.id.password_Input);
         loginButton = findViewById(R.id.login_Button);
+        registerButton = findViewById(R.id.Register_Button);
 
         // Login button listener that calls the login method
         loginButton.setOnClickListener(v -> Login());
+        registerButton.setOnClickListener(v -> openRegisterAccount());
 
+        ///TODO: Make this part of the database
+        createMocKeepItAll();
     }
 
     /**
@@ -57,18 +62,6 @@ public class loginActivity extends AppCompatActivity {
         else if(!usernameInput.getText().toString().isEmpty() && passwordInput.getText().toString().isEmpty()){
             Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
         }
-        // if neither are empty
-        else if(!usernameInput.getText().toString().isEmpty() && !passwordInput.getText().toString().isEmpty()){
-            Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
-            // Go to the next activity
-            waitForSeconds(1.5f);
-            launchHomePage();
-        }
-        // Display a toast message if the username or password is incorrect
-        ///TODO: make this check the database for the username and password
-        else{
-            Toast.makeText(this, "Incorrect username or password", Toast.LENGTH_SHORT).show();
-        }
     }
     /**
      * This method will check if the username and password are correct
@@ -76,13 +69,29 @@ public class loginActivity extends AppCompatActivity {
      */
     private void Login(){
         username = usernameInput.getText().toString();
+        password = passwordInput.getText().toString();
         LoginMessages();
-        // Temporary code just to get to the next activity
-        //Toast.makeText(this, "Welcome " + username, Toast.LENGTH_SHORT).show();
-        // Go to the next activity
-        //waitForSeconds(1.5f);
-        //launchHomePage();
+        User userToLogin = keepItAll.getUserByName(username);
+        // Check if the User is null
+        if(userToLogin == null){
+            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(userToLogin.getPassword().equals(password)){
+            Toast.makeText(this, "Login Successful, Welcome " + username, Toast.LENGTH_LONG).show();
+            waitForSeconds(1.5f);
+            launchHomePage();
+        }
+        else{
+            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+        }
     }
+
+    private void openRegisterAccount(){
+        RegisterAccount registerAccount = new RegisterAccount();
+        registerAccount.show(getSupportFragmentManager(), "Register Account");
+    }
+
     /**
      * This method will launch the home page activity
      */
@@ -105,40 +114,8 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * This method will check if the username is valid for a few cases:
-     * 1. the username is not taken
-     * 2. the username is greater than 3 characters
-     * 3. the username is less than 15 characters
-     * @param username the username to check
-     * @return true if the username is valid, false otherwise
-     */
-    private boolean checkValidUsername(String username){
-        // Case 1: the username is not taken
-        if(!keepItAll.isUsernameUnique(username)){
-            Toast.makeText(this, "Username is already taken", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        // Case 2: the username is greater than 3 characters
-        if(username.length() < 3){
-            Toast.makeText(this, "Username must be greater than 3 characters", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        // Case 3: the username is less than 15 characters
-        if(username.length() > 15){
-            Toast.makeText(this, "Username must be less than 15 characters", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        // If all of the tests 'fail', then its a valid username
-        return true;
-    }
-
-
-    void createMocKeepItAll(){
-        keepItAll = new KeepItAll();
-        User user1 = new User("user1");
-        User user2 = new User("user2");
-        keepItAll.addUser(user1);
-        keepItAll.addUser(user2);
+    private void createMocKeepItAll(){
+        User dev = new User("dev", "pass", "email");
+        keepItAll.addUser(dev);
     }
 }

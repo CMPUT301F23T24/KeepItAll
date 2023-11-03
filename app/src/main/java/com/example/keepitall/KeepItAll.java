@@ -6,13 +6,14 @@ import java.util.ArrayList;
  * Main class uses by the App to organize users and Items
  */
 public class KeepItAll{
+    private static volatile KeepItAll INSTANCE = null;
     private ArrayList<User> users;
 
     /**
      * Constructor used for the main data class
      * Holds an ArrayList of User classes
      */
-    public KeepItAll() {
+    private KeepItAll() {
         this.users = new ArrayList<User>();
     }
 
@@ -60,12 +61,28 @@ public class KeepItAll{
     /**
      * Searches our list of users for a specific user, based off a given name input
      * @param userName - the name of the user we are looking for
-     * @return the found User object, or throws an exception if not found
+     * @return the found User object, or returns null if the user is not found
      */
     public User getUserByName(String userName){
         return users.stream()
                 .filter(u -> u.getUserName().equals(userName))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .findFirst().orElse(null);
+    }
+    // SMALL CHANGE
+    // public static method to retrieve the singleton instance
+    public static KeepItAll getInstance() {
+        // Check if the instance is already created
+        if(INSTANCE == null) {
+            // synchronize the block to ensure only one thread can execute at a time
+            synchronized (KeepItAll.class) {
+                // check again if the instance is already created
+                if (INSTANCE == null) {
+                    // create the singleton instance
+                    INSTANCE = new KeepItAll();
+                }
+            }
+        }
+        // return the singleton instance
+        return INSTANCE;
     }
 }

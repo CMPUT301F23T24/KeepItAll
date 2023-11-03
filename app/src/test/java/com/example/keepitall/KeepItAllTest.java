@@ -8,7 +8,7 @@ public class KeepItAllTest {
 
     private KeepItAll createMocData(){
         // Creates a moc KeepItAll class, with a user in it
-        KeepItAll Data = new KeepItAll();
+        KeepItAll Data = KeepItAll.getInstance();
         User user1 = new User("User One");
         User user2 = new User("User Two");
         Data.addUser(user1);
