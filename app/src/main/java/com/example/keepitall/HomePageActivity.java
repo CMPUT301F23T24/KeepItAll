@@ -42,7 +42,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         totalValue = getTotal(itemList);
         TextView totalValueView = findViewById(R.id.totalValueText);
-        totalValueView.setText("Total Estimated Value: $" + totalValue);
+        totalValueView.setText(String.format("Total Estimated Value: $%.2f", totalValue));
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -58,14 +58,13 @@ public class HomePageActivity extends AppCompatActivity {
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             if (deleteMode) {
-                if (itemsToRemove.contains(position)) {
-                    itemsToRemove.remove(position);
-                    // TODO: Change the background or visual state to indicate unselected
-                    view.setBackgroundColor(Color.TRANSPARENT); // Example, change as needed
+                if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
+                    Toast.makeText(this, "does this work", Toast.LENGTH_SHORT).show();
+                    itemsToRemove.remove(itemList.getItem(position));
+                    view.setBackgroundColor(Color.TRANSPARENT);
                 } else {
                     itemsToRemove.add(itemList.getItem(position));
-                    // TODO: Change the background or visual state to indicate selected
-                    view.setBackgroundColor(Color.LTGRAY); // Example, change as needed
+                    view.setBackgroundColor(Color.LTGRAY); // change color if selected
                 }
             }
 
@@ -99,14 +98,14 @@ public class HomePageActivity extends AppCompatActivity {
                     itemList.deleteItem(item);
                     totalValue -= item.getValue();
                 }
-                totalValueView.setText("Total Estimated Value: $" + totalValue);
+                totalValueView.setText(String.format("Total Estimated Value: $%.2f", totalValue));
                 homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
                 itemsToRemove.clear(); // Clear the selection
                 deleteMode = false; // Exit delete mode
             }
         });
 
-        //TODO: sort by, filter by, search
+        //TODO: sort by, filter by, search, VALUE FORMAT
     }
 
     private float getTotal(ItemManager itemList) {
@@ -117,5 +116,4 @@ public class HomePageActivity extends AppCompatActivity {
         }
         return total;
     }
-
 }

@@ -77,6 +77,10 @@ public class ItemManager implements Serializable {
         return new ArrayList<>(itemList);
     }
 
+    public boolean itemInList(int position) {
+        return itemList.contains(position);
+    }
+
     /**
      * sorts the list in asc/desc order based on different cases
      *
