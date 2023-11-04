@@ -6,19 +6,13 @@ import androidx.appcompat.widget.AppCompatButton;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 
 public class HomePageActivity extends AppCompatActivity {
 
@@ -46,6 +40,9 @@ public class HomePageActivity extends AppCompatActivity {
         itemList.addItem(testItem3);
         itemList.addItem(testItem4);
 
+        totalValue = getTotal(itemList);
+        TextView totalValueView = findViewById(R.id.totalValueText);
+        totalValueView.setText("Total Estimated Value: $" + totalValue);
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -100,7 +97,9 @@ public class HomePageActivity extends AppCompatActivity {
                 // Delete selected items
                 for (Item item : itemsToRemove) {
                     itemList.deleteItem(item);
+                    totalValue -= item.getValue();
                 }
+                totalValueView.setText("Total Estimated Value: $" + totalValue);
                 homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
                 itemsToRemove.clear(); // Clear the selection
                 deleteMode = false; // Exit delete mode
@@ -110,6 +109,13 @@ public class HomePageActivity extends AppCompatActivity {
         //TODO: sort by, filter by, search
     }
 
-    private float
+    private float getTotal(ItemManager itemList) {
+        float total = 0;
+        ArrayList<Item> allItems = itemList.getAllItems();
+        for (Item item: allItems) {
+            total += item.getValue();
+        }
+        return total;
+    }
 
 }

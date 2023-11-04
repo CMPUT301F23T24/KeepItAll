@@ -72,7 +72,7 @@ public class ItemManager implements Serializable {
      * @return a new array list containng all the items by itemManager
      */
 
-    public List<Item> getAllItems() {
+    public ArrayList<Item> getAllItems() {
 
         return new ArrayList<>(itemList);
     }
