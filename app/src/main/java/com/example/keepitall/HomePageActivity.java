@@ -27,6 +27,7 @@ public class HomePageActivity extends AppCompatActivity {
     ItemManager itemList = new ItemManager();
 
     ArrayList<Item> itemsToRemove = new ArrayList<>();
+    Float totalValue;
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
@@ -44,6 +45,7 @@ public class HomePageActivity extends AppCompatActivity {
         itemList.addItem(testItem2);
         itemList.addItem(testItem3);
         itemList.addItem(testItem4);
+
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -107,5 +109,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         //TODO: sort by, filter by, search
     }
+
+    private float
 
 }

@@ -40,7 +40,7 @@ public class ViewItemActivity extends AppCompatActivity {
     /**
      * Displays the clicked item's properties
      */
-    public void displayText() {
+    private void displayText() {
         // Get item properties
         Item item = (Item) getIntent().getSerializableExtra("item");
         String name = item.getName();
@@ -74,7 +74,7 @@ public class ViewItemActivity extends AppCompatActivity {
      * Changes the activity based on clicked button
      * @param activity
      */
-    public void changeActivity(Class activity) {
+    private void changeActivity(Class activity) {
         Intent intent = new Intent(ViewItemActivity.this, activity);
         startActivity(intent);
     }
