@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 public class HomePageActivity extends AppCompatActivity {
 
     GridView gridView;
     boolean deleteMode = false;
     ItemManager itemList = new ItemManager();
+
+    ArrayList<Item> itemsToRemove = new ArrayList<>();
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
@@ -54,10 +58,16 @@ public class HomePageActivity extends AppCompatActivity {
         gridView.setAdapter(homePageAdapter);
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            if (deleteMode == true) {
-                itemList.deleteItem(itemList.getItem(position));
-                homePageAdapter.notifyDataSetChanged();
-                deleteMode = false;
+            if (deleteMode) {
+                if (itemsToRemove.contains(position)) {
+                    itemsToRemove.remove(position);
+                    // TODO: Change the background or visual state to indicate unselected
+                    view.setBackgroundColor(Color.TRANSPARENT); // Example, change as needed
+                } else {
+                    itemsToRemove.add(itemList.getItem(position));
+                    // TODO: Change the background or visual state to indicate selected
+                    view.setBackgroundColor(Color.LTGRAY); // Example, change as needed
+                }
             }
 
             else {
@@ -69,12 +79,9 @@ public class HomePageActivity extends AppCompatActivity {
         });
 
         AppCompatButton addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
-                startActivity(intent);
-            }
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+            startActivity(intent);
         });
 
         // Go back to login screen if back button is pressed
@@ -84,8 +91,18 @@ public class HomePageActivity extends AppCompatActivity {
         // Delete an item
         Button deleteButton = findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(v -> {
-            deleteMode = true;
-            Toast.makeText(HomePageActivity.this, "Select Item to be Deleted", Toast.LENGTH_SHORT).show();
+            if (!deleteMode) {
+                deleteMode = true;
+                Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+            } else {
+                // Delete selected items
+                for (Item item : itemsToRemove) {
+                    itemList.deleteItem(item);
+                }
+                homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
+                itemsToRemove.clear(); // Clear the selection
+                deleteMode = false; // Exit delete mode
+            }
         });
 
         //TODO: sort by, filter by, search
