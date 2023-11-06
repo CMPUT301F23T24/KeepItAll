@@ -89,8 +89,8 @@ public class HomePageActivity extends AppCompatActivity {
         });
 
         // Go back to login screen if back button is pressed
-        Button backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> finish());
+        Button logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(v -> finish());
 
         // Delete an item
         Button deleteButton = findViewById(R.id.deleteButton);
