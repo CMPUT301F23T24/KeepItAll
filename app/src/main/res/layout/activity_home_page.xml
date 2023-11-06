@@ -107,7 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Total Estimated Value: $2121"
+        android:text="Total Value: "
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="24sp"
