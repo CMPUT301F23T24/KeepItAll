@@ -105,7 +105,7 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        //TODO: sort by, filter by, search, VALUE FORMAT
+        //TODO: sort by, filter by, search
     }
 
     private float getTotal(ItemManager itemList) {
