@@ -4,14 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +21,9 @@ public class HomePageActivity extends AppCompatActivity {
     GridView gridView;
     boolean deleteMode = false;
     ItemManager itemList = new ItemManager();
+    ArrayList<Item> itemsToRemove = new ArrayList<>();
+    HomePageAdapter homePageAdapter;
+    TextView totalValueView;
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
@@ -35,11 +36,14 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        totalValueView = findViewById(R.id.totalValueText);
 
         itemList.addItem(testItem);
         itemList.addItem(testItem2);
         itemList.addItem(testItem3);
         itemList.addItem(testItem4);
+
+        updateTotalValue(); // Gets the total Value
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -49,18 +53,27 @@ public class HomePageActivity extends AppCompatActivity {
         TextView usernameView = findViewById(R.id.nameText);
         usernameView.setText(userName);
 
+
+        // set the Adapter for gridView
         gridView = findViewById(R.id.gridView);
-        HomePageAdapter homePageAdapter = new HomePageAdapter(this, itemList);
+        homePageAdapter = new HomePageAdapter(this, itemList);
         gridView.setAdapter(homePageAdapter);
 
+
+        // gridView onClickListener for deletion or view item properties
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            if (deleteMode == true) {
-                itemList.deleteItem(itemList.getItem(position));
-                homePageAdapter.notifyDataSetChanged();
-                deleteMode = false;
+            if (deleteMode) { // if delete
+                if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
+                    Toast.makeText(this, "does this work", Toast.LENGTH_SHORT).show();
+                    itemsToRemove.remove(itemList.getItem(position));
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    itemsToRemove.add(itemList.getItem(position));
+                    view.setBackgroundColor(Color.LTGRAY); // change color if selected
+                }
             }
 
-            else {
+            else { // if view
                 Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
                 intent.putExtra("item", itemList.getItem(position));
                 intent.putExtra("image", R.drawable.app_icon);
@@ -68,13 +81,11 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
+        // Add item button
         AppCompatButton addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
-                startActivity(intent);
-            }
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+            startActivityForResult(intent, 1);
         });
 
         // Go back to login screen if back button is pressed
@@ -84,11 +95,56 @@ public class HomePageActivity extends AppCompatActivity {
         // Delete an item
         Button deleteButton = findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(v -> {
-            deleteMode = true;
-            Toast.makeText(HomePageActivity.this, "Select Item to be Deleted", Toast.LENGTH_SHORT).show();
+            if (!deleteMode) {
+                deleteMode = true;
+                Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+                deleteButton.setBackgroundResource(R.drawable.gray_button);
+            } else {
+                // Delete selected items
+                for (Item item : itemsToRemove) {
+                    itemList.deleteItem(item);
+                }
+                updateTotalValue();
+                homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
+                itemsToRemove.clear(); // Clear the selection
+                deleteMode = false; // Exit delete mode
+                deleteButton.setBackgroundResource(R.drawable.white_button);
+            }
         });
 
         //TODO: sort by, filter by, search
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // Get the new item from the result intent
+                Item newItem = (Item) data.getSerializableExtra("newItem");
+                // Add the new item to your item list
+                itemList.addItem(newItem);
+                //
+                updateTotalValue();
+                // Notify the adapter that the data set has changed
+                homePageAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+
+    /**
+     * Gets total value of every item and display in homePage
+     */
+    private void updateTotalValue() {
+        float totalValue = 0;
+        ArrayList<Item> allItems = itemList.getAllItems();
+        for (Item item: allItems) {
+            totalValue += item.getValue();
+        }
+        totalValueView.setText(String.format("Total Value: $%.2f", totalValue));
+    }
 }
