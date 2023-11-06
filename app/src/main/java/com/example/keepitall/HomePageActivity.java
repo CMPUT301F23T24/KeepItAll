@@ -24,6 +24,7 @@ public class HomePageActivity extends AppCompatActivity {
     ArrayList<Item> itemsToRemove = new ArrayList<>();
     HomePageAdapter homePageAdapter;
     TextView totalValueView;
+    Button deleteButton;
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
@@ -53,32 +54,14 @@ public class HomePageActivity extends AppCompatActivity {
         TextView usernameView = findViewById(R.id.nameText);
         usernameView.setText(userName);
 
-
         // set the Adapter for gridView
         gridView = findViewById(R.id.gridView);
         homePageAdapter = new HomePageAdapter(this, itemList);
         gridView.setAdapter(homePageAdapter);
 
-
         // gridView onClickListener for deletion or view item properties
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            if (deleteMode) { // if delete
-                if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
-                    Toast.makeText(this, "does this work", Toast.LENGTH_SHORT).show();
-                    itemsToRemove.remove(itemList.getItem(position));
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                } else {
-                    itemsToRemove.add(itemList.getItem(position));
-                    view.setBackgroundColor(Color.LTGRAY); // change color if selected
-                }
-            }
-
-            else { // if view
-                Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-                intent.putExtra("item", itemList.getItem(position));
-                intent.putExtra("image", R.drawable.app_icon);
-                startActivity(intent);
-            }
+            gridViewClickEvent(view, position);
         });
 
         // Add item button
@@ -93,23 +76,9 @@ public class HomePageActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(v -> finish());
 
         // Delete an item
-        Button deleteButton = findViewById(R.id.deleteButton);
+        deleteButton = findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(v -> {
-            if (!deleteMode) {
-                deleteMode = true;
-                Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
-                deleteButton.setBackgroundResource(R.drawable.gray_button);
-            } else {
-                // Delete selected items
-                for (Item item : itemsToRemove) {
-                    itemList.deleteItem(item);
-                }
-                updateTotalValue();
-                homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
-                itemsToRemove.clear(); // Clear the selection
-                deleteMode = false; // Exit delete mode
-                deleteButton.setBackgroundResource(R.drawable.white_button);
-            }
+            deleteButtonClickEvent();
         });
 
         //TODO: sort by, filter by, search
@@ -135,7 +104,56 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Click Listener for grid, either delete or view item property
+     * @param view
+     * @param position
+     */
+    private void gridViewClickEvent(View view, int position) {
+        if (deleteMode) { // if delete
+            if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
+                itemsToRemove.remove(itemList.getItem(position));
+                view.setBackgroundColor(Color.TRANSPARENT);
+            } else {
+                itemsToRemove.add(itemList.getItem(position));
+                view.setBackgroundColor(Color.LTGRAY); // change color if selected
+            }
+        }
 
+        else { // if user wants to view property item
+            Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
+            intent.putExtra("item", itemList.getItem(position));
+            intent.putExtra("image", R.drawable.app_icon);
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * Click Listener for deleteButton
+     *      1) First click is to activate delete mode
+     *      2) Second click is to delete selected items
+     */
+    private void deleteButtonClickEvent() {
+        if (!deleteMode) {
+            deleteMode = true;
+            Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+            deleteButton.setBackgroundResource(R.drawable.gray_button);
+        } else {
+            // Delete selected items
+            for (Item item : itemsToRemove) {
+                itemList.deleteItem(item);
+            }
+            updateTotalValue();
+            homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
+            itemsToRemove.clear(); // Clear the selection
+            deleteMode = false; // Exit delete mode
+            deleteButton.setBackgroundResource(R.drawable.white_button);
+        }
+    }
+
+    private void searchClickEvent() {
+
+    }
     /**
      * Gets total value of every item and display in homePage
      */
