@@ -6,12 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * The class that holds the main functionality of the login page
@@ -29,6 +40,9 @@ public class loginActivity extends AppCompatActivity {
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private TextView signUpText;
 
+    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private CollectionReference userCollection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +57,34 @@ public class loginActivity extends AppCompatActivity {
         signUpText.setOnClickListener(v -> openRegisterAccount());
         ///TODO: Make this part of the database
         createMocKeepItAll();
+        userCollection = Database.collection("users");
+        userCollection.addSnapshotListener(new EventListener<QuerySnapshot>(){
+            @Override
+            public void onEvent(QuerySnapshot value, FirebaseFirestoreException error){
+                if(error != null){
+                    return;
+                }
+                if (value != null) {
+                    // Clear the list of users
+                    for (QueryDocumentSnapshot doc: value) {
+                        // The collection stores the user as a HashMap
+                        // [String, User]
+                        // get the map
+                        Map<String, Object> data = doc.getData();
+                        // get the user
+                        //User user = (User) data.get("User");
+                        //if(user == null){
+                            //Toast.makeText(loginActivity.this, "User is null", Toast.LENGTH_SHORT).show();
+                        //}
+                        //keepItAll.addUser(user);
+                    }
+                }
 
 
+
+            }
+        });
     }
-
-
-
     /**
      * Various messages that will be displayed if the user
      * badly inputs their username or password.
@@ -96,6 +132,9 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method will open the register account dialog box
+     */
     private void openRegisterAccount(){
         RegisterAccount registerAccount = new RegisterAccount();
         registerAccount.show(getSupportFragmentManager(), "Register Account");
@@ -107,6 +146,7 @@ public class loginActivity extends AppCompatActivity {
     private void launchHomePage(){
         Intent i = new Intent(this, HomePageActivity.class);
         i.putExtra("username", username);
+        //i.putExtra("user", (Serializable) keepItAll.getUserByName(username));
         startActivity(i);
     }
 
@@ -123,6 +163,10 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method will create a mock KeepItAll object
+     * with a few users and items. Mostly for testing purposes
+     */
     private void createMocKeepItAll(){
         User dev = new User("dev", "pass", "email");
         keepItAll.addUser(dev);

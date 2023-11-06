@@ -1,6 +1,10 @@
 package com.example.keepitall;
 
+import android.widget.Toast;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Used for storing all of a users information, including their name and item manager
@@ -10,29 +14,30 @@ public class User{
     // Primary Variables used and help by the User
     private String userName;
     private String password;
-    private String emailAdress;
-    //private ItemManager itemManager;
-    private Item selectedItem;      
-
+    private String emailAddress ;
+    private ItemManager itemManager = new ItemManager();
+    private Item selectedItem = new Item(new Date(2020-12-21), "Test Description", "Test Location", "Test Category", 1231, 10.f, "Test Serial Number");
     /**
      * Constructor for the User Object
      * @param userName
      */
     public User(String userName) {
         this.userName = userName;
-        //itemManager = new ItemManager();
+        itemManager = new ItemManager();
     }
 
     /**
      * Constructor for the User Object which takes in all of the variables
      * @param userName
      * @param password
-     * @param emailAdress
+     * @param emailAddress
      */
-    public User(String userName, String password, String emailAdress) {
+    public User(String userName, String password, String emailAddress) {
         this.userName = userName;
         this.password = password;
-        this.emailAdress = emailAdress;
+        this.emailAddress = emailAddress;
+        itemManager = new ItemManager();
+        //Toast.makeText(null, "User Created", Toast.LENGTH_SHORT).show();
     }
 
     /**

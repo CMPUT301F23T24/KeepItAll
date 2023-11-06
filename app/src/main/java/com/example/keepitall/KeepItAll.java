@@ -1,12 +1,20 @@
 package com.example.keepitall;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Main class uses by the App to organize users and Items
  */
 public class KeepItAll{
     private static volatile KeepItAll INSTANCE = null;
+    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private CollectionReference userCollection;
     private ArrayList<User> users;
 
     /**
@@ -15,6 +23,7 @@ public class KeepItAll{
      */
     private KeepItAll() {
         this.users = new ArrayList<User>();
+        this.userCollection = Database.collection("users");
     }
 
     /**
@@ -31,7 +40,18 @@ public class KeepItAll{
      */
     public void addUser(User user){
         if(!users.contains(user)){
-            users.add(user);
+
+            // Create a HashMap to store the users information
+            // including the User object, and the itemManager
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("User", user);
+            userCollection.document(user.getUserName()).set(data);
+
+
+            //HashMap<String, User> data = new HashMap<>();
+            //data.put("User", user);
+            //userCollection.document(user.getUserName()).set(data);
+            //users.add(user);
         }
     }
     /**
@@ -85,4 +105,5 @@ public class KeepItAll{
         // return the singleton instance
         return INSTANCE;
     }
+
 }
