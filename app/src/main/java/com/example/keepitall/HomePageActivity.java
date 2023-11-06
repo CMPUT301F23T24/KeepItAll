@@ -79,7 +79,7 @@ public class HomePageActivity extends AppCompatActivity {
         AppCompatButton addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         });
 
         // Go back to login screen if back button is pressed
@@ -109,6 +109,23 @@ public class HomePageActivity extends AppCompatActivity {
 
         //TODO: sort by, filter by, search
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // Get the new item from the result intent
+                Item newItem = (Item) data.getSerializableExtra("newItem");
+                // Add the new item to your item list
+                itemList.addItem(newItem);
+                // Notify the adapter that the data set has changed
+                ((BaseAdapter) gridView.getAdapter()).notifyDataSetChanged();
+            }
+        }
 
     private float getTotal(ItemManager itemList) {
         float total = 0;

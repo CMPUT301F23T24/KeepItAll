@@ -16,4 +16,5 @@
     <string name="estimated_value" />
     <string name="description" />
     <string name="tags" />
+    <string name="dd_mm_yyyy">dd/MM/yyyy</string>
 </resources>
