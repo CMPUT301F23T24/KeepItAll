@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -126,6 +127,7 @@ public class HomePageActivity extends AppCompatActivity {
                 ((BaseAdapter) gridView.getAdapter()).notifyDataSetChanged();
             }
         }
+    }
 
     private float getTotal(ItemManager itemList) {
         float total = 0;
