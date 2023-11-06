@@ -1,5 +1,6 @@
 package com.example.keepitall;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ItemManager {
+public class ItemManager implements Serializable {
     private ArrayList<Item> itemList;
 
 
@@ -71,9 +72,13 @@ public class ItemManager {
      * @return a new array list containng all the items by itemManager
      */
 
-    public List<Item> getAllItems() {
+    public ArrayList<Item> getAllItems() {
 
         return new ArrayList<>(itemList);
+    }
+
+    public boolean itemInList(int position) {
+        return itemList.contains(position);
     }
 
     /**

@@ -4,14 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +19,9 @@ public class HomePageActivity extends AppCompatActivity {
     GridView gridView;
     boolean deleteMode = false;
     ItemManager itemList = new ItemManager();
+
+    ArrayList<Item> itemsToRemove = new ArrayList<>();
+    Float totalValue;
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
@@ -41,6 +40,10 @@ public class HomePageActivity extends AppCompatActivity {
         itemList.addItem(testItem3);
         itemList.addItem(testItem4);
 
+        totalValue = getTotal(itemList);
+        TextView totalValueView = findViewById(R.id.totalValueText);
+        totalValueView.setText(String.format("Total Estimated Value: $%.2f", totalValue));
+
         // Gets username
         Bundle extras = getIntent().getExtras();
         String userName = extras.getString("username");
@@ -54,10 +57,15 @@ public class HomePageActivity extends AppCompatActivity {
         gridView.setAdapter(homePageAdapter);
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            if (deleteMode == true) {
-                itemList.deleteItem(itemList.getItem(position));
-                homePageAdapter.notifyDataSetChanged();
-                deleteMode = false;
+            if (deleteMode) {
+                if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
+                    Toast.makeText(this, "does this work", Toast.LENGTH_SHORT).show();
+                    itemsToRemove.remove(itemList.getItem(position));
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    itemsToRemove.add(itemList.getItem(position));
+                    view.setBackgroundColor(Color.LTGRAY); // change color if selected
+                }
             }
 
             else {
@@ -81,8 +89,22 @@ public class HomePageActivity extends AppCompatActivity {
         // Delete an item
         Button deleteButton = findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(v -> {
-            deleteMode = true;
-            Toast.makeText(HomePageActivity.this, "Select Item to be Deleted", Toast.LENGTH_SHORT).show();
+            if (!deleteMode) {
+                deleteMode = true;
+                Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+                deleteButton.setBackgroundResource(R.drawable.gray_button);
+            } else {
+                // Delete selected items
+                for (Item item : itemsToRemove) {
+                    itemList.deleteItem(item);
+                    totalValue -= item.getValue();
+                }
+                totalValueView.setText(String.format("Total Estimated Value: $%.2f", totalValue));
+                homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
+                itemsToRemove.clear(); // Clear the selection
+                deleteMode = false; // Exit delete mode
+                deleteButton.setBackgroundResource(R.drawable.white_button);
+            }
         });
 
         //TODO: sort by, filter by, search
@@ -104,5 +126,13 @@ public class HomePageActivity extends AppCompatActivity {
                 ((BaseAdapter) gridView.getAdapter()).notifyDataSetChanged();
             }
         }
+
+    private float getTotal(ItemManager itemList) {
+        float total = 0;
+        ArrayList<Item> allItems = itemList.getAllItems();
+        for (Item item: allItems) {
+            total += item.getValue();
+        }
+        return total;
     }
 }
