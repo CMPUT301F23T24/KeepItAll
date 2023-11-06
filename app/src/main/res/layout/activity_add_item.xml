@@ -60,9 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Name:"
+            android:hint="Name:"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -71,8 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Date of Purchase:"
-            android:textColor="@color/white"
+            android:hint="Date of Purchase:"
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -81,8 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Item Make:"
-            android:textColor="@color/white"
+            android:hint="Item Make:"
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -91,8 +91,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Item Model:"
-            android:textColor="@color/white"
+            android:hint="Item Model:"
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -101,8 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Estimated Value:"
-            android:textColor="@color/white"
+            android:hint="Estimated Value:"
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -111,8 +111,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Serial Number: "
-            android:textColor="@color/white"
+            android:hint="Serial Number: "
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -121,8 +121,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Description: "
-            android:textColor="@color/white"
+            android:hint="Description: "
+            android:textColorHint="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
