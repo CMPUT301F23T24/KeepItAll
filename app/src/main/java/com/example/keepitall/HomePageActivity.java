@@ -92,6 +92,7 @@ public class HomePageActivity extends AppCompatActivity {
             if (!deleteMode) {
                 deleteMode = true;
                 Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+                deleteButton.setBackgroundResource(R.drawable.gray_button);
             } else {
                 // Delete selected items
                 for (Item item : itemsToRemove) {
@@ -102,6 +103,7 @@ public class HomePageActivity extends AppCompatActivity {
                 homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
                 itemsToRemove.clear(); // Clear the selection
                 deleteMode = false; // Exit delete mode
+                deleteButton.setBackgroundResource(R.drawable.white_button);
             }
         });
 
