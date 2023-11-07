@@ -40,9 +40,12 @@ public class HomePageActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String userName = extras.getString("username");
 
+        // delete this after
         Item item = new Item(new Date(), "test", "test", "test", 123, (float)123.00, "test");
+        Item item2 = new Item(new Date(), "test", "test", "test", 123, (float)123.00, "test2");
         itemList.addItem(item);
-        itemList.addItem(item);
+        itemList.addItem(item2);
+
         // get User's itemManager
         user = keepItAll.getUserByName(userName);
         //itemList = user.getItemManager();

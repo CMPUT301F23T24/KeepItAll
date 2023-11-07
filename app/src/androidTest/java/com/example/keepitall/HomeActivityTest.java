@@ -107,11 +107,8 @@ public class HomeActivityTest {
             gridView = (GridView) view;
         });
         onView(withId(R.id.deleteButton)).perform(click());
-        onView(isRoot()).perform(waitIdling(3000));
         onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(1).perform(click());
-        onView(isRoot()).perform(waitIdling(3000));
         onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
-        onView(isRoot()).perform(waitIdling(3000));
         onView(withId(R.id.deleteButton)).perform(click());
         gridViewAdapter = gridView.getAdapter();
         assertEquals(0, gridViewAdapter.getCount());
