@@ -20,7 +20,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     private GridView gridView;
     private boolean deleteMode = false;
-    private ItemManager itemList;
+    private ItemManager itemList = new ItemManager(); // remove this after
     private ArrayList<Item> itemsToRemove = new ArrayList<>();
     private HomePageAdapter homePageAdapter;
     private TextView totalValueView;
@@ -40,9 +40,12 @@ public class HomePageActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         String userName = extras.getString("username");
 
+        Item item = new Item(new Date(), "test", "test", "test", 123, (float)123.00, "test");
+        itemList.addItem(item);
+        itemList.addItem(item);
         // get User's itemManager
         user = keepItAll.getUserByName(userName);
-        itemList = user.getItemManager();
+        //itemList = user.getItemManager();
 
         updateTotalValue(); // Gets the total Value
 
@@ -92,7 +95,7 @@ public class HomePageActivity extends AppCompatActivity {
                 Item newItem = (Item) data.getSerializableExtra("newItem");
                 // Add the new item to your item list
                 itemList.addItem(newItem);
-                User.setItemManager(itemList);
+                //user.setItemManager(itemList);
                 // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
@@ -143,7 +146,7 @@ public class HomePageActivity extends AppCompatActivity {
             updateTotalValue();
             homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
             itemsToRemove.clear(); // Clear the selection
-            User.setItemManager(itemList);
+            //user.setItemManager(itemList);
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
