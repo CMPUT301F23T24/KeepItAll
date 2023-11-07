@@ -34,7 +34,7 @@ public class ViewItemActivity extends AppCompatActivity {
         Button galleryButton = findViewById(R.id.galleryButton);
         galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class));
 
-                // TODO: delete functionality, tag functionality, edit properties functionality
+        // TODO: delete functionality, tag functionality, edit properties functionality
     }
 
     /**
