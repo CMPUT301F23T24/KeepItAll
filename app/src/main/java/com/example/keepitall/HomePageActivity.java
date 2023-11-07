@@ -18,15 +18,17 @@ import java.util.Date;
 
 public class HomePageActivity extends AppCompatActivity {
 
-    GridView gridView;
-    boolean deleteMode = false;
-    ItemManager itemList;
-    ArrayList<Item> itemsToRemove = new ArrayList<>();
-    HomePageAdapter homePageAdapter;
-    TextView totalValueView;
-    Button deleteButton;
-    User user;
-    KeepItAll keepItAll = KeepItAll.getInstance();
+    private GridView gridView;
+    private boolean deleteMode = false;
+    private ItemManager itemList;
+    private ArrayList<Item> itemsToRemove = new ArrayList<>();
+    private HomePageAdapter homePageAdapter;
+    private TextView totalValueView;
+    private Button deleteButton;
+    private User user;
+    private KeepItAll keepItAll = KeepItAll.getInstance();
+    private Button logoutButton;
+    private TextView usernameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class HomePageActivity extends AppCompatActivity {
         updateTotalValue(); // Gets the total Value
 
         // sets username
-        TextView usernameView = findViewById(R.id.nameText);
+        usernameView = findViewById(R.id.nameText);
         usernameView.setText(userName);
 
         // set the Adapter for gridView
@@ -66,7 +68,7 @@ public class HomePageActivity extends AppCompatActivity {
         });
 
         // Go back to login screen if back button is pressed
-        Button logoutButton = findViewById(R.id.logoutButton);
+        logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(v -> finish());
 
         // Delete an item
