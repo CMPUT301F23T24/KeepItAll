@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.util.Date;
 
 public class ViewItemActivity extends AppCompatActivity {
+    private Item item;
+    private static final int REQUEST_CODE_EDIT_ITEM = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,14 @@ public class ViewItemActivity extends AppCompatActivity {
         Button galleryButton = findViewById(R.id.galleryButton);
         galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class));
 
-                // TODO: delete functionality, tag functionality, edit properties functionality
+        Button editButton = findViewById(R.id.editButton);
+        editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ViewItemActivity.this, EditItemActivity.class);
+            intent.putExtra("item", item);
+            startActivityForResult(intent, REQUEST_CODE_EDIT_ITEM);
+        });
+
+        // TODO: delete functionality, tag functionality, edit properties functionality
     }
 
     /**
