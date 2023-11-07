@@ -153,6 +153,14 @@ public class HomePageActivity extends AppCompatActivity {
         // TODO: search
     }
 
+    private void sortClickEvent() {
+        // TODO: sort
+    }
+
+    private void filterClickEvent() {
+        // TODO: filter
+    }
+
     /**
      * Gets total value of every item and display in homePage
      */
