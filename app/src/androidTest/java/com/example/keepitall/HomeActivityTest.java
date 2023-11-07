@@ -80,6 +80,7 @@ public class HomeActivityTest {
     /**
      * ViewItem test
      */
+    // This test fails if no items are found, create a test user someho
     @Test
     public void testViewItem() {
         onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
@@ -92,6 +93,8 @@ public class HomeActivityTest {
     /**
      * Delete one item test
      */
+
+    // This test fails if no items are found, create a test user somehow
     @Test
     public void testDeleteItem() {
         onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
