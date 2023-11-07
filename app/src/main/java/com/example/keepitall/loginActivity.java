@@ -33,64 +33,38 @@ import java.util.Map;
  */
 public class loginActivity extends AppCompatActivity {
 
-    private String username;
-    private String password;
-    private EditText usernameInput;
-    private EditText passwordInput;
-    private Button loginButton;
-    private final KeepItAll keepItAll = KeepItAll.getInstance();
-    private TextView signUpText;
-
-    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
-    private CollectionReference userCollection;
-
+    // ---------- Global Variables ---------- //
+    private String username; // The username of the user
+    private String password; // The password of the user
+    private EditText usernameInput; // The username input field
+    private EditText passwordInput;  // The password input field
+    private Button loginButton; // The login button
+    private final KeepItAll keepItAll = KeepItAll.getInstance(); // access to the KeepItAll singleton
+    private TextView signUpText; // the text the user clicks to register
+    private FirebaseFirestore Database = FirebaseFirestore.getInstance(); // access to the database singleton
+    private CollectionReference userCollection; // access to the user collection in the database
+    // ---------- Global Variables ---------- //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // initialize variables
+        // ---------- Init Variables ---------- //
         usernameInput = findViewById(R.id.userName_Input);
         passwordInput = findViewById(R.id.password_Input);
         loginButton = findViewById(R.id.login_Button);
         signUpText = findViewById(R.id.signUpText);
-        // Login button listener that calls the login method
+        userCollection = Database.collection("users");
+        keepItAll.retrieveUsers(); // retrieve the users from the database (fireStore)
+        // ---------- Init Variables ---------- //
+
+        // ---------- Button Listeners ---------- //
         loginButton.setOnClickListener(v -> Login());
         signUpText.setOnClickListener(v -> openRegisterAccount());
+        // ---------- Button Listeners ---------- //
 
 
 
-        ///TODO: Make this part of the database
-        //createMocKeepItAll();
-        keepItAll.retrieveUsers();
 
-
-        userCollection = Database.collection("users");
-        userCollection.addSnapshotListener(new EventListener<QuerySnapshot>(){
-            @Override
-            public void onEvent(QuerySnapshot value, FirebaseFirestoreException error){
-                if(error != null){
-                    return;
-                }
-                if (value != null) {
-                    // Clear the list of users
-                    for (QueryDocumentSnapshot doc: value) {
-                        // The collection stores the user as a HashMap
-                        // [String, User]
-                        // get the map
-                        Map<String, Object> data = doc.getData();
-                        // get the user
-                        //User user = (User) data.get("User");
-                        //if(user == null){
-                            //Toast.makeText(loginActivity.this, "User is null", Toast.LENGTH_SHORT).show();
-                        //}
-                        //keepItAll.addUser(user);
-                    }
-                }
-
-
-
-            }
-        });
     }
     /**
      * Various messages that will be displayed if the user
@@ -99,9 +73,14 @@ public class loginActivity extends AppCompatActivity {
      * 1. Both username and password are empty
      * 2. Only the username is empty
      * 3. Only the password is empty
-     * 4. The username or password is incorrect
+     * 4. The user does not exist
+     * 5. The password is incorrect
+     * 6. The login is successful
+     * 7. Edge case
      */
     private void LoginMessages(){
+        // Stores the logged in user to a local variable
+        User userToLogin = keepItAll.getUserByName(username);
         // Display a toast message if the username or password is empty
         if(usernameInput.getText().toString().isEmpty() && passwordInput.getText().toString().isEmpty()){
             Toast.makeText(this, "Please enter a username and password", Toast.LENGTH_SHORT).show();
@@ -114,33 +93,38 @@ public class loginActivity extends AppCompatActivity {
         else if(!usernameInput.getText().toString().isEmpty() && passwordInput.getText().toString().isEmpty()){
             Toast.makeText(this, "Please enter a password", Toast.LENGTH_SHORT).show();
         }
+        // Display a toast if the user does not exist
+        else if(userToLogin == null){
+            Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show();
+        }
+        // Display a toast if the password is incorrect
+        else if(!userToLogin.getPassword().equals(password)){
+            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Display a toast if the login is successful
+        else if(userToLogin.getPassword().equals(password)){
+            Toast.makeText(this, "Login Successful, Welcome " + username, Toast.LENGTH_LONG).show();
+        }
+        // Edge case
+        else{
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }
     }
     /**
      * This method will check if the username and password are correct
      * and if they are, it will go to the next activity.
      */
     private void Login(){
+        // Get the username and password from the input fields and store them in the global variables
         username = usernameInput.getText().toString();
         password = passwordInput.getText().toString();
         LoginMessages();
+        // Stores the logged in user to a local variable
         User userToLogin = keepItAll.getUserByName(username);
-        // Check if the User is null
-        if(userToLogin == null){
-            Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(!userToLogin.getPassword().equals(password)){
-            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(userToLogin.getPassword().equals(password)){
-            Toast.makeText(this, "Login Successful, Welcome " + username, Toast.LENGTH_LONG).show();
-            waitForSeconds(1.5f);
-            launchHomePage();
-        }
-        else{
-            Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-        }
+        if(userToLogin == null){ return;}
+        // Launch the home page activity
+        launchHomePage();
     }
 
     /**
@@ -153,10 +137,13 @@ public class loginActivity extends AppCompatActivity {
 
     /**
      * This method will launch the home page activity
+     * Called by the sign up button (text). Passes the username
+     * to the next activity
      */
     private void launchHomePage(){
         Intent i = new Intent(this, HomePageActivity.class);
         i.putExtra("username", username);
+        waitForSeconds(1.5f);
         startActivity(i);
     }
 
@@ -181,14 +168,8 @@ public class loginActivity extends AppCompatActivity {
         User dev = new User("dev", "pass", "email");
         keepItAll.addUser(dev);
         // Create a few items
-        Item item1 = new Item(new Date(2002-20-02), "Test Description 1", "Test Location 1", "Test Category 1", 1231, 10.f, "Test Serial Number 1");
-        Item item2 = new Item(new Date(2002-20-02), "Test Description 2", "Test Location 2", "Test Category 2", 1232, 20.f, "Test Serial Number 2");
+        Item item1 = new Item(new Date(2002-20-02), "Test Description 1", "Test Location 1", "Test Category 1", 1231, 10.f, "Developer Item 1");
         // Add the items to the user
         dev.getItemManager().addItem(item1);
-        dev.getItemManager().addItem(item2);
-        User Cohen = new User("Cohen", "word", "email");
-        keepItAll.addUser(Cohen);
-        Item item3 = new Item(new Date(2002-20-02), "Test Description 2", "Test Location 2", "Test Category 2", 1232, 20.f, "Test Serial Number 2");
-        Cohen.getItemManager().addItem(item3);
     }
 }

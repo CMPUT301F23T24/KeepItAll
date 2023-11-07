@@ -42,46 +42,9 @@ public class KeepItAll{
 
     /**
      * Adds a user to the list of users if it isn't already present
+     * Also adds the user to the database
      * @param user - user to add
      */
-    public void addUserX(User user){
-        if(!users.contains(user)){
-            // Add the User to Firestore
-            userCollection.add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference userDocRef) {
-                            // Get the auto-generated document ID for the User
-                            String userId = userDocRef.getId();
-                            // Once the User is added, add the associated ItemManager
-                            ItemManager itemManager = user.getItemManager();
-                            userDocRef.collection("itemManager").add(itemManager)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference itemManagerDocRef) {
-                                            // Once the ItemManager is added, add associated items
-                                            for (Item item : itemManager.getAllItems()) {
-                                                itemManagerDocRef.collection("items").add(item);
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(Exception e) {
-                                            // Handle the failure to add the ItemManager
-                                        }
-                                    });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            // Handle the failure to add the User
-                        }
-                    });
-            users.add(user);
-        }
-    }
     public void addUser(User user) {
         // Check if the user already exists in the local list (optional)
         if (!users.contains(user)) {
@@ -222,7 +185,6 @@ public class KeepItAll{
                 .filter(u -> u.getUserName().equals(userName))
                 .findFirst().orElse(null);
     }
-    // SMALL CHANGE
     // public static method to retrieve the singleton instance
     public static KeepItAll getInstance() {
         // Check if the instance is already created
