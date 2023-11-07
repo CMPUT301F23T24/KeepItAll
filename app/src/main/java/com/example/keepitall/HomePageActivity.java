@@ -108,7 +108,7 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        //TODO: sort by, filter by, search
+        //TODO: sort by, filter by
     }
 
     @Override
