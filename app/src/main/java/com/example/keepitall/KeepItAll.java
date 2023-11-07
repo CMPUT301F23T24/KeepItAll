@@ -1,12 +1,26 @@
 package com.example.keepitall;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Main class uses by the App to organize users and Items
  */
 public class KeepItAll{
     private static volatile KeepItAll INSTANCE = null;
+    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private CollectionReference userCollection;
     private ArrayList<User> users;
 
     /**
@@ -15,6 +29,7 @@ public class KeepItAll{
      */
     private KeepItAll() {
         this.users = new ArrayList<User>();
+        this.userCollection = Database.collection("users");
     }
 
     /**
@@ -27,13 +42,115 @@ public class KeepItAll{
 
     /**
      * Adds a user to the list of users if it isn't already present
+     * Also adds the user to the database
      * @param user - user to add
      */
-    public void addUser(User user){
-        if(!users.contains(user)){
+    public void addUser(User user) {
+        // Check if the user already exists in the local list (optional)
+        if (!users.contains(user)) {
+            // Add the User to Firestore
+            userCollection.add(user)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference userDocRef) {
+                            // Get the auto-generated document ID for the User
+                            String userId = userDocRef.getId();
+
+                            // Add the associated ItemManager to the user's document
+                            ItemManager itemManager = user.getItemManager();
+                            userDocRef.collection("itemManagers").document("itemManager").set(itemManager)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // ItemManager successfully saved
+                                            // We want to now save all the items
+                                            for (Item item : itemManager.getAllItems()) {
+                                                userDocRef.collection("itemManagers").document("itemManager").collection("items").add(item);
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            // Handle the failure to add the ItemManager
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(Exception e) {
+                            // Handle the failure to add the User
+                        }
+                    });
+            // Add the user to the local list (optional)
             users.add(user);
         }
     }
+
+
+    public void retrieveUsers() {
+        userCollection.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
+                            User user = userDoc.toObject(User.class);
+                            String userId = userDoc.getId();
+
+                            // Retrieve the associated ItemManager reference
+                            DocumentReference itemManagerDocRef = userDoc.getReference().collection("itemManagers").document("itemManager");
+
+                            itemManagerDocRef.get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot itemManagerDoc) {
+                                            if (itemManagerDoc.exists()) {
+                                                ItemManager itemManager = itemManagerDoc.toObject(ItemManager.class);
+
+                                                // Set the ItemManager reference to the User
+                                                user.setItemManager(itemManager);
+
+                                                // Retrieve the associated items
+                                                itemManagerDocRef.collection("items").get()
+                                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(QuerySnapshot itemSnapshots) {
+                                                                List<Item> items = new ArrayList<>();
+
+                                                                for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
+                                                                    Item item = itemDoc.toObject(Item.class);
+                                                                    // Fill up Item with data using the setter methods
+                                                                    item.setName(itemDoc.getString("name"));
+                                                                    item.setPurchaseDate(itemDoc.getDate("purchaseDate"));
+                                                                    item.setDescription(itemDoc.getString("description"));
+                                                                    item.setMake(itemDoc.getString("make"));
+                                                                    item.setModel(itemDoc.getString("model"));
+                                                                    item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
+                                                                    item.setValue(itemDoc.getDouble("value").floatValue());
+                                                                    ///TODO: One day the tags will be added
+                                                                    itemManager.addItem(item);
+                                                                }
+                                                                // Add the user to the list after all data is fetched
+                                                                users.add(user);
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(Exception e) {
+                                                                // Handle the failure to retrieve the items
+                                                            }
+                                                        });
+                                            } else {
+                                                // Handle the case where the ItemManager document does not exist
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
+    }
+
     /**
      * Removes a user from the list of users if it is already present
      * @param user - user to remove
@@ -68,7 +185,6 @@ public class KeepItAll{
                 .filter(u -> u.getUserName().equals(userName))
                 .findFirst().orElse(null);
     }
-    // SMALL CHANGE
     // public static method to retrieve the singleton instance
     public static KeepItAll getInstance() {
         // Check if the instance is already created
@@ -85,4 +201,5 @@ public class KeepItAll{
         // return the singleton instance
         return INSTANCE;
     }
+
 }

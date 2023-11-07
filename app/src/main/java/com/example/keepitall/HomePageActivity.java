@@ -24,6 +24,7 @@ public class HomePageActivity extends AppCompatActivity {
     ArrayList<Item> itemsToRemove = new ArrayList<>();
     HomePageAdapter homePageAdapter;
     TextView totalValueView;
+    private KeepItAll keepItAll = KeepItAll.getInstance();
 
     // test data (REMOVE THIS AFTER)
     Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");

@@ -42,6 +42,9 @@ public class Item implements Serializable {
         this.tags = new ArrayList<>();  // Initialize tags list
         this.name = name;
     }
+    public Item(){
+        this.tags = new ArrayList<>();  // Initialize tags list
+    }
 
     public Date getPurchaseDate() {
         return purchaseDate;
