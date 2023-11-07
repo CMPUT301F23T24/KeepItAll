@@ -77,7 +77,7 @@ public class HomePageActivity extends AppCompatActivity {
             deleteButtonClickEvent();
         });
 
-        //TODO: sort by, filter by, search
+        //TODO: sort by, filter by
     }
 
     @Override

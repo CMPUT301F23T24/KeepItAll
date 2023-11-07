@@ -1,6 +1,10 @@
 package com.example.keepitall;
 
+import android.widget.Toast;
+
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Used for storing all of a users information, including their name and item manager
@@ -10,29 +14,33 @@ public class User{
     // Primary Variables used and help by the User
     private String userName;
     private String password;
-    private String emailAdress;
-    //private ItemManager itemManager;
-    private Item selectedItem;      
-
+    private String emailAddress ;
+    private ItemManager itemManager;
+    private Item selectedItem;
     /**
      * Constructor for the User Object
      * @param userName
      */
     public User(String userName) {
         this.userName = userName;
-        //itemManager = new ItemManager();
+        itemManager = new ItemManager();
+    }
+    public User(){
+        itemManager = new ItemManager();
     }
 
     /**
      * Constructor for the User Object which takes in all of the variables
      * @param userName
      * @param password
-     * @param emailAdress
+     * @param emailAddress
      */
-    public User(String userName, String password, String emailAdress) {
+    public User(String userName, String password, String emailAddress) {
         this.userName = userName;
         this.password = password;
-        this.emailAdress = emailAdress;
+        this.emailAddress = emailAddress;
+        this.itemManager = new ItemManager();
+        //Toast.makeText(null, "User Created", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -62,4 +70,6 @@ public class User{
     public String getPassword() {return password;}
     public void setUserName(String userName) {this.userName = userName;}
     public Item getSelectedItem() {return selectedItem;}
+    public ItemManager getItemManager() {return itemManager;}
+    public void setItemManager(ItemManager itemManager) {this.itemManager = itemManager;}
 }

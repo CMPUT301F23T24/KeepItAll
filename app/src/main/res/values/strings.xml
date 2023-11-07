@@ -16,5 +16,6 @@
     <string name="estimated_value" />
     <string name="description" />
     <string name="tags" />
+    <string name="need_an_account">Need an account? <font color='#01C6DB'>Register now!</font></string>
     <string name="dd_mm_yyyy">dd/MM/yyyy</string>
 </resources>
