@@ -20,18 +20,13 @@ public class HomePageActivity extends AppCompatActivity {
 
     GridView gridView;
     boolean deleteMode = false;
-    ItemManager itemList = new ItemManager();
+    ItemManager itemList;
     ArrayList<Item> itemsToRemove = new ArrayList<>();
     HomePageAdapter homePageAdapter;
     TextView totalValueView;
     Button deleteButton;
-
-    // test data (REMOVE THIS AFTER)
-    Item testItem = new Item(new Date(), "Description Example", "Toyota", "Rav-4", 1234, (float)24.42, "Item1");
-    Item testItem2 = new Item(new Date(), "Description Example", "Toyotar", "Rav-4", 1234, (float)24.42, "Item2");
-    Item testItem3 = new Item(new Date(), "Description Example", "Toyotad", "Rav-4", 1234, (float)24.42, "Item3");
-    Item testItem4 = new Item(new Date(), "Description Example", "Toyotab", "Rav-4", 1234, (float)24.42, "Item4");
-
+    User user;
+    KeepItAll keepItAll = KeepItAll.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +34,15 @@ public class HomePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
 
-        itemList.addItem(testItem);
-        itemList.addItem(testItem2);
-        itemList.addItem(testItem3);
-        itemList.addItem(testItem4);
-
-        updateTotalValue(); // Gets the total Value
-
         // Gets username
         Bundle extras = getIntent().getExtras();
         String userName = extras.getString("username");
+
+        // get User's itemManager
+        user = keepItAll.getUserByName(userName);
+        itemList = user.getItemManager();
+
+        updateTotalValue(); // Gets the total Value
 
         // sets username
         TextView usernameView = findViewById(R.id.nameText);
@@ -96,7 +90,8 @@ public class HomePageActivity extends AppCompatActivity {
                 Item newItem = (Item) data.getSerializableExtra("newItem");
                 // Add the new item to your item list
                 itemList.addItem(newItem);
-                //
+                User.setItemManager(itemList);
+                // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
                 homePageAdapter.notifyDataSetChanged();
@@ -146,14 +141,16 @@ public class HomePageActivity extends AppCompatActivity {
             updateTotalValue();
             homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
             itemsToRemove.clear(); // Clear the selection
+            User.setItemManager(itemList);
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
     }
 
     private void searchClickEvent() {
-
+        // TODO: search
     }
+
     /**
      * Gets total value of every item and display in homePage
      */
