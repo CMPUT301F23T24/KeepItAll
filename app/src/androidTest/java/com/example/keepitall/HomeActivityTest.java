@@ -89,6 +89,9 @@ public class HomeActivityTest {
         onView(withId(R.id.addButton)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Delete one item test
+     */
     @Test
     public void testDeleteItem() {
         onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
@@ -101,6 +104,9 @@ public class HomeActivityTest {
         assertEquals(1, gridViewAdapter.getCount());
     }
 
+    /**
+     * Delete multiple items test
+     */
     @Test
     public void testDeleteItems() {
         onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
@@ -115,8 +121,11 @@ public class HomeActivityTest {
     }
 
 
-
-    // Custom ViewAction to wait for a specific time
+    /**
+     * Adds a delay for testing
+     * @param millis
+     * @return
+     */
     public static ViewAction waitIdling(final long millis) {
         return new ViewAction() {
             @Override
