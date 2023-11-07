@@ -15,14 +15,17 @@ public class User{
     private String userName;
     private String password;
     private String emailAddress ;
-    private ItemManager itemManager = new ItemManager();
-    private Item selectedItem = new Item(new Date(2020-12-21), "Test Description", "Test Location", "Test Category", 1231, 10.f, "Test Serial Number");
+    private ItemManager itemManager;
+    private Item selectedItem;
     /**
      * Constructor for the User Object
      * @param userName
      */
     public User(String userName) {
         this.userName = userName;
+        itemManager = new ItemManager();
+    }
+    public User(){
         itemManager = new ItemManager();
     }
 
@@ -36,7 +39,7 @@ public class User{
         this.userName = userName;
         this.password = password;
         this.emailAddress = emailAddress;
-        itemManager = new ItemManager();
+        this.itemManager = new ItemManager();
         //Toast.makeText(null, "User Created", Toast.LENGTH_SHORT).show();
     }
 
@@ -67,4 +70,6 @@ public class User{
     public String getPassword() {return password;}
     public void setUserName(String userName) {this.userName = userName;}
     public Item getSelectedItem() {return selectedItem;}
+    public ItemManager getItemManager() {return itemManager;}
+    public void setItemManager(ItemManager itemManager) {this.itemManager = itemManager;}
 }

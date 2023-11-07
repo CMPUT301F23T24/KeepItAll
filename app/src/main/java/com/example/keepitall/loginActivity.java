@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -37,7 +38,7 @@ public class loginActivity extends AppCompatActivity {
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
-    private KeepItAll keepItAll = KeepItAll.getInstance();
+    private final KeepItAll keepItAll = KeepItAll.getInstance();
     private TextView signUpText;
 
     private FirebaseFirestore Database = FirebaseFirestore.getInstance();
@@ -55,8 +56,14 @@ public class loginActivity extends AppCompatActivity {
         // Login button listener that calls the login method
         loginButton.setOnClickListener(v -> Login());
         signUpText.setOnClickListener(v -> openRegisterAccount());
+
+
+
         ///TODO: Make this part of the database
-        createMocKeepItAll();
+        //createMocKeepItAll();
+        keepItAll.retrieveUsers();
+
+
         userCollection = Database.collection("users");
         userCollection.addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
@@ -119,6 +126,10 @@ public class loginActivity extends AppCompatActivity {
         User userToLogin = keepItAll.getUserByName(username);
         // Check if the User is null
         if(userToLogin == null){
+            Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!userToLogin.getPassword().equals(password)){
             Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -146,7 +157,6 @@ public class loginActivity extends AppCompatActivity {
     private void launchHomePage(){
         Intent i = new Intent(this, HomePageActivity.class);
         i.putExtra("username", username);
-        //i.putExtra("user", (Serializable) keepItAll.getUserByName(username));
         startActivity(i);
     }
 
@@ -170,5 +180,15 @@ public class loginActivity extends AppCompatActivity {
     private void createMocKeepItAll(){
         User dev = new User("dev", "pass", "email");
         keepItAll.addUser(dev);
+        // Create a few items
+        Item item1 = new Item(new Date(2002-20-02), "Test Description 1", "Test Location 1", "Test Category 1", 1231, 10.f, "Test Serial Number 1");
+        Item item2 = new Item(new Date(2002-20-02), "Test Description 2", "Test Location 2", "Test Category 2", 1232, 20.f, "Test Serial Number 2");
+        // Add the items to the user
+        dev.getItemManager().addItem(item1);
+        dev.getItemManager().addItem(item2);
+        User Cohen = new User("Cohen", "word", "email");
+        keepItAll.addUser(Cohen);
+        Item item3 = new Item(new Date(2002-20-02), "Test Description 2", "Test Location 2", "Test Category 2", 1232, 20.f, "Test Serial Number 2");
+        Cohen.getItemManager().addItem(item3);
     }
 }
