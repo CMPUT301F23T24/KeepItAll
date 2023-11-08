@@ -78,7 +78,6 @@ public class ViewItemActivity extends AppCompatActivity {
      */
     private void displayText() {
         // Get item properties
-        Item item = (Item) getIntent().getSerializableExtra("item");
         String name = item.getName();
         Date date = item.getPurchaseDate();
         String make = item.getMake();
