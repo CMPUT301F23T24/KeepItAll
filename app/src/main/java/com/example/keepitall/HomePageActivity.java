@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -20,7 +19,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     private GridView gridView;
     private boolean deleteMode = false;
-    private ItemManager itemList;
+    private ItemManager userItemManager;
     private ArrayList<Item> itemsToRemove = new ArrayList<>();
     private HomePageAdapter homePageAdapter;
     private TextView totalValueView;
@@ -38,47 +37,67 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Gets username
         Bundle extras = getIntent().getExtras();
-        String userName = extras.getString("username");
+        if (extras != null) {
+            String userName = extras.getString("username");
 
-        // get User's itemManager
-        user = keepItAll.getUserByName(userName);
-        itemList = user.getItemManager();
+            // Ensure that the username is not null or empty
+            if (userName != null && !userName.isEmpty()) {
+                // get User's itemManager
+                user = keepItAll.getUserByName(userName);
+                if (user != null) {
+                    userItemManager = user.getItemManager();
+                    updateTotalValue(); // Gets the total Value
 
-        updateTotalValue(); // Gets the total Value
+                    // sets username
+                    usernameView = findViewById(R.id.nameText);
+                    usernameView.setText(userName);
 
-        // sets username
-        usernameView = findViewById(R.id.nameText);
-        usernameView.setText(userName);
+                    // set the Adapter for gridView
+                    gridView = findViewById(R.id.gridView);
+                    homePageAdapter = new HomePageAdapter(this, userItemManager);
+                    gridView.setAdapter(homePageAdapter);
 
-        // set the Adapter for gridView
-        gridView = findViewById(R.id.gridView);
-        homePageAdapter = new HomePageAdapter(this, itemList);
-        gridView.setAdapter(homePageAdapter);
+                    // gridView onClickListener for deletion or view item properties
+                    gridView.setOnItemClickListener((parent, view, position, id) -> {
+                        gridViewClickEvent(view, position);
+                    });
 
-        // gridView onClickListener for deletion or view item properties
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            gridViewClickEvent(view, position);
-        });
+                    // Add item button
+                    AppCompatButton addButton = findViewById(R.id.addButton);
+                    addButton.setOnClickListener(v -> {
+                        Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+                        startActivityForResult(intent, 1);
+                    });
 
-        // Add item button
-        AppCompatButton addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
-            startActivityForResult(intent, 1);
-        });
+                    // Go back to login screen if back button is pressed
+                    logoutButton = findViewById(R.id.logoutButton);
+                    logoutButton.setOnClickListener(v -> finish());
 
-        // Go back to login screen if back button is pressed
-        logoutButton = findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(v -> finish());
+                    // Delete an item
+                    deleteButton = findViewById(R.id.deleteButton);
+                    deleteButton.setOnClickListener(v -> {
+                        deleteButtonClickEvent();
+                    });
 
-        // Delete an item
-        deleteButton = findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(v -> {
-            deleteButtonClickEvent();
-        });
+                    //TODO: sort by, filter by
 
-        //TODO: sort by, filter by
+                } else {
+                    // Handle the case where the user is not found
+                    Toast.makeText(this, "User not found.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            } else {
+                // Handle the case where username is not passed correctly
+                Toast.makeText(this, "Username not received.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else {
+            // Handle the case where extras is null
+            Toast.makeText(this, "No data received.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -90,9 +109,10 @@ public class HomePageActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Get the new item from the result intent
                 Item newItem = (Item) data.getSerializableExtra("newItem");
-                itemList.addItem_DataSync(newItem, user);
+                userItemManager.addItem_DataSync(newItem, user);
                 // Add the new item to your item list
-                user.setItemManager(itemList);
+                user.setItemManager(userItemManager);
+
                 // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
@@ -108,18 +128,18 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void gridViewClickEvent(View view, int position) {
         if (deleteMode) { // if delete
-            if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
-                itemsToRemove.remove(itemList.getItem(position));
+            if (itemsToRemove.contains(userItemManager.getItem(position))) { // if already selected, unselect
+                itemsToRemove.remove(userItemManager.getItem(position));
                 view.setBackgroundColor(Color.TRANSPARENT);
             } else {
-                itemsToRemove.add(itemList.getItem(position));
+                itemsToRemove.add(userItemManager.getItem(position));
                 view.setBackgroundColor(Color.LTGRAY); // change color if selected
             }
         }
 
         else { // if user wants to view property item
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-            intent.putExtra("item", itemList.getItem(position));
+            intent.putExtra("item", userItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
             startActivity(intent);
         }
@@ -138,12 +158,13 @@ public class HomePageActivity extends AppCompatActivity {
         } else {
             // Delete selected items
             for (Item item : itemsToRemove) {
-                itemList.deleteItem(item);
+                userItemManager.deleteItem(item);
+                userItemManager.deleteItem_DataSync(item, user);
             }
             updateTotalValue();
             homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
             itemsToRemove.clear(); // Clear the selection
-            user.setItemManager(itemList);
+            user.setItemManager(userItemManager);
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
@@ -166,7 +187,7 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void updateTotalValue() {
         float totalValue = 0;
-        ArrayList<Item> allItems = itemList.getAllItems();
+        ArrayList<Item> allItems = userItemManager.getAllItems();
         for (Item item: allItems) {
             totalValue += item.getValue();
         }

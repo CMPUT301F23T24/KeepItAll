@@ -2,12 +2,12 @@ package com.example.keepitall;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import android.nfc.Tag;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -16,7 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -53,6 +53,7 @@ public class ItemManager implements Serializable {
         itemList.add(item);
     }
 
+
     public void editItem_DataSync(Item item, User user) {
         if (item == null || user == null || user.getUserName() == null) {
             return;
@@ -79,9 +80,28 @@ public class ItemManager implements Serializable {
             }
         });
     }
-
-
-
+    /**
+     * Deletes an item frm the item list and syncs with the database (fireStore)
+     * @param item
+     * @param user
+     */
+    public void deleteItem_DataSync(Item item, User user) {
+        if (item == null){
+            return;
+        }
+        CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
+        itemsCollection.
+                whereEqualTo("name", item.getName())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            itemsCollection.document(document.getId()).delete();
+                        }
+                    }
+                });
+    }
+    
     /**
      * adds an item to the the item list
      * @param item to be added
@@ -179,8 +199,3 @@ public class ItemManager implements Serializable {
         Collections.sort(items, comparator);
     }
 }
-
-
-
-
-
