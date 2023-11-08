@@ -37,47 +37,67 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Gets username
         Bundle extras = getIntent().getExtras();
-        String userName = extras.getString("username");
+        if (extras != null) {
+            String userName = extras.getString("username");
 
-        // get User's itemManager
-        user = keepItAll.getUserByName(userName);
-        userItemManager = user.getItemManager();
+            // Ensure that the username is not null or empty
+            if (userName != null && !userName.isEmpty()) {
+                // get User's itemManager
+                user = keepItAll.getUserByName(userName);
+                if (user != null) {
+                    userItemManager = user.getItemManager();
+                    updateTotalValue(); // Gets the total Value
 
-        updateTotalValue(); // Gets the total Value
+                    // sets username
+                    usernameView = findViewById(R.id.nameText);
+                    usernameView.setText(userName);
 
-        // sets username
-        usernameView = findViewById(R.id.nameText);
-        usernameView.setText(userName);
+                    // set the Adapter for gridView
+                    gridView = findViewById(R.id.gridView);
+                    homePageAdapter = new HomePageAdapter(this, userItemManager);
+                    gridView.setAdapter(homePageAdapter);
 
-        // set the Adapter for gridView
-        gridView = findViewById(R.id.gridView);
-        homePageAdapter = new HomePageAdapter(this, userItemManager);
-        gridView.setAdapter(homePageAdapter);
+                    // gridView onClickListener for deletion or view item properties
+                    gridView.setOnItemClickListener((parent, view, position, id) -> {
+                        gridViewClickEvent(view, position);
+                    });
 
-        // gridView onClickListener for deletion or view item properties
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            gridViewClickEvent(view, position);
-        });
+                    // Add item button
+                    AppCompatButton addButton = findViewById(R.id.addButton);
+                    addButton.setOnClickListener(v -> {
+                        Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+                        startActivityForResult(intent, 1);
+                    });
 
-        // Add item button
-        AppCompatButton addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
-            startActivityForResult(intent, 1);
-        });
+                    // Go back to login screen if back button is pressed
+                    logoutButton = findViewById(R.id.logoutButton);
+                    logoutButton.setOnClickListener(v -> finish());
 
-        // Go back to login screen if back button is pressed
-        logoutButton = findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(v -> finish());
+                    // Delete an item
+                    deleteButton = findViewById(R.id.deleteButton);
+                    deleteButton.setOnClickListener(v -> {
+                        deleteButtonClickEvent();
+                    });
 
-        // Delete an item
-        deleteButton = findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(v -> {
-            deleteButtonClickEvent();
-        });
+                    //TODO: sort by, filter by
 
-        //TODO: sort by, filter by
+                } else {
+                    // Handle the case where the user is not found
+                    Toast.makeText(this, "User not found.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            } else {
+                // Handle the case where username is not passed correctly
+                Toast.makeText(this, "Username not received.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else {
+            // Handle the case where extras is null
+            Toast.makeText(this, "No data received.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -92,6 +112,7 @@ public class HomePageActivity extends AppCompatActivity {
                 userItemManager.addItem_DataSync(newItem, user);
                 // Add the new item to your item list
                 user.setItemManager(userItemManager);
+
                 // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
