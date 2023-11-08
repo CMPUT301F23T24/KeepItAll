@@ -9,8 +9,8 @@ public class KeepItAllTest {
     private KeepItAll createMocData(){
         // Creates a moc KeepItAll class, with a user in it
         KeepItAll Data = KeepItAll.getInstance();
-        User user1 = new User("User One");
-        User user2 = new User("User Two");
+        User user1 = new User("User One", "Password", "Email");
+        User user2 = new User("User Two", "Password", "Email");
         Data.addUser(user1);
         Data.addUser(user2);
         return Data;
@@ -27,7 +27,7 @@ public class KeepItAllTest {
     public void testAddUser(){
         KeepItAll Data = createMocData();
         assertEquals(2, Data.getUsers().size());
-        User user3 = new User("User Three");
+        User user3 = new User("User Three", "Password", "Email");
         Data.addUser(user3);
         assertEquals(3, Data.getUsers().size());
     }
@@ -35,7 +35,7 @@ public class KeepItAllTest {
     public void testDeleteUser(){
         KeepItAll Data = createMocData();
         assertEquals(2, Data.getUsers().size());
-        User tempUser = new User("Temp User");
+        User tempUser = new User("Temp User", "Password", "Email");
         Data.addUser(tempUser);
         assertEquals(3, Data.getUsers().size());
         // Tests removing by class type
