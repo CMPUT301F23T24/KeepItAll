@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import android.nfc.Tag;
 import android.widget.Toast;
@@ -17,9 +18,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ItemManager implements Serializable {
     private ArrayList<Item> itemList;
@@ -55,31 +59,48 @@ public class ItemManager implements Serializable {
 
 
     public void editItem_DataSync(Item item, User user) {
-        if (item == null || user == null || user.getUserName() == null) {
+        if (item == null) {
             return;
         }
-        // Create a reference to the Firestore collection
+
         CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
 
-        // Query the Firestore collection to find the document with the specified name
-        Query query = itemsCollection.whereEqualTo("name", item.getName());
+        // First, query the item by name to get its Firestore document ID
+        itemsCollection.whereEqualTo("name", item.getName())
+                .get()
+                .addOnCompleteListener(queryTask -> {
+                    if (queryTask.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : queryTask.getResult()) {
+                            // Get the Firestore document ID of the item
+                            String itemId = document.getId();
 
-        // Execute the query
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                    // Get the first matching document (assuming there's only one)
-                    DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                            // Update the item data
+                            Map<String, Object> updatedData = new HashMap<>();
+                            updatedData.put("purchaseDate", item.getPurchaseDate());
+                            updatedData.put("description", item.getDescription());
+                            updatedData.put("make", item.getMake());
+                            updatedData.put("model", item.getModel());
+                            updatedData.put("serialNumber", item.getSerialNumber());
+                            updatedData.put("value", item.getValue());
 
-                    // Update the item data in the document
-                    document.getReference().set(item);
-                }
-            } else {
-                // Handle the query error, if needed
-            }
-        });
+                            // Update the item in Firestore
+                            itemsCollection.document(itemId)
+                                    .set(updatedData, SetOptions.merge()) // Merge to update only specified fields
+                                    .addOnCompleteListener(updateTask -> {
+                                        if (updateTask.isSuccessful()) {
+                                            // Item has been successfully updated
+                                            // You can add any additional handling here
+                                        } else {
+                                            // Handle the update failure if necessary
+                                        }
+                                    });
+                        }
+                    } else {
+                        // Handle the query failure if necessary
+                    }
+                });
     }
+
     /**
      * Deletes an item frm the item list and syncs with the database (fireStore)
      * @param item
@@ -101,7 +122,7 @@ public class ItemManager implements Serializable {
                     }
                 });
     }
-    
+
     /**
      * adds an item to the the item list
      * @param item to be added
