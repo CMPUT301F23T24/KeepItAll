@@ -17,6 +17,7 @@ public class User{
     private String emailAddress ;
     private ItemManager itemManager;
     private Item selectedItem;
+
     /**
      * Constructor for the User Object
      * @param userName
