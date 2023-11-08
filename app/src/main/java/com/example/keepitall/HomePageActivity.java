@@ -89,9 +89,10 @@ public class HomePageActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Get the new item from the result intent
                 Item newItem = (Item) data.getSerializableExtra("newItem");
-                userItemManager.addItem_DataSync(newItem, user);
+                itemList.addItem_DataSync(newItem, user);
                 // Add the new item to your item list
-                user.setItemManager(userItemManager);
+                user.setItemManager(itemList);
+
                 // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
