@@ -10,7 +10,7 @@ public class User  implements Comparable<User>{
     // Primary Variables used and help by the User
     private String userName;
     private ItemManager itemManager;
-    private Item selectedItem;      
+    private Item selectedItem;
 
     /**
      * Constructor for the User Object
