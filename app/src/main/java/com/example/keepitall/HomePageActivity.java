@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -20,7 +19,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     private GridView gridView;
     private boolean deleteMode = false;
-    private ItemManager itemList;
+    private ItemManager userItemManager;
     private ArrayList<Item> itemsToRemove = new ArrayList<>();
     private HomePageAdapter homePageAdapter;
     private TextView totalValueView;
@@ -42,7 +41,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         // get User's itemManager
         user = keepItAll.getUserByName(userName);
-        itemList = user.getItemManager();
+        userItemManager = user.getItemManager();
 
         updateTotalValue(); // Gets the total Value
 
@@ -52,7 +51,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         // set the Adapter for gridView
         gridView = findViewById(R.id.gridView);
-        homePageAdapter = new HomePageAdapter(this, itemList);
+        homePageAdapter = new HomePageAdapter(this, userItemManager);
         gridView.setAdapter(homePageAdapter);
 
         // gridView onClickListener for deletion or view item properties
@@ -93,6 +92,7 @@ public class HomePageActivity extends AppCompatActivity {
                 itemList.addItem_DataSync(newItem, user);
                 // Add the new item to your item list
                 user.setItemManager(itemList);
+
                 // Update total value
                 updateTotalValue();
                 // Notify the adapter that the data set has changed
@@ -108,18 +108,18 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void gridViewClickEvent(View view, int position) {
         if (deleteMode) { // if delete
-            if (itemsToRemove.contains(itemList.getItem(position))) { // if already selected, unselect
-                itemsToRemove.remove(itemList.getItem(position));
+            if (itemsToRemove.contains(userItemManager.getItem(position))) { // if already selected, unselect
+                itemsToRemove.remove(userItemManager.getItem(position));
                 view.setBackgroundColor(Color.TRANSPARENT);
             } else {
-                itemsToRemove.add(itemList.getItem(position));
+                itemsToRemove.add(userItemManager.getItem(position));
                 view.setBackgroundColor(Color.LTGRAY); // change color if selected
             }
         }
 
         else { // if user wants to view property item
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-            intent.putExtra("item", itemList.getItem(position));
+            intent.putExtra("item", userItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
             startActivity(intent);
         }
@@ -138,12 +138,13 @@ public class HomePageActivity extends AppCompatActivity {
         } else {
             // Delete selected items
             for (Item item : itemsToRemove) {
-                itemList.deleteItem(item);
+                userItemManager.deleteItem(item);
+                userItemManager.deleteItem_DataSync(item, user);
             }
             updateTotalValue();
             homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
             itemsToRemove.clear(); // Clear the selection
-            user.setItemManager(itemList);
+            user.setItemManager(userItemManager);
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
@@ -166,7 +167,7 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void updateTotalValue() {
         float totalValue = 0;
-        ArrayList<Item> allItems = itemList.getAllItems();
+        ArrayList<Item> allItems = userItemManager.getAllItems();
         for (Item item: allItems) {
             totalValue += item.getValue();
         }
