@@ -57,7 +57,11 @@ public class ItemManager implements Serializable {
         itemList.add(item);
     }
 
-
+    /**'
+     * Edits an item from the item list and syncs with the database (fireStore)
+     * @param item
+     * @param user
+     */
     public void editItem_DataSync(Item item, User user) {
         if (item == null) {
             return;
