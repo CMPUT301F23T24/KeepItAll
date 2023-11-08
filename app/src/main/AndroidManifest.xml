@@ -13,6 +13,25 @@
         android:theme="@style/Theme.KeepItAll"
         tools:targetApi="31">
         <activity
+            android:name=".ImageGalleryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeLogoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HomePageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".loginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -21,6 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddItemActivity" />
     </application>
 
 </manifest>
