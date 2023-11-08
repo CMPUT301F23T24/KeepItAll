@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -20,7 +21,14 @@ public class ViewItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_item);
 
-        displayText();
+        // Retrieve the Item object sent from the previous activity
+        item = (Item) getIntent().getSerializableExtra("item");
+        if (item == null) {
+            Toast.makeText(this, "Item data is not available.", Toast.LENGTH_LONG).show();
+            finish();
+        } else {
+            displayText();
+        }
 
         // Go back to HomePage when back or homeButton is clicked
         Button backButton = findViewById(R.id.viewBackButton);
@@ -38,12 +46,31 @@ public class ViewItemActivity extends AppCompatActivity {
 
         Button editButton = findViewById(R.id.editButton);
         editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ViewItemActivity.this, EditItemActivity.class);
-            intent.putExtra("item", item);
-            startActivityForResult(intent, REQUEST_CODE_EDIT_ITEM);
+            if (item != null) {
+                Intent intent = new Intent(ViewItemActivity.this, EditItemActivity.class);
+                intent.putExtra("item", item);
+                startActivityForResult(intent, REQUEST_CODE_EDIT_ITEM);
+            } else {
+                Toast.makeText(ViewItemActivity.this, "Item data is not available.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // TODO: delete functionality, tag functionality, edit properties functionality
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_EDIT_ITEM && resultCode == RESULT_OK && data != null) {
+            // Get the updated item from the result intent
+            Item updatedItem = (Item) data.getSerializableExtra("updatedItem");
+            if (updatedItem != null) {
+                // Update the item
+                this.item = updatedItem;
+                displayText();
+            }
+        }
     }
 
     /**
