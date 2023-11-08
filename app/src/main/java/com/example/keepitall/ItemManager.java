@@ -6,6 +6,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import android.nfc.Tag;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +21,8 @@ import java.util.ArrayList;
 
 public class ItemManager implements Serializable {
     private ArrayList<Item> itemList;
-
+    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private CollectionReference userCollection;
 
     /**
      * Constructor for the User Object
@@ -21,14 +30,32 @@ public class ItemManager implements Serializable {
      */
     public ItemManager() {
         this.itemList = new ArrayList<>();
+        this.userCollection = Database.collection("users");
     }
+
     /**
-     * adds item to the the item list
+     * Adds an item to the the item list and syncs it with the database (fireStore)
+     * @param item
+     * @param user
+     */
+    public void addItem_DataSync(Item item, User user) {
+        if(item == null){
+            return;
+        }
+        CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
+        itemsCollection.add(item);
+        itemList.add(item);
+    }
+
+
+    /**
+     * adds an item to the the item list
      * @param item to be added
      */
     public void addItem(Item item) {
         itemList.add(item);
     }
+
     /**
      * deletes  item to the the item list
      * @param item to be deleted

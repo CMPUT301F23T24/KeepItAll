@@ -48,33 +48,17 @@ public class KeepItAll{
     public void addUser(User user) {
         // Check if the user already exists in the local list (optional)
         if (!users.contains(user)) {
-            // Add the User to Firestore
-            userCollection.add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            // Add the User to Firestore with the document ID set to user.getUserName()
+            userCollection.document(user.getUserName()).set(user)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(DocumentReference userDocRef) {
-                            // Get the auto-generated document ID for the User
-                            String userId = userDocRef.getId();
-
-                            // Add the associated ItemManager to the user's document
-                            ItemManager itemManager = user.getItemManager();
-                            userDocRef.collection("itemManagers").document("itemManager").set(itemManager)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            // ItemManager successfully saved
-                                            // We want to now save all the items
-                                            for (Item item : itemManager.getAllItems()) {
-                                                userDocRef.collection("itemManagers").document("itemManager").collection("items").add(item);
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(Exception e) {
-                                            // Handle the failure to add the ItemManager
-                                        }
-                                    });
+                        public void onSuccess(Void aVoid) {
+                            // User successfully saved
+                            // We want to now save all the items
+                            CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
+                            for (Item item : user.getItemManager().getAllItems()) {
+                                itemsCollection.add(item);
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -89,6 +73,7 @@ public class KeepItAll{
     }
 
 
+
     public void retrieveUsers() {
         userCollection.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -98,58 +83,42 @@ public class KeepItAll{
                             User user = userDoc.toObject(User.class);
                             String userId = userDoc.getId();
 
-                            // Retrieve the associated ItemManager reference
-                            DocumentReference itemManagerDocRef = userDoc.getReference().collection("itemManagers").document("itemManager");
-
-                            itemManagerDocRef.get()
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            // Retrieve the associated items for the user
+                            userDoc.getReference().collection("items").get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @Override
-                                        public void onSuccess(DocumentSnapshot itemManagerDoc) {
-                                            if (itemManagerDoc.exists()) {
-                                                ItemManager itemManager = itemManagerDoc.toObject(ItemManager.class);
-
-                                                // Set the ItemManager reference to the User
-                                                user.setItemManager(itemManager);
-
-                                                // Retrieve the associated items
-                                                itemManagerDocRef.collection("items").get()
-                                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(QuerySnapshot itemSnapshots) {
-                                                                List<Item> items = new ArrayList<>();
-
-                                                                for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
-                                                                    Item item = itemDoc.toObject(Item.class);
-                                                                    // Fill up Item with data using the setter methods
-                                                                    item.setName(itemDoc.getString("name"));
-                                                                    item.setPurchaseDate(itemDoc.getDate("purchaseDate"));
-                                                                    item.setDescription(itemDoc.getString("description"));
-                                                                    item.setMake(itemDoc.getString("make"));
-                                                                    item.setModel(itemDoc.getString("model"));
-                                                                    item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
-                                                                    item.setValue(itemDoc.getDouble("value").floatValue());
-                                                                    ///TODO: One day the tags will be added
-                                                                    itemManager.addItem(item);
-                                                                }
-                                                                // Add the user to the list after all data is fetched
-                                                                users.add(user);
-                                                            }
-                                                        })
-                                                        .addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(Exception e) {
-                                                                // Handle the failure to retrieve the items
-                                                            }
-                                                        });
-                                            } else {
-                                                // Handle the case where the ItemManager document does not exist
+                                        public void onSuccess(QuerySnapshot itemSnapshots) {
+                                            List<Item> items = new ArrayList<>();
+                                            ItemManager itemManager = new ItemManager();
+                                            for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
+                                                Item item = itemDoc.toObject(Item.class);
+                                                // Fill up Item with data using the setter methods
+                                                item.setName(itemDoc.getString("name"));
+                                                item.setPurchaseDate(itemDoc.getDate("purchaseDate"));
+                                                item.setDescription(itemDoc.getString("description"));
+                                                item.setMake(itemDoc.getString("make"));
+                                                item.setModel(itemDoc.getString("model"));
+                                                item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
+                                                item.setValue(itemDoc.getDouble("value").floatValue());
+                                                ///TODO: One day the tags will be added
+                                                itemManager.addItem(item);
                                             }
+                                            // Add the user to the list after all items are fetched
+                                            user.setItemManager(itemManager);
+                                            users.add(user);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            // Handle the failure to retrieve the items
                                         }
                                     });
                         }
                     }
                 });
     }
+
 
     /**
      * Removes a user from the list of users if it is already present
