@@ -7,15 +7,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,9 +29,6 @@ public class HomePageActivity extends AppCompatActivity {
     private Button logoutButton;
     private TextView usernameView;
 
-    private FirebaseFirestore database;
-    private CollectionReference itemsRef;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +38,6 @@ public class HomePageActivity extends AppCompatActivity {
         // Gets username
         Bundle extras = getIntent().getExtras();
         String userName = extras.getString("username");
-
-        database = FirebaseFirestore.getInstance();
-        itemsRef = database.collection("users"); // not done
 
         // get User's itemManager
         user = keepItAll.getUserByName(userName);
@@ -100,8 +89,8 @@ public class HomePageActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Get the new item from the result intent
                 Item newItem = (Item) data.getSerializableExtra("newItem");
+                userItemManager.addItem_DataSync(newItem, user);
                 // Add the new item to your item list
-                userItemManager.addItem(newItem);
                 user.setItemManager(userItemManager);
                 // Update total value
                 updateTotalValue();
@@ -149,6 +138,7 @@ public class HomePageActivity extends AppCompatActivity {
             // Delete selected items
             for (Item item : itemsToRemove) {
                 userItemManager.deleteItem(item);
+                userItemManager.deleteItem_DataSync(item, user);
             }
             updateTotalValue();
             homePageAdapter.notifyDataSetChanged(); // Refresh the adapter
