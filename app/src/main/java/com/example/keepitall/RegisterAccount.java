@@ -2,22 +2,24 @@ package com.example.keepitall;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+/**
+ * Class used to for the RegisterAccount dialog, which handles the registration of a new account
+ * This dialog is called from the loginActivity
+ * error checking is done in this class and ensures that the user enters valid information
+ * once the user enters valid information, the user is added to the database
+ */
 public class RegisterAccount extends AppCompatDialogFragment {
 
-    // Sets up the variables that will be used within the class
-    private KeepItAll keepItAll = KeepItAll.getInstance();
-    private RegisterAccountListener Listener;
+    // private variables
+    private final KeepItAll keepItAll = KeepItAll.getInstance();
     private EditText editTextUsername;
     private EditText editTextPassword;
     private EditText editTextConfirmPassword;
@@ -79,7 +81,6 @@ public class RegisterAccount extends AppCompatDialogFragment {
 
 
         final AlertDialog dialog = builder.create();
-
         // Customize the behavior of the Confirm button
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -107,6 +108,7 @@ public class RegisterAccount extends AppCompatDialogFragment {
                 dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // Clear the input fields
                         username = "";
                         password = "";
                         confirmPassword = "";
@@ -121,24 +123,11 @@ public class RegisterAccount extends AppCompatDialogFragment {
         });
         return dialog;
     }
-    // make it so when the confirm button is pressed, the dialuge isnt dismissed
-    // and the user is told what they did wrong
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            Listener = (RegisterAccountListener) context;
-        } catch (ClassCastException e) {
-            //
-        }
-    }
 
     /**
      * Checks if the registration is valid by checking each part of the registration
      * and displaying a toast message if it is not valid
-     * @return
+     * @return - true if the registration is valid, false otherwise
      */
     public boolean ValidRegistration(){
         // First check if any part of the registration is empty, and if so, display a toast message
@@ -176,7 +165,6 @@ public class RegisterAccount extends AppCompatDialogFragment {
     /**
      * Checks if the registration is valid by checking each part of the registration and prints a Toast for it
      * This is seperate from the ValidRegistration method because we want to display a toast message for each
-     * @return
      */
     private void PrintValidRegistrationToast(){
         // First check if any part of the registration is empty, and if so, display a toast message
@@ -210,6 +198,10 @@ public class RegisterAccount extends AppCompatDialogFragment {
         }
         Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Creates a new user and adds it to the database by calling the addUser method from KeepItAll
+     */
     private void RegisterNewUser(){
         // creates a new user with the given information
         User newUser = new User(username, password, email);
@@ -217,13 +209,7 @@ public class RegisterAccount extends AppCompatDialogFragment {
         keepItAll.addUser(newUser);
     }
 
-    // Creates the interface we will use to call this on the main class
-    public interface RegisterAccountListener{
-        void RegisterAccount(String username, String password, String email);
-    }
-
     // Getters and setters
-
     public void setUsername(String username) {
         this.username = username;
     }

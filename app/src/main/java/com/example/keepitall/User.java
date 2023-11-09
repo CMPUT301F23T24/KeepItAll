@@ -4,7 +4,7 @@ package com.example.keepitall;
  */
 public class User{
 
-    // Primary Variables used and help by the User
+    // Private Variables used and help by the User
     private String userName;
     private String password;
     private String emailAddress ;
@@ -16,11 +16,12 @@ public class User{
     public User(){
         itemManager = new ItemManager();
     }
+
     /**
      * Constructor for the User Object which takes in all of the variables
-     * @param userName
-     * @param password
-     * @param emailAddress
+     * @param userName - the user's name
+     * @param password - the user's password
+     * @param emailAddress - the user's email address
      */
     public User(String userName, String password, String emailAddress) {
         this.userName = userName;
@@ -28,6 +29,7 @@ public class User{
         this.emailAddress = emailAddress;
         this.itemManager = new ItemManager();
     }
+
     // Getters and Setters
     public String getUserName() {return userName;}
     public String getPassword() {return password;}
