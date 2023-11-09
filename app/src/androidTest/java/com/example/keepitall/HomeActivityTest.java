@@ -60,6 +60,19 @@ public class HomeActivityTest {
     }
 
     /**
+     * Checks if itemView displays 2 items, always maintain 2 items in test user
+     */
+    @Test
+    public void testCorrectItemAmount() {
+        setup();
+        onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
+            gridView = (GridView) view;
+        });
+        gridViewAdapter = (HomePageAdapter) gridView.getAdapter();
+        assertEquals(2, gridViewAdapter.getCount());
+    }
+
+    /**
      * AddButton test, press add button -> go back to homepage
      */
     @Test
