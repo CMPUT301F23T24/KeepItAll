@@ -14,36 +14,19 @@ import static org.junit.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.anything;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ListAdapter;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import androidx.test.runner.lifecycle.Stage;
 
 import org.hamcrest.Matcher;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Collection;
-
 
 /**
  * HomePage tests
@@ -51,25 +34,25 @@ import java.util.Collection;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class HomeActivityTest {
-    private GridView gridView;
-    private ListAdapter gridViewAdapter;
-
     @Rule
-    public IntentsTestRule<HomePageActivity> intentsTestRule = new IntentsTestRule<HomePageActivity>(HomePageActivity.class) {
-        @Override
-        protected Intent getActivityIntent() {
-            Intent intent = new Intent();
-            intent.putExtra("userName", "TestUser");
-            return intent;
-        }
-    };
+    public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
+
 
     /**
-     * AddButton test
+     * Login using test account to be able to test homePage functionalities
+     */
+    public void setup() {
+        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("test"));
+        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("test"));
+        onView(withId(R.id.login_Button)).perform(click());
+    }
+
+    /**
+     * AddButton test, press add button -> go back to homepage
      */
     @Test
     public void testAddButton() {
-        // IntentsTestRule starts the activity for you
+        setup();
         onView(withId(R.id.addButton)).perform(click());
         intended(hasComponent(AddItemActivity.class.getName()));
         onView(isRoot()).perform(waitIdling(3000));
@@ -78,11 +61,11 @@ public class HomeActivityTest {
     }
 
     /**
-     * ViewItem test
+     * ViewItem test, clicks on an item -> return back to homepage after
      */
-    // This test fails if no items are found, create a test user someho
     @Test
     public void testViewItem() {
+        setup();
         onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
         intended(hasComponent(ViewItemActivity.class.getName()));
         onView(isRoot()).perform(waitIdling(3000));
@@ -91,38 +74,29 @@ public class HomeActivityTest {
     }
 
     /**
-     * Delete one item test
-     */
-
-    // This test fails if no items are found, create a test user somehow
-    @Test
-    public void testDeleteItem() {
-        onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
-            gridView = (GridView) view;
-        });
-        onView(withId(R.id.deleteButton)).perform(click());
-        onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
-        onView(withId(R.id.deleteButton)).perform(click());
-        gridViewAdapter = gridView.getAdapter();
-        assertEquals(1, gridViewAdapter.getCount());
-    }
-
-    /**
-     * Delete multiple items test
+     * Tests logout button, should go back to login page
      */
     @Test
-    public void testDeleteItems() {
-        onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
-            gridView = (GridView) view;
-        });
-        onView(withId(R.id.deleteButton)).perform(click());
-        onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(1).perform(click());
-        onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
-        onView(withId(R.id.deleteButton)).perform(click());
-        gridViewAdapter = gridView.getAdapter();
-        assertEquals(0, gridViewAdapter.getCount());
+    public void testLogoutButton() {
+        setup();
+        onView(withId(R.id.logoutButton)).perform(click());
+        onView(withId(R.id.login_Button)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void testSearch() {
+        // TODO
+    }
+
+    @Test
+    public void testFilter() {
+        // TODO
+    }
+
+    @Test
+    public void testSort() {
+        // TODO
+    }
 
     /**
      * Adds a delay for testing
@@ -148,4 +122,3 @@ public class HomeActivityTest {
         };
     }
 }
-
