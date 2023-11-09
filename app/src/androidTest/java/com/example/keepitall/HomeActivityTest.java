@@ -2,7 +2,6 @@ package com.example.keepitall;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -22,7 +21,6 @@ import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
@@ -38,7 +36,6 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class HomeActivityTest {
     private GridView gridView;
-    private HomePageAdapter gridViewAdapter;
 
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<MainActivity>(MainActivity.class) {
@@ -65,10 +62,8 @@ public class HomeActivityTest {
     @Test
     public void testCorrectItemAmount() {
         setup();
-        onView(withId(R.id.gridView)).check((view, noViewFoundException) -> {
-            gridView = (GridView) view;
-        });
-        gridViewAdapter = (HomePageAdapter) gridView.getAdapter();
+        onView(withId(R.id.gridView)).check((view, noViewFoundException) -> gridView = (GridView) view);
+        HomePageAdapter gridViewAdapter = (HomePageAdapter) gridView.getAdapter();
         assertEquals(2, gridViewAdapter.getCount());
     }
 
@@ -126,8 +121,8 @@ public class HomeActivityTest {
 
     /**
      * Adds a delay for testing
-     * @param millis
-     * @return
+     * @param millis: milliseconds
+     * @return isRoot() or message
      */
     public static ViewAction waitIdling(final long millis) {
         return new ViewAction() {
