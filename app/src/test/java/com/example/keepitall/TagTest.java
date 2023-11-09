@@ -14,4 +14,5 @@ public class TagTest {
         assertEquals(1, tag1.compareTo(tag2)); // tag1 < tag2
         assertEquals(-1, tag2.compareTo(tag1)); // tag2 > tag1
     }
+
 }

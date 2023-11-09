@@ -96,6 +96,7 @@ public class RegisterAccount extends AppCompatDialogFragment {
                         email = editTextEmail.getText().toString();
 
                         // Check for a valid registration
+                        PrintValidRegistrationToast();
                         if (ValidRegistration()) {
                             RegisterNewUser();
                             dialog.dismiss();
@@ -134,49 +135,81 @@ public class RegisterAccount extends AppCompatDialogFragment {
         }
     }
 
-    private boolean ValidRegistration(){
+    /**
+     * Checks if the registration is valid by checking each part of the registration
+     * and displaying a toast message if it is not valid
+     * @return
+     */
+    public boolean ValidRegistration(){
         // First check if any part of the registration is empty, and if so, display a toast message
         if(username.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && email.isEmpty()){
-            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return false;
         }
         // Check each specific part of the registration
         if(username.isEmpty()){
-            Toast.makeText(getContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(password.isEmpty()){
-            Toast.makeText(getContext(), "Please enter a password", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(confirmPassword.isEmpty()){
-            Toast.makeText(getContext(), "Please confirm your password", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(email.isEmpty()){
-            Toast.makeText(getContext(), "Please enter an email", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         // Check if the password and confirm password match
         if(!password.equals(confirmPassword)){
-            Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
             return false;
         }
         // make sure the username is not already taken
         if(!keepItAll.isUsernameUnique(username)){
-            Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
             return false;
         }
         // make sure the username is within the correct length (3-15 characters)
         if(username.length() < 3 || username.length() > 15){
-            Toast.makeText(getContext(), "Username must be between 3 and 15 characters", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT).show();
         return true;
     }
 
+    /**
+     * Checks if the registration is valid by checking each part of the registration and prints a Toast for it
+     * This is seperate from the ValidRegistration method because we want to display a toast message for each
+     * @return
+     */
+    private void PrintValidRegistrationToast(){
+        // First check if any part of the registration is empty, and if so, display a toast message
+        if(username.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && email.isEmpty()){
+            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        }
+        // Check each specific part of the registration
+        if(username.isEmpty()){
+            Toast.makeText(getContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
+        }
+        if(password.isEmpty()){
+            Toast.makeText(getContext(), "Please enter a password", Toast.LENGTH_SHORT).show();
+        }
+        if(confirmPassword.isEmpty()){
+            Toast.makeText(getContext(), "Please confirm your password", Toast.LENGTH_SHORT).show();
+        }
+        if(email.isEmpty()){
+            Toast.makeText(getContext(), "Please enter an email", Toast.LENGTH_SHORT).show();
+        }
+        // Check if the password and confirm password match
+        if(!password.equals(confirmPassword)){
+            Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+        }
+        // make sure the username is not already taken
+        if(!keepItAll.isUsernameUnique(username)){
+            Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
+        }
+        // make sure the username is within the correct length (3-15 characters)
+        if(username.length() < 3 || username.length() > 15){
+            Toast.makeText(getContext(), "Username must be between 3 and 15 characters", Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(getContext(), "Account created!", Toast.LENGTH_SHORT).show();
+    }
     private void RegisterNewUser(){
         // creates a new user with the given information
         User newUser = new User(username, password, email);
@@ -187,5 +220,20 @@ public class RegisterAccount extends AppCompatDialogFragment {
     // Creates the interface we will use to call this on the main class
     public interface RegisterAccountListener{
         void RegisterAccount(String username, String password, String email);
+    }
+
+    // Getters and setters
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
