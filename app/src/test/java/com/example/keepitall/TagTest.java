@@ -3,6 +3,9 @@ package com.example.keepitall;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test class for Tag
+ */
 public class TagTest {
     @Test
     public void testCompareTo() {

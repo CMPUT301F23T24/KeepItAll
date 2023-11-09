@@ -21,7 +21,7 @@ public class RegisterAccountTest {
     /**
      * This test will test the registration of a new account with no username
      */
-    @Test
+    @org.junit.Test
     public void testValidRegistration_Invalid_NoUsername() {
         RegisterAccount registerAccount = new RegisterAccount();
         registerAccount.setUsername("");
