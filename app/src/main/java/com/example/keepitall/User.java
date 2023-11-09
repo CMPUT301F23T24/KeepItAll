@@ -27,7 +27,6 @@ public class User{
         this.password = password;
         this.emailAddress = emailAddress;
         this.itemManager = new ItemManager();
-        //Toast.makeText(null, "User Created", Toast.LENGTH_SHORT).show();
     }
     // Getters and Setters
     public String getUserName() {return userName;}

@@ -12,6 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeepItAllTest {
+
+    /**
+     * KeepItALl is a singleton, so we can only test if we can get its instance
+     * not its constructor
+     */
+    @Test
+    public void testGetInstance() {
+        assertTrue(KeepItAll.getInstance() != null);
+    }
+
     /**
      * Test to ensure that the Usernames are unique
      */
