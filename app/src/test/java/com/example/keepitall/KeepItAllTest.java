@@ -4,6 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import androidx.annotation.NonNull;
+
 import org.junit.Test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import org.junit.runner.RunWith;
  */
 public class KeepItAllTest {
 
+    @NonNull
     private KeepItAll createMocData(){
         // Creates a moc KeepItAll class, with a user in it
         KeepItAll Data = KeepItAll.getInstance();
