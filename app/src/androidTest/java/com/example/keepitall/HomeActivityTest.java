@@ -14,11 +14,14 @@ import static org.junit.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.anything;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.GridView;
 
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -34,9 +37,18 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class HomeActivityTest {
-    @Rule
-    public ActivityScenarioRule<MainActivity> activityScenarioRule = new ActivityScenarioRule<>(MainActivity.class);
+    private GridView gridView;
+    private HomePageAdapter gridViewAdapter;
 
+    @Rule
+    public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<MainActivity>(MainActivity.class) {
+        @Override
+        protected Intent getActivityIntent() {
+            Intent intent = new Intent();
+            intent.putExtra("userName", "TestUser");
+            return intent;
+        }
+    };
 
     /**
      * Login using test account to be able to test homePage functionalities
@@ -74,7 +86,7 @@ public class HomeActivityTest {
     }
 
     /**
-     * Tests logout button, should go back to login page
+     * Tests logout button, would go back to login page
      */
     @Test
     public void testLogoutButton() {
@@ -83,19 +95,20 @@ public class HomeActivityTest {
         onView(withId(R.id.login_Button)).check(matches(isDisplayed()));
     }
 
+
     @Test
     public void testSearch() {
-        // TODO
+        // TODO: the feature isn't done yet
     }
 
     @Test
     public void testFilter() {
-        // TODO
+        // TODO: the feature isn't done yet
     }
 
     @Test
     public void testSort() {
-        // TODO
+        // TODO: the feature isn't done yet
     }
 
     /**
