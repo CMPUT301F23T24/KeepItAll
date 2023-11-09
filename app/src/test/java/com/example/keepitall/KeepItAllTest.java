@@ -1,9 +1,18 @@
 package com.example.keepitall;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+
+/**
+ * Tests for the KeepItAll class
+ * These tests dont include the database
+ */
 public class KeepItAllTest {
 
     private KeepItAll createMocData(){
@@ -11,10 +20,11 @@ public class KeepItAllTest {
         KeepItAll Data = KeepItAll.getInstance();
         User user1 = new User("User One", "Password", "Email");
         User user2 = new User("User Two", "Password", "Email");
-        Data.addUser(user1);
-        Data.addUser(user2);
+        Data.addUser_local(user1);
+        Data.addUser_local(user2);
         return Data;
     }
+
 
     @Test
     public void testIsUsernameUnique(){
@@ -28,7 +38,7 @@ public class KeepItAllTest {
         KeepItAll Data = createMocData();
         assertEquals(2, Data.getUsers().size());
         User user3 = new User("User Three", "Password", "Email");
-        Data.addUser(user3);
+        Data.addUser_local(user3);
         assertEquals(3, Data.getUsers().size());
     }
     @Test
@@ -36,14 +46,11 @@ public class KeepItAllTest {
         KeepItAll Data = createMocData();
         assertEquals(2, Data.getUsers().size());
         User tempUser = new User("Temp User", "Password", "Email");
-        Data.addUser(tempUser);
+        Data.addUser_local(tempUser);
         assertEquals(3, Data.getUsers().size());
         // Tests removing by class type
-        Data.removeUser(tempUser);
+        Data.deleteUser(tempUser);
         assertEquals(2, Data.getUsers().size());
-        // Tests removing by user name
-        Data.removeUser("User One");
-        assertEquals(1, Data.getUsers().size());
     }
 
 
