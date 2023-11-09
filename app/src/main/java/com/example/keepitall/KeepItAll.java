@@ -33,14 +33,6 @@ public class KeepItAll{
     }
 
     /**
-     * Gets the list of users
-     * @return list of users
-     */
-    public ArrayList<User> getUsers(){
-        return users;
-    }
-
-    /**
      * Adds a user to the list of users if it isn't already present
      * Also adds the user to the database
      * @param user - user to add
@@ -71,19 +63,6 @@ public class KeepItAll{
             users.add(user);
         }
     }
-
-    /**
-     * Adds a user to the list of users if it isn't already present (local only)
-     * @param user
-     */
-    public void addUser_local(User user) {
-        // Check if the user already exists in the local list (optional)
-        if (!users.contains(user)) {
-            // Add the user to the local list (optional)
-            users.add(user);
-        }
-    }
-
     /**
      * Removes a user from the list of users if it is present
      * Also removes the user from the database
@@ -112,18 +91,6 @@ public class KeepItAll{
         // Remove the user from the local list (optional)
         users.remove(user);
     }
-
-    /**
-     * Removes a user from the list of users if it is present (local only)
-     * @param user
-     */
-    public void deleteUser_local(User user){
-        // Remove the user from the local list (optional)
-        if(users.contains(user)){
-            users.remove(user);
-        }
-    }
-
     /**
      * Retrieves all the users from the database and fills the local list
      */
@@ -211,5 +178,13 @@ public class KeepItAll{
         // return the singleton instance
         return INSTANCE;
     }
+    /**
+     * Gets the list of users
+     * @return list of users
+     */
+    public ArrayList<User> getUsers(){
+        return users;
+    }
+
 
 }
