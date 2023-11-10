@@ -32,6 +32,8 @@ public class KeepItAll{
     /**
      * Adds a user to the list of users if it isn't already present
      * Also adds the user to the database
+     * ChatGPT AI - was used to help generate the base function of this method. It was then modified
+     * down to fit our desired needs.
      * @param user - user to add
      */
     public void addUser(User user) {
@@ -93,6 +95,8 @@ public class KeepItAll{
 
     /**
      * Retrieves all the users from the database and fills the local list
+     * ChatGPT AI - was used to help generate the base function of this method. It was then modified
+     * down to fit our desired needs.
      */
     public void retrieveUsers() {
         userCollection.get()
