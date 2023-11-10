@@ -100,7 +100,6 @@ public class loginActivity extends AppCompatActivity {
         // Display a toast if the password is incorrect
         else if(!userToLogin.getPassword().equals(password)){
             Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-            return;
         }
         // Display a toast if the login is successful
         else if(userToLogin.getPassword().equals(password)){
@@ -123,6 +122,10 @@ public class loginActivity extends AppCompatActivity {
         // Stores the logged in user to a local variable
         User userToLogin = keepItAll.getUserByName(username);
         if(userToLogin == null){ return;}
+        // Check for the correct password
+        if(!userToLogin.getPassword().equals(password)){
+            return;
+        }
         // Launch the home page activity
         launchHomePage();
     }

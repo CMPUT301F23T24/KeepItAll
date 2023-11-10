@@ -219,6 +219,8 @@ public class LoginActivityTest {
         onView(withId(R.id.login_Button)).perform(click());
         // make sure that we have changed activities
         onView(withId(R.id.loginWindow)).check(doesNotExist());
+        // Now we want to delete the account we just created
+        KeepItAll.getInstance().deleteUser(KeepItAll.getInstance().getUserByName("username"));
     }
 
 
