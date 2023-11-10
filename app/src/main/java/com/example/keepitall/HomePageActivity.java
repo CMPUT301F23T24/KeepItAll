@@ -2,7 +2,6 @@ package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,21 +10,34 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.Date;
 
+/**
+ * Activity used for displaying the user's items (HomePage)
+ * This page has multiple functionalities:
+ *     1) Add an item
+ *     2) Delete an item
+ *     3) View an item's properties
+ *     4) Sort items (soon)
+ *     5) Filter items (soon)
+ *     6) Search items (soon)
+ *     7) Logout
+ * Whenever an item is added or deleted, the total value of all items is updated
+ * Whenever an item is added or deleted, the adapter is notified and the gridView is refreshed
+ * Whenever an item is added or deleted, the itemManager is updated and synced with the database
+ */
 public class HomePageActivity extends AppCompatActivity {
 
+    // Private variables
     private GridView gridView;
     private boolean deleteMode = false;
     private ItemManager userItemManager;
-    private ArrayList<Item> itemsToRemove = new ArrayList<>();
+    private final ArrayList<Item> itemsToRemove = new ArrayList<>();
     private HomePageAdapter homePageAdapter;
     private TextView totalValueView;
     private Button deleteButton;
     private User user;
-    private KeepItAll keepItAll = KeepItAll.getInstance();
+    private final KeepItAll keepItAll = KeepItAll.getInstance();
     private Button logoutButton;
     private TextView usernameView;
 
@@ -33,9 +45,10 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        // Init the total value TextView
         totalValueView = findViewById(R.id.totalValueText);
 
-        // Gets username
+        // Gets username (which is passed from the login screen as an extra)
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String userName = extras.getString("username");
@@ -99,6 +112,14 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Called when the user returns from AddItemActivity, it will check the result code
+     * and add the new item to the item list if the result code is RESULT_OK
+     * onSuccess, the item will be added to the database, and the homepage will be updated
+     * @param requestCode - the code that was passed to startActivityForResult
+     * @param resultCode - the result code that was passed back from AddItemActivity
+     * @param data - the intent that was passed back from AddItemActivity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,8 +144,8 @@ public class HomePageActivity extends AppCompatActivity {
 
     /**
      * Click Listener for grid, either delete or view item property
-     * @param view
-     * @param position
+     * @param view - the view that was clicked
+     * @param position - the position of the view in the grid
      */
     private void gridViewClickEvent(View view, int position) {
         if (deleteMode) { // if delete

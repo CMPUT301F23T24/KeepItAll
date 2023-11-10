@@ -2,26 +2,23 @@ package com.example.keepitall;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
- * Main class uses by the App to organize users and Items
+ * Main class uses by the App to organize users and Items. This class is a singleton.
+ * This class will link up to firestore to be able to add, delete, and edit items from the database,
+ * by calling the methods in the ItemManager class.
  */
 public class KeepItAll{
+    // Private variables
     private static volatile KeepItAll INSTANCE = null;
-    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
-    private CollectionReference userCollection;
-    private ArrayList<User> users;
+    private final FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private final CollectionReference userCollection;
+    private final ArrayList<User> users;
 
     /**
      * Constructor used for the main data class
@@ -63,11 +60,13 @@ public class KeepItAll{
             users.add(user);
         }
     }
+
     /**
      * Removes a user from the list of users if it is present
      * Also removes the user from the database
-     * @param user
+     * @param user - user to remove
      */
+
     public void deleteUser(User user){
         // Remove the user from Firestore
         userCollection.document(user.getUserName()).delete()
@@ -91,6 +90,7 @@ public class KeepItAll{
         // Remove the user from the local list (optional)
         users.remove(user);
     }
+
     /**
      * Retrieves all the users from the database and fills the local list
      */
@@ -101,15 +101,14 @@ public class KeepItAll{
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
                             User user = userDoc.toObject(User.class);
-                            String userId = userDoc.getId();
-
                             // Retrieve the associated items for the user
                             userDoc.getReference().collection("items").get()
                                     .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @Override
                                         public void onSuccess(QuerySnapshot itemSnapshots) {
-                                            List<Item> items = new ArrayList<>();
+                                            // Create a new ItemManager for the user
                                             ItemManager itemManager = new ItemManager();
+                                            // Loop through all the items and add them to the ItemManager
                                             for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
                                                 Item item = itemDoc.toObject(Item.class);
                                                 // Fill up Item with data using the setter methods
@@ -120,11 +119,12 @@ public class KeepItAll{
                                                 item.setModel(itemDoc.getString("model"));
                                                 item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
                                                 item.setValue(itemDoc.getDouble("value").floatValue());
-                                                ///TODO: One day the tags will be added
+                                                ///TODO: Add tags to the item
                                                 itemManager.addItem(item);
                                             }
                                             // Add the user to the list after all items are fetched
                                             user.setItemManager(itemManager);
+                                            // update the local list of users
                                             users.add(user);
                                         }
                                     })
@@ -161,7 +161,7 @@ public class KeepItAll{
 
     /**
      * Getter function for the singleton instance
-     * @return
+     * @return - the singleton instance of KeepItAll
      */
     public static KeepItAll getInstance() {
         // Check if the instance is already created
@@ -185,6 +185,4 @@ public class KeepItAll{
     public ArrayList<User> getUsers(){
         return users;
     }
-
-
 }

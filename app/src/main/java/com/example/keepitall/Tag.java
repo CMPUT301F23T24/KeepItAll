@@ -3,8 +3,10 @@ package com.example.keepitall;
 
 /**
  * Used for tags that would be used to categorize items
+ * Not currently implemented
  */
 public class Tag implements Comparable<Tag> {
+    // Private variables
     private String tagName;
 
     /**
@@ -30,11 +32,6 @@ public class Tag implements Comparable<Tag> {
     }
 
     // getters and setters
-    public String getTagName() {
-        return tagName;
-    }
-
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
-    }
+    public String getTagName() {return tagName;}
+    public void setTagName(String tagName) {this.tagName = tagName;}
 }

@@ -64,7 +64,8 @@
             android:textAlignment="center"
             android:textColorHint="@color/white"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="textPersonName"/>
 
         <EditText
             android:id="@+id/purchaseDateText"
@@ -74,7 +75,8 @@
             android:hint="Date of Purchase:"
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="date"/>
 
         <EditText
             android:id="@+id/makeText"
@@ -84,7 +86,8 @@
             android:hint="Item Make:"
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="textPersonName"/>
 
         <EditText
             android:id="@+id/modelText"
@@ -94,7 +97,8 @@
             android:hint="Item Model:"
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="textPersonName"/>
 
         <EditText
             android:id="@+id/valueText"
@@ -104,7 +108,8 @@
             android:hint="Estimated Value:"
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="numberDecimal"/>
 
         <EditText
             android:id="@+id/serialNumberText"
@@ -114,7 +119,8 @@
             android:hint="Serial Number: "
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="number"/>
 
         <EditText
             android:id="@+id/descriptionText"
@@ -124,7 +130,8 @@
             android:hint="Description: "
             android:textColorHint="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType="text"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tagButton"
