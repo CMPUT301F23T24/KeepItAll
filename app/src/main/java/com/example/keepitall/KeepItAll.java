@@ -12,6 +12,16 @@ import java.util.List;
  * Main class uses by the App to organize users and Items. This class is a singleton.
  * This class will link up to firestore to be able to add, delete, and edit items from the database,
  * by calling the methods in the ItemManager class.
+ *
+ * Functions with AI aid: The add User and retrieveUsers methods were created with the help of the
+ * ChatGPT AI. The AI was used to help generate the base function of these methods. It was then
+ * modified down to fit our desired needs. This was due to the reasoning of firestore being a new
+ * technology for us to learn and implement. The AI was used to help us understand how it actually worked.
+ * We went through many variations of the code, asking for prompts of how to properly go about adding and
+ * retrieving custom classes from the database. Once the process was much better understood, we took
+ * the code provided by the AI, and redesigned it to create the current Collection path and retrieval
+ * system currently implemented. After that point, there was no further need to rsearch using this method,
+ * as we had a much better understanding of how to properly implement firestore.
  */
 public class KeepItAll{
     // Private variables
@@ -33,7 +43,7 @@ public class KeepItAll{
      * Adds a user to the list of users if it isn't already present
      * Also adds the user to the database
      * ChatGPT AI - was used to help generate the base function of this method. It was then modified
-     * down to fit our desired needs.
+     * down to fit our desired needs. View top of class for more information.
      * @param user - user to add
      */
     public void addUser(User user) {
@@ -96,7 +106,7 @@ public class KeepItAll{
     /**
      * Retrieves all the users from the database and fills the local list
      * ChatGPT AI - was used to help generate the base function of this method. It was then modified
-     * down to fit our desired needs.
+     * down to fit our desired needs.View top of class for more information.
      */
     public void retrieveUsers() {
         userCollection.get()
