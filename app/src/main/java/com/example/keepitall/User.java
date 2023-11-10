@@ -75,6 +75,6 @@ public class User{
     public void setItemManager(ItemManager itemManager) {this.itemManager = itemManager;}
 
     public String getEmailAddress() {
-        return null;
+        return emailAddress;
     }
 }
