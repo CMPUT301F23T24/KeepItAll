@@ -38,7 +38,4 @@ public class User{
     public void setUserName(String userName) {this.userName = userName;}
     public void setItemManager(ItemManager itemManager) {this.itemManager = itemManager;}
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
 }
