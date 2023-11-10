@@ -33,14 +33,6 @@ public class KeepItAll{
     }
 
     /**
-     * Gets the list of users
-     * @return list of users
-     */
-    public ArrayList<User> getUsers(){
-        return users;
-    }
-
-    /**
      * Adds a user to the list of users if it isn't already present
      * Also adds the user to the database
      * @param user - user to add
@@ -71,9 +63,37 @@ public class KeepItAll{
             users.add(user);
         }
     }
-
-
-
+    /**
+     * Removes a user from the list of users if it is present
+     * Also removes the user from the database
+     * @param user
+     */
+    public void deleteUser(User user){
+        // Remove the user from Firestore
+        userCollection.document(user.getUserName()).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // User successfully deleted
+                        // We want to now delete all the items
+                        CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
+                        for (Item item : user.getItemManager().getAllItems()) {
+                            itemsCollection.document(item.getName()).delete();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle the failure to delete the User
+                    }
+                });
+        // Remove the user from the local list (optional)
+        users.remove(user);
+    }
+    /**
+     * Retrieves all the users from the database and fills the local list
+     */
     public void retrieveUsers() {
         userCollection.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -119,22 +139,6 @@ public class KeepItAll{
                 });
     }
 
-
-    /**
-     * Removes a user from the list of users if it is already present
-     * @param user - user to remove
-     */
-    public void removeUser(User user){
-        users.remove(user);
-    }
-    /**
-     * Removes a user from a list of users, if it is already present
-     * @param username - the username of the user we wish to remove
-     */
-    public void removeUser(String username){
-        users.removeIf(u -> u.getUserName().equals(username));
-    }
-
     /**
      * Checks an input string against all active usernames, to see if it's available
      * @param userName - the username to check
@@ -154,7 +158,11 @@ public class KeepItAll{
                 .filter(u -> u.getUserName().equals(userName))
                 .findFirst().orElse(null);
     }
-    // public static method to retrieve the singleton instance
+
+    /**
+     * Getter function for the singleton instance
+     * @return
+     */
     public static KeepItAll getInstance() {
         // Check if the instance is already created
         if(INSTANCE == null) {
@@ -170,5 +178,13 @@ public class KeepItAll{
         // return the singleton instance
         return INSTANCE;
     }
+    /**
+     * Gets the list of users
+     * @return list of users
+     */
+    public ArrayList<User> getUsers(){
+        return users;
+    }
+
 
 }

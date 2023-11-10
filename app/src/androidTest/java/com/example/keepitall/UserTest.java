@@ -1,6 +1,3 @@
-package com.example.keepitall;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
@@ -36,4 +33,3 @@ public class UserTest {
         assertEquals(newUserName, user.getUserName());
     }
 }
-
