@@ -1,6 +1,5 @@
 package com.example.keepitall;
 
-
 /**
  * Used for tags that would be used to categorize items
  * Not currently implemented
