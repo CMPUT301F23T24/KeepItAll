@@ -3,6 +3,7 @@ package com.example.keepitall;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,7 +59,17 @@ public class ViewItemActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: tag functionality
+        // Set up OnClickListener for the tagButton
+        Button tagButton = findViewById(R.id.tagButton);
+        tagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start ItemTagsActivity
+                Intent intent = new Intent(ViewItemActivity.this, ItemTagsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**

@@ -67,16 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view4" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/homeButton"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="@drawable/home_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/view4"
-        app:layout_constraintTop_toTopOf="@+id/view4" />
-
     <View
         android:id="@+id/view4"
         android:layout_width="match_parent"
