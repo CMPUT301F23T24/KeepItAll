@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "565592187310",
+    "project_id": "keepitalldatabase",
+    "storage_bucket": "keepitalldatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565592187310:android:935cc019adbb3e52c4a83f",
+        "android_client_info": {
+          "package_name": "com.example.keepitall"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr5_3m4vGC-HedHszBM4f7HhUwFBr5Q6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
