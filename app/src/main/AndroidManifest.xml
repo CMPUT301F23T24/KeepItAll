@@ -30,6 +30,8 @@
         <activity
             android:name=".EditItemActivity"
             android:exported="false" />
+        <activity android:name=".ItemTagsActivity"
+            android:exported="false"/>
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
