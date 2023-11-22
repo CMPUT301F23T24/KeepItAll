@@ -4,16 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class HomePageActivity extends AppCompatActivity {
 
@@ -27,6 +28,9 @@ public class HomePageActivity extends AppCompatActivity {
     private User user;
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private Button logoutButton;
+    private Button pictureButton;
+    static final int REQUEST_IMAGE_CAPTURE = 2; // For taking picture
+    private ImageView TempImageView;
     private TextView usernameView;
 
     @Override
@@ -34,6 +38,8 @@ public class HomePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
+        pictureButton = findViewById(R.id.take_picture_button);
+        TempImageView = findViewById(R.id.Temp_Image);
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -68,6 +74,9 @@ public class HomePageActivity extends AppCompatActivity {
                         Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
                         startActivityForResult(intent, 1);
                     });
+
+                    // Take picture button
+                    pictureButton.setOnClickListener(v -> takePictureClickEvent());
 
                     // Go back to login screen if back button is pressed
                     logoutButton = findViewById(R.id.logoutButton);
@@ -118,6 +127,12 @@ public class HomePageActivity extends AppCompatActivity {
                 // Notify the adapter that the data set has changed
                 homePageAdapter.notifyDataSetChanged();
             }
+        }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            TempImageView.setImageBitmap(imageBitmap);
         }
     }
 
@@ -192,5 +207,13 @@ public class HomePageActivity extends AppCompatActivity {
             totalValue += item.getValue();
         }
         totalValueView.setText(String.format("Total Value: $%.2f", totalValue));
+    }
+
+    private void takePictureClickEvent() {
+        Toast.makeText(HomePageActivity.this, "Take picture", Toast.LENGTH_SHORT).show();
+        // Opens the camera on the phone
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
     }
 }
