@@ -4,8 +4,8 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="142dp"
+        android:layout_height="154dp"
         android:padding="1dp">
 
         <RelativeLayout
@@ -20,11 +20,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:paddingBottom="5dp"
                 android:text="Name"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 android:textSize="20sp"
-                android:paddingBottom="5dp"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/gridDataImage"
@@ -32,7 +32,7 @@
                 android:layout_height="90dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/ic_launcher"/>
+                android:src="@mipmap/ic_launcher" />
 
         </RelativeLayout>
 
