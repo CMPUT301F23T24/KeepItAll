@@ -1,6 +1,7 @@
 package com.example.keepitall;
 
 import android.content.Intent;
+import android.widget.Button;
 import android.widget.EditText;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,6 +48,15 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
+        Button tagButton = findViewById(R.id.tagButton); //
+        tagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start ItemTagsActivity
+                Intent intent = new Intent(AddItemActivity.this, ItemTagsActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
