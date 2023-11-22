@@ -28,6 +28,7 @@ public class HomePageActivity extends AppCompatActivity {
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private Button logoutButton;
     private TextView usernameView;
+    private Button filterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,12 @@ public class HomePageActivity extends AppCompatActivity {
                         deleteButtonClickEvent();
                     });
 
+
+                    // Filter the items
+                    filterButton = findViewById(R.id.filterButton);
+                    filterButton.setOnClickListener(v -> {
+                        filterClickEvent();
+                    });
                     //TODO: sort by, filter by
 
                 } else {
@@ -179,6 +186,8 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     private void filterClickEvent() {
+        FilterOptions filterFragment = new FilterOptions();
+        filterFragment.show(getSupportFragmentManager(), "filterDialog");
         // TODO: filter
     }
 
