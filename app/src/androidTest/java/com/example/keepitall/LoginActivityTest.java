@@ -1,6 +1,5 @@
 package com.example.keepitall;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -9,20 +8,14 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
- * Test to login / registraton functionality
+ * Test to login / registration functionality
  */
 public class LoginActivityTest {
     @Rule
@@ -80,19 +73,19 @@ public class LoginActivityTest {
     @Test
     public void testLogin(){
         // Login with the developer account
-        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("dev"));
-        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("pass"));
+        // Create a valid user to login with
+        KeepItAll.getInstance().addUser(new User("DEV_TEST_ACCOUNT", "password", "email"));
+        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("DEV_TEST_ACCOUNT"));
+        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("password"));
         onView(withId(R.id.login_Button)).perform(click());
         // make sure that we have changed activities
         onView(withId(R.id.loginWindow)).check(doesNotExist());
         // Something from the next activity should be displayed
-        //TODO: Swap this to a check of the home page
         onView(withId(R.id.searchText)).check(matches(isDisplayed()));
-    }
 
-    /**
-     * Test the Register functionality that should all not work
-     */
+        // Now we want to delete the account we just created
+        KeepItAll.getInstance().deleteUser(KeepItAll.getInstance().getUserByName("DEV_TEST_ACCOUNT"));
+    }
 
     /**
      * Performs a Test to make sure that we can open and close the register account activity
@@ -194,7 +187,7 @@ public class LoginActivityTest {
     @Test
     public void testRegisterAccount_Valid(){
         // First we will try to login with the account we are about to register
-        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("username"));
+        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("di238fnd82d"));
         onView(withId(R.id.password_Input)).perform(ViewActions.typeText("password"));
         onView(withId(R.id.login_Button)).perform(click());
         // make sure that the activity doesn't change
@@ -203,7 +196,7 @@ public class LoginActivityTest {
         // click the register button to create a new account
         onView(withId(R.id.signUpText)).perform(click());
         // Set  values for the username, email, and password
-        onView(withId(R.id.Register_Username_Input)).perform(ViewActions.typeText("username"));
+        onView(withId(R.id.Register_Username_Input)).perform(ViewActions.typeText("di238fnd82d"));
         onView(withId(R.id.Register_Email_Input)).perform(ViewActions.typeText("email@gmail.com"));
         onView(withId(R.id.Register_Password_Input)).perform(ViewActions.typeText("password"));
         onView(withId(R.id.Register_Confirm_Password_Input)).perform(ViewActions.typeText("password"));
@@ -214,13 +207,13 @@ public class LoginActivityTest {
         // Clear the username and password fields
         onView(withId(R.id.userName_Input)).perform(ViewActions.clearText());
         onView(withId(R.id.password_Input)).perform(ViewActions.clearText());
-        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("username"));
+        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("di238fnd82d"));
         onView(withId(R.id.password_Input)).perform(ViewActions.typeText("password"));
         onView(withId(R.id.login_Button)).perform(click());
         // make sure that we have changed activities
         onView(withId(R.id.loginWindow)).check(doesNotExist());
         // Now we want to delete the account we just created
-        KeepItAll.getInstance().deleteUser(KeepItAll.getInstance().getUserByName("username"));
+        KeepItAll.getInstance().deleteUser(KeepItAll.getInstance().getUserByName("di238fnd82d"));
     }
 
 
