@@ -29,6 +29,7 @@ public class HomePageActivity extends AppCompatActivity {
     private Button logoutButton;
     private TextView usernameView;
     private Button filterButton;
+    private Button sortButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +77,16 @@ public class HomePageActivity extends AppCompatActivity {
 
                     // Delete an item
                     deleteButton = findViewById(R.id.deleteButton);
-                    deleteButton.setOnClickListener(v -> {
-                        deleteButtonClickEvent();
-                    });
+                    deleteButton.setOnClickListener(v -> deleteButtonClickEvent());
 
 
                     // Filter the items
                     filterButton = findViewById(R.id.filterButton);
-                    filterButton.setOnClickListener(v -> {
-                        filterClickEvent();
-                    });
+                    filterButton.setOnClickListener(v -> filterClickEvent());
+
+                    // Sort the items
+                    sortButton = findViewById(R.id.sortButton);
+                    sortButton.setOnClickListener(v -> sortClickEvent());
                     //TODO: sort by, filter by
 
                 } else {
@@ -182,6 +183,8 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     private void sortClickEvent() {
+        SortOptions sortFragment = new SortOptions();
+        sortFragment.show(getSupportFragmentManager(), "sortDialog");
         // TODO: sort
     }
 
