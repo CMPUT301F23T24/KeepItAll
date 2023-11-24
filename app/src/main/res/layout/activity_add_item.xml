@@ -132,13 +132,6 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:inputType="text"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/tagButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/white_button"
-            android:text="TAGS" />
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton

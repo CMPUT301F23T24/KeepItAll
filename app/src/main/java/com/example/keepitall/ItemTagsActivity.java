@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,8 @@ public class ItemTagsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_tags);
 
+        currentItemId = getIntent().getStringExtra("itemId");
+
         // Initialize TagsManager
         tagsManager = new TagsManager();
 
@@ -46,14 +51,19 @@ public class ItemTagsActivity extends AppCompatActivity {
         // GridView item click listener
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             gridViewItemClickEvent(view, position);
-        });
+        }
+        );
 
         // Add Tag button
         Button addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ItemTagsActivity.this, AddTagActivity.class);
-            intent.putExtra("itemId", currentItemId); // Pass the item identifier
-            startActivityForResult(intent, ADD_TAG_REQUEST_CODE);
+            if (currentItemId != null) {
+                Intent intent = new Intent(ItemTagsActivity.this, AddTagActivity.class);
+                intent.putExtra("itemId", currentItemId);
+                startActivityForResult(intent, ADD_TAG_REQUEST_CODE);
+            } else {
+                Toast.makeText(this, "Current Item ID is missing.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Delete Tag button
@@ -98,6 +108,34 @@ public class ItemTagsActivity extends AppCompatActivity {
         }
     }
 
+    private void loadTags() {
+        if (currentItemId == null) {
+            return;
+        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String itemId = getIntent().getStringExtra("itemId");
+
+        db.collection("items").document(itemId).collection("tags")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        tags.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String tagName = document.getString("tagName");
+                            tags.add(new Tag(tagName));
+                        }
+                        tagAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle failure
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTags();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
