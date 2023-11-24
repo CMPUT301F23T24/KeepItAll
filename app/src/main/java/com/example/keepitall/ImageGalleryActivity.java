@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,11 +23,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -37,20 +43,41 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private String currentPhotoPath;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSION_REQUEST_CODE = 2;
+    private RecyclerView recyclerView;
+    private TextView recyclerViewText;
+    private ArrayList<Uri> uri = new ArrayList<>();
+    private ImageRecyclerAdapter imageRecyclerAdapter;
+
+    private static final int Read_Permission = 1;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_gallery);
         // Connect the buttons to their respective views
         Button backButton = findViewById(R.id.viewBackButton);
-        Button homeButton = findViewById(R.id.homeButton);
         Button cameraButton = findViewById(R.id.cameraButton);
         Button galleryButton = findViewById(R.id.galleryOpenButton);
+        recyclerViewText = findViewById(R.id.totalPhotos);
+        recyclerView = findViewById(R.id.recyclerView_Gallery_Images);
+        imageRecyclerAdapter = new ImageRecyclerAdapter(uri);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        recyclerView.setAdapter(imageRecyclerAdapter);
         // Set the click listeners for the buttons
         backButton.setOnClickListener(view -> finish());
-        homeButton.setOnClickListener(view ->TraverseToHome());
         cameraButton.setOnClickListener(view -> OpenCamera());
         galleryButton.setOnClickListener(view -> OpenGallery());
+
+
+
+        // GALLERY STUFF this may need to change
+        if(ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        }
+
+
+        ///
+
 
         // Registers a photo picker activity launcher in single-select mode.
         pickMultipleMedia =
@@ -70,17 +97,45 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     private void OpenGallery(){
         // Launch the photo picker and let the user choose only images.
-        pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
-
+        //pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
+                //.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                //.build());
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent.createChooser(intent, "Select Picture"), 1);
 
     }
-    private void TraverseToHome(){
-        // Create an intent to navigate back to HomePageActivity
-        Intent intent = new Intent(ImageGalleryActivity.this, HomePageActivity.class);
-        startActivity(intent);
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check if the result comes from the correct activity
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+
+            if(data.getClipData() != null){
+                Toast.makeText(getApplicationContext(), "Multiple images selected", Toast.LENGTH_SHORT).show();
+                int x = data.getClipData().getItemCount();
+
+                for(int i=0; i < x; i++){
+                    uri.add(data.getClipData().getItemAt(i).getUri());
+                }
+                imageRecyclerAdapter.notifyDataSetChanged();
+                recyclerViewText.setText("Total Photos: " + uri.size());
+            } else if(data.getData() != null){
+                Toast.makeText(getApplicationContext(), "Single image selected", Toast.LENGTH_SHORT).show();
+                String imageURL = data.getData().getPath();
+                uri.add(Uri.parse(imageURL));
+            }
+        }
+        imageRecyclerAdapter.notifyDataSetChanged();
+        ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
+        ImageView itemLogo = findViewById(R.id.itemLogo);
+        itemLogo.setImageURI(uri.get(0));
+
     }
+
     private void OpenCamera(){
         // Check if the CAMERA permission is not granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -110,12 +165,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
 
     private void startCameraIntent(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } else{
-            Toast.makeText(this, "Camera not found.", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivity(intent);
+
     }
 }
 

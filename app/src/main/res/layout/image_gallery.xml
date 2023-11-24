@@ -28,34 +28,39 @@
 
     <TextView
         android:id="@+id/titlePageText"
-        android:layout_width="266dp"
-        android:layout_height="95dp"
+        android:layout_width="211dp"
+        android:layout_height="38dp"
         android:layout_marginBottom="40dp"
+        android:gravity="center"
         android:text="Item Gallery"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="24sp"
-        android:textAlignment="center"
-        android:gravity="center"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.889"
+        app:layout_constraintHorizontal_bias="0.655"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.07" />
 
-    <GridView
-        android:id="@+id/gridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="175dp"
-        android:layout_marginBottom="150dp"
-        android:horizontalSpacing="15dp"
-        android:numColumns="3"
-        android:paddingHorizontal="15dp"
-        android:verticalSpacing="15dp"
+    <TextView
+        android:id="@+id/totalPhotos"
+        android:layout_width="211dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:text="Total Photos:"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.655"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.133" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/viewBackButton"
@@ -67,16 +72,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view4" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/homeButton"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="@drawable/home_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/view4"
-        app:layout_constraintTop_toTopOf="@+id/view4" />
-
     <View
         android:id="@+id/view4"
         android:layout_width="match_parent"
@@ -84,29 +79,46 @@
         android:background="@color/dark_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cameraButton"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/camera_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/view4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view4" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/galleryOpenButton"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="168dp"
         android:background="@drawable/camera_icon"
         app:layout_constraintBottom_toBottomOf="@+id/view4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view4"
         app:layout_constraintVertical_bias="0.52" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/galleryOpenButton"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginEnd="44dp"
+        android:background="@drawable/gallery_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/view4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view4"
+        app:layout_constraintVertical_bias="0.52" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_Gallery_Images"
+        android:layout_width="388dp"
+        android:layout_height="451dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="18dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/view4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view3"
+        app:layout_constraintVertical_bias="0.657" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
