@@ -33,8 +33,8 @@ public class TagsManager {
     }
 
     public void removeTagFromItem(String itemId, Tag tag) {
-        List<Tag> tags = itemTagsMap.get(itemId);
-        if (tags != null) {
+        if (itemTagsMap.containsKey(itemId)) {
+            List<Tag> tags = itemTagsMap.get(itemId);
             tags.remove(tag);
             if (tags.isEmpty()) {
                 itemTagsMap.remove(itemId);

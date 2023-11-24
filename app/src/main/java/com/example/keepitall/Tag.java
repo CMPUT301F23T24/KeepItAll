@@ -1,6 +1,7 @@
 package com.example.keepitall;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -36,4 +37,32 @@ public class Tag implements Comparable<Tag> {
     // getters and setters
     public String getTagName() {return tagName;}
     public void setTagName(String tagName) {this.tagName = tagName;}
+
+    /**
+     * Purpose: Compares this tag object to another object for equality.
+     * The comparison is based on the tag name.
+     *
+     * @param o The object to be compared with this tag.
+     * @return true if the given object is also a tag and has the same tag name as this tag.
+     *         false if the given object is null, not a tag, or has a different tag name.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(tagName, tag.tagName);
+    }
+
+    /**
+     * Purpose: Provides a hash code value for a tag object, which is used in hash-based collections
+     *          like hashmap.
+     * @return An integer representing the hash code value of the Tag object. The hash code
+     *         is generated based on the tagName field of the Tag object. If two Tag objects
+     *         have the same tagName, they will have the same hash code.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(tagName);
+    }
 }
