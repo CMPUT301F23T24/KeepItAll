@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemTagsActivity extends AppCompatActivity {
 
@@ -20,15 +21,22 @@ public class ItemTagsActivity extends AppCompatActivity {
     private ArrayList<Tag> tagsToDelete = new ArrayList<>();
     private boolean deleteMode = false;
     private static final int ADD_TAG_REQUEST_CODE = 1;
+    private String currentItemId; // Current item identifier
+    private TagsManager tagsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_tags);
 
-        // Initialize your tags list
-        tags = new ArrayList<>();
-        // TODO: Populate your tags list here
+        // Initialize TagsManager
+        tagsManager = new TagsManager();
+
+        // Get current item ID passed from previous activity
+        currentItemId = getIntent().getStringExtra("itemId");
+
+        // Initialize tags list for the current item
+        tags = new ArrayList<>(tagsManager.getTagsForItem(currentItemId));
 
         // Initialize GridView and its adapter
         gridView = findViewById(R.id.gridView);
@@ -44,6 +52,7 @@ public class ItemTagsActivity extends AppCompatActivity {
         Button addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(ItemTagsActivity.this, AddTagActivity.class);
+            intent.putExtra("itemId", currentItemId); // Pass the item identifier
             startActivityForResult(intent, ADD_TAG_REQUEST_CODE);
         });
 
@@ -93,8 +102,9 @@ public class ItemTagsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TAG_REQUEST_CODE && resultCode == RESULT_OK) {
-            String newTagName = data.getStringExtra("newTag");
-            tags.add(new Tag(newTagName));
+            // Update tags list from TagsManager
+            tags.clear();
+            tags.addAll(tagsManager.getTagsForItem(currentItemId));
             tagAdapter.notifyDataSetChanged();
         }
     }
