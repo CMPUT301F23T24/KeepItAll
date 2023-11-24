@@ -15,10 +15,16 @@ public class AddTagActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_tag);
 
         EditText tagNameEditText = findViewById(R.id.tagText);
+        String itemId = getIntent().getStringExtra("itemId");
 
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
             String tagName = tagNameEditText.getText().toString();
+
+            // Add tag to TagsManager
+            TagsManager tagsManager = new TagsManager();
+            tagsManager.addTagToItem(itemId, new Tag(tagName));
+
             Intent returnIntent = new Intent();
             returnIntent.putExtra("newTag", tagName);
             setResult(RESULT_OK, returnIntent);
