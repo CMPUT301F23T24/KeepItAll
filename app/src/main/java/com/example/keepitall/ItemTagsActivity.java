@@ -102,6 +102,7 @@ public class ItemTagsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TAG_REQUEST_CODE && resultCode == RESULT_OK) {
+            TagsManager tagsManager = TagsManager.getInstance();
             // Update tags list from TagsManager
             tags.clear();
             tags.addAll(tagsManager.getTagsForItem(currentItemId));

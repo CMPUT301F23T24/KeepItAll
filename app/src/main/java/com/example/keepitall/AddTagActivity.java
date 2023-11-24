@@ -22,7 +22,7 @@ public class AddTagActivity extends AppCompatActivity {
             String tagName = tagNameEditText.getText().toString();
 
             // Add tag to TagsManager
-            TagsManager tagsManager = new TagsManager();
+            TagsManager tagsManager = TagsManager.getInstance();
             tagsManager.addTagToItem(itemId, new Tag(tagName));
 
             Intent returnIntent = new Intent();

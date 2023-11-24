@@ -6,7 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 public class TagsManager {
+    private static TagsManager instance;
     private Map<String, List<Tag>> itemTagsMap;
+
+    public static synchronized TagsManager getInstance() {
+        if (instance == null) {
+            instance = new TagsManager();
+        }
+        return instance;
+    }
 
     public TagsManager() {
         itemTagsMap = new HashMap<>();
