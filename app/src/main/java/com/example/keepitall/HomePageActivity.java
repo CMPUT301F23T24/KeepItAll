@@ -53,7 +53,6 @@ public class HomePageActivity extends AppCompatActivity {
         // Init the total value TextView
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
-        TempImageView = findViewById(R.id.Temp_Image);
 
         // Gets username (which is passed from the login screen as an extra)
         Bundle extras = getIntent().getExtras();
@@ -154,7 +153,7 @@ public class HomePageActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            TempImageView.setImageBitmap(imageBitmap);
+            //TempImageView.setImageBitmap(imageBitmap);
         }
     }
 
