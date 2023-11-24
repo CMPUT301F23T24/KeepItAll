@@ -191,36 +191,33 @@ public class ItemManager implements Serializable {
      * sorts the list in asc/desc order based on different cases
      *
      */
-    public void sortItems(List<Item> items, String sortBy, String sortOrder) {
+    public void sortItems(String sortBy, String sortOrder) {
         Comparator<Item> comparator = null;
 
-        switch (sortBy.toLowerCase()) {
-            case "purchasedate":
+        switch (sortBy) {
+            case "DATE":
                 comparator = Comparator.comparing(Item::getPurchaseDate);
                 break;
-            case "description":
+            case "DESCRIPTION":
                 comparator = Comparator.comparing(Item::getDescription);
                 break;
-            case "make":
+            case "MAKE":
                 comparator = Comparator.comparing(Item::getMake);
                 break;
-            case "model":
+            case "MODEL":
                 comparator = Comparator.comparing(Item::getModel);
                 break;
-            case "serialnumber":
-                comparator = Comparator.comparing(Item::getSerialNumber);
-                break;
-            case "value":
+            case "VALUE":
                 comparator = Comparator.comparing(Item::getValue);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid sortBy parameter");
         }
 
-        if (sortOrder.equalsIgnoreCase("desc")) {
+        if (sortOrder.equalsIgnoreCase("DESCENDING")) {
             comparator = comparator.reversed();
         }
 
-        Collections.sort(items, comparator);
+        Collections.sort(this.itemList, comparator);
     }
 }

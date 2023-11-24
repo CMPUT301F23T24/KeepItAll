@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class HomePageActivity extends AppCompatActivity {
+public class HomePageActivity extends AppCompatActivity implements SortOptions.SortOptionsListener {
 
     private GridView gridView;
     private boolean deleteMode = false;
@@ -30,6 +30,7 @@ public class HomePageActivity extends AppCompatActivity {
     private TextView usernameView;
     private Button filterButton;
     private Button sortButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,5 +205,19 @@ public class HomePageActivity extends AppCompatActivity {
             totalValue += item.getValue();
         }
         totalValueView.setText(String.format("Total Value: $%.2f", totalValue));
+    }
+
+    @Override
+    public void onSortOptionSelected(String sortBy, String order) {
+        if (userItemManager != null) {
+            // Assuming userItemManager has a method to sort items, you would call it here.
+            userItemManager.sortItems(sortBy, order);
+
+            // After sorting, notify the adapter that the underlying data has changed.
+            homePageAdapter.notifyDataSetChanged();
+        } else {
+            // Handle the case where userItemManager is not initialized.
+            Toast.makeText(this, "Error: Item manager is not initialized.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
