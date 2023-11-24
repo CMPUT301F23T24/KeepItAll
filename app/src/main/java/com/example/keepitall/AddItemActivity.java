@@ -47,17 +47,6 @@ public class AddItemActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        Button tagButton = findViewById(R.id.tagButton); //
-        tagButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start ItemTagsActivity
-                Intent intent = new Intent(AddItemActivity.this, ItemTagsActivity.class);
-                startActivity(intent);
-            }
-        });
-
     }
 
     /**
