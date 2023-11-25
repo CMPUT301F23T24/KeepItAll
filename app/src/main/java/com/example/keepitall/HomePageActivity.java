@@ -3,11 +3,16 @@ package com.example.keepitall;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -31,14 +36,22 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private TextView usernameView;
     private Button filterButton;
     private Button sortButton;
-
     private SearchView searchText;
+    private ItemManager currentItemManager;
+    private ConstraintLayout fullLayout;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
+
+        fullLayout = findViewById(R.id.homePageLayout);
+        fullLayout.setOnTouchListener((v, event) -> {
+            hideKeyboard();
+            return false;
+        });
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -97,16 +110,15 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                         @Override
                         public boolean onQueryTextSubmit(String query) {
                             performSearch(query);
-                            return false;
+                            return true;
                         }
 
                         @Override
                         public boolean onQueryTextChange(String newText) {
                             performSearch(newText);
-                            return false;
+                            return true;
                         }
                     });
-                    //TODO: sort by, filter by
 
                 } else {
                     // Handle the case where the user is not found
@@ -125,10 +137,10 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+       homePageAdapter.updateItems(userItemManager);
 
         // Check which request we're responding to
         if (requestCode == 1) {
@@ -150,23 +162,24 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
     /**
      * Click Listener for grid, either delete or view item property
-     * @param view
-     * @param position
+     * @param view: current view
+     * @param position: position clicked
      */
     private void gridViewClickEvent(View view, int position) {
+        currentItemManager = homePageAdapter.getItemList();
+
         if (deleteMode) { // if delete
             if (itemsToRemove.contains(userItemManager.getItem(position))) { // if already selected, unselect
                 itemsToRemove.remove(userItemManager.getItem(position));
+                homePageAdapter.notifyDataSetChanged();
                 view.setBackgroundColor(Color.TRANSPARENT);
             } else {
-                itemsToRemove.add(userItemManager.getItem(position));
+                itemsToRemove.add(currentItemManager.getItem(position));
                 view.setBackgroundColor(Color.LTGRAY); // change color if selected
             }
-        }
-
-        else { // if user wants to view property item
+        } else { // if user wants to view property item
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
-            intent.putExtra("item", userItemManager.getItem(position));
+            intent.putExtra("item", currentItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
             startActivity(intent);
         }
@@ -178,6 +191,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
      *      2) Second click is to delete selected items
      */
     private void deleteButtonClickEvent() {
+        currentItemManager = homePageAdapter.getItemList();
         if (!deleteMode) {
             deleteMode = true;
             Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
@@ -185,6 +199,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         } else {
             // Delete selected items
             for (Item item : itemsToRemove) {
+                currentItemManager.deleteItem(item);
                 userItemManager.deleteItem(item);
                 userItemManager.deleteItem_DataSync(item, user);
             }
@@ -197,29 +212,40 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         }
     }
 
+    /**
+     * Performs the search and displays it based on given query
+     * @param query: searched query
+     */
     private void performSearch(String query) {
         ItemManager filteredItems = new ItemManager();
+
+        // Goes through all items to see if they match query
         for (Item item: userItemManager.getAllItems()) {
             if (item.matchesQuery(query)) {
                 filteredItems.addItem(item);
             }
         }
 
+        // update the homePage
         homePageAdapter.updateItems(filteredItems);
         homePageAdapter.notifyDataSetChanged();
         // TODO: search
     }
 
+    /**
+     * Displays sortFragment (menu)
+     */
     private void sortClickEvent() {
         SortOptions sortFragment = new SortOptions();
         sortFragment.show(getSupportFragmentManager(), "sortDialog");
-        // TODO: sort
     }
 
+    /**
+     * Displays filterFragment (date)
+     */
     private void filterClickEvent() {
         FilterOptions filterFragment = new FilterOptions();
         filterFragment.show(getSupportFragmentManager(), "filterDialog");
-        // TODO: filter
     }
 
     /**
@@ -236,9 +262,10 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
     @Override
     public void onSortOptionSelected(String sortBy, String order) {
+        currentItemManager = homePageAdapter.getItemList();
         if (userItemManager != null) {
             // Assuming userItemManager has a method to sort items, you would call it here.
-            userItemManager.sortItems(sortBy, order);
+            currentItemManager.sortItems(sortBy, order);
 
             // After sorting, notify the adapter that the underlying data has changed.
             homePageAdapter.notifyDataSetChanged();
@@ -246,5 +273,18 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             // Handle the case where userItemManager is not initialized.
             Toast.makeText(this, "Error: Item manager is not initialized.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            hideKeyboard();
+        }
+        return super.dispatchTouchEvent(event);
     }
 }
