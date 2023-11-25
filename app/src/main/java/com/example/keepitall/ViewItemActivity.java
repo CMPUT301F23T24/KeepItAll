@@ -66,6 +66,7 @@ public class ViewItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Start ItemTagsActivity
                 Intent intent = new Intent(ViewItemActivity.this, ItemTagsActivity.class);
+                intent.putExtra("itemId", item.getName());
                 startActivity(intent);
             }
         });
