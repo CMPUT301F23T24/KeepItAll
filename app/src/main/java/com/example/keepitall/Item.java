@@ -112,4 +112,11 @@ public class Item implements Serializable {
     public String getName() {
         return name;
     }
+
+    public boolean matchesQuery(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+        return name.toLowerCase().contains(lowerCaseQuery) ||
+                make.toLowerCase().contains(lowerCaseQuery) ||
+                description.toLowerCase().contains(lowerCaseQuery);
+    }
 }

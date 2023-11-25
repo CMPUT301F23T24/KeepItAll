@@ -2,6 +2,7 @@ package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.SearchView;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,6 +32,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private Button filterButton;
     private Button sortButton;
 
+    private SearchView searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,22 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     // Sort the items
                     sortButton = findViewById(R.id.sortButton);
                     sortButton.setOnClickListener(v -> sortClickEvent());
+
+                    // Search the items
+                    searchText = findViewById(R.id.searchText);
+                    searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            performSearch(query);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            performSearch(newText);
+                            return false;
+                        }
+                    });
                     //TODO: sort by, filter by
 
                 } else {
@@ -179,7 +197,16 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         }
     }
 
-    private void searchClickEvent() {
+    private void performSearch(String query) {
+        ItemManager filteredItems = new ItemManager();
+        for (Item item: userItemManager.getAllItems()) {
+            if (item.matchesQuery(query)) {
+                filteredItems.addItem(item);
+            }
+        }
+
+        homePageAdapter.updateItems(filteredItems);
+        homePageAdapter.notifyDataSetChanged();
         // TODO: search
     }
 

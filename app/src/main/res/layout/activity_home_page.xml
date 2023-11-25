@@ -68,7 +68,7 @@
                 android:layout_height="20dp"
                 android:background="@drawable/white_button"
                 android:text="Logout"
-                android:textSize="10dp"
+                android:textSize="10sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -126,7 +126,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <EditText
+    <androidx.appcompat.widget.SearchView
             android:id="@+id/searchText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -136,8 +136,6 @@
             android:autofillHints="name"
             android:background="@drawable/white_button"
             android:drawableStart="@android:drawable/ic_search_category_default"
-            android:hint="Search"
-            android:inputType="text"
             android:padding="8dp"
             android:textColor="#9AA2AA"
             app:layout_constraintBottom_toBottomOf="parent"

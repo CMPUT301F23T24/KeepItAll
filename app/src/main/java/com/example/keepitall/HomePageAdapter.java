@@ -21,6 +21,10 @@ public class HomePageAdapter extends BaseAdapter {
         inflater = (LayoutInflater.from(context));
     }
 
+
+    public void updateItems(ItemManager newItems) {
+        this.itemList = newItems;
+    }
     @Override
     public int getCount() {
         return itemList.getAllItems().size();
