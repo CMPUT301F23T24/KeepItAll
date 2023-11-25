@@ -46,8 +46,10 @@ import java.util.Objects;
  * This activity is not fully implemented
  */
 public class ImageGalleryActivity extends AppCompatActivity {
+
+    private PhotoManager photoManager;
+
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
-    private String currentPhotoPath;
     static final int REQUEST_IMAGE_CAPTURE = 3;
     private static final int PERMISSION_REQUEST_CODE = 2;
     private RecyclerView recyclerView;
@@ -71,9 +73,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
         imageRecyclerAdapter = new ImageRecyclerAdapter(uri);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(imageRecyclerAdapter);
+        photoManager = new PhotoManager(this);
         // Set the click listeners for the buttons
         backButton.setOnClickListener(view -> finish());
-        cameraButton.setOnClickListener(view -> OpenCamera());
+        cameraButton.setOnClickListener(view -> photoManager.TakePhoto());
         galleryButton.setOnClickListener(view -> OpenGallery());
 
 
@@ -99,15 +102,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
 
     private void OpenGallery(){
-        // Launch the photo picker and let the user choose only images.
-        //pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
-                //.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                //.build());
         if(ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
             Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
         }
-
         Intent intent = new Intent();
         intent.setType("image/*");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
@@ -146,84 +144,12 @@ public class ImageGalleryActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             hiddenImage.setImageBitmap(imageBitmap);
 
-            SaveImageToGallery();
-            // set the bitmap to the image view
-
+            photoManager.SaveImageToGallery(hiddenImage);
         }
 
         imageRecyclerAdapter.notifyDataSetChanged();
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
     }
-
-
-    private void SaveImageToGallery(){
-        // -- S
-        Toast.makeText(getApplicationContext(), "Image saved to gallery", Toast.LENGTH_SHORT).show();
-        Uri images;
-        ContentResolver contentResolver = getContentResolver();
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            images = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        } else{
-            images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        }
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
-        Uri uri = contentResolver.insert(images, contentValues);
-
-        try {
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) hiddenImage.getDrawable();
-            Bitmap bitmap = bitmapDrawable.getBitmap();
-
-            OutputStream outputStream = contentResolver.openOutputStream(Objects.requireNonNull(uri));
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            Objects.requireNonNull(outputStream);
-            Toast.makeText(getApplicationContext(), "Image saved to gallery", Toast.LENGTH_SHORT).show();
-
-        }catch(Exception e){
-            Toast.makeText(getApplicationContext(), "Image NOT saved to gallery!!", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-
-    private void OpenCamera(){
-        // Check if the CAMERA permission is not granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Request the CAMERA permission
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE);
-        } else {
-            // Permission already granted, proceed with your camera-related code
-            startCameraIntent();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Check if the CAMERA permission is granted
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with your camera-related code
-                startCameraIntent();
-
-            } else {
-                // Permission denied, handle accordingly (e.g., show a message to the user)
-                Toast.makeText(this, "Camera permission denied.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void startCameraIntent(){
-
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-    }
-
-
-
     //// ------------------------ ////
 
 }
