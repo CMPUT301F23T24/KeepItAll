@@ -106,8 +106,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_Gallery_Images"
-        android:layout_width="388dp"
-        android:layout_height="451dp"
+        android:layout_width="408dp"
+        android:layout_height="457dp"
         android:layout_marginStart="13dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="16dp"
@@ -115,10 +115,10 @@
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view3"
-        app:layout_constraintVertical_bias="0.657" />
+        app:layout_constraintVertical_bias="0.57" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

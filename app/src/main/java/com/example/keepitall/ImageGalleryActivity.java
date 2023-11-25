@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -49,6 +50,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private ImageRecyclerAdapter imageRecyclerAdapter;
 
     private static final int Read_Permission = 1;
+    private static final int PICK_IMAGE = 1;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
         recyclerViewText = findViewById(R.id.totalPhotos);
         recyclerView = findViewById(R.id.recyclerView_Gallery_Images);
         imageRecyclerAdapter = new ImageRecyclerAdapter(uri);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(imageRecyclerAdapter);
         // Set the click listeners for the buttons
         backButton.setOnClickListener(view -> finish());
@@ -68,12 +70,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
         galleryButton.setOnClickListener(view -> OpenGallery());
 
 
-
-        // GALLERY STUFF this may need to change
-        if(ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
-            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-        }
 
 
         ///
@@ -100,11 +96,18 @@ public class ImageGalleryActivity extends AppCompatActivity {
         //pickMultipleMedia.launch(new PickVisualMediaRequest.Builder()
                 //.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 //.build());
+        if(ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        }
+
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent.createChooser(intent, "Select Picture"), 1);
+        startActivityForResult(intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
 
     }
 
@@ -112,10 +115,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Check if the result comes from the correct activity
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
 
             if(data.getClipData() != null){
-                Toast.makeText(getApplicationContext(), "Multiple images selected", Toast.LENGTH_SHORT).show();
                 int x = data.getClipData().getItemCount();
 
                 for(int i=0; i < x; i++){
@@ -131,9 +133,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
         }
         imageRecyclerAdapter.notifyDataSetChanged();
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
-        ImageView itemLogo = findViewById(R.id.itemLogo);
-        itemLogo.setImageURI(uri.get(0));
-
     }
 
     private void OpenCamera(){
@@ -165,9 +164,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
 
     private void startCameraIntent(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivity(intent);
-
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
     }
 }
 
