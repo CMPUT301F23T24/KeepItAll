@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -64,9 +66,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
     static final int REQUEST_IMAGE_CAPTURE = 3;
-    private static final int PERMISSION_REQUEST_CODE = 2;
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    private RecyclerView recyclerView;
     private TextView recyclerViewText;
     private ArrayList<Uri> uri = new ArrayList<>();
     private PhotoGridAdapter photoGridAdapter;
@@ -75,8 +74,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     private String stringIdentifier;
     private ItemPhotoManager itemPhotoManager;
-
+    private boolean deleteMode = false;
     private GridView gridView;
+    private ArrayList<Uri> UriToDelete = new ArrayList<>();
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,16 @@ public class ImageGalleryActivity extends AppCompatActivity {
         uri = new ArrayList<>(itemPhotoManager.getPhotosForItem(stringIdentifier));
         photoGridAdapter = new PhotoGridAdapter(this, uri);
         gridView.setAdapter(photoGridAdapter);
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+                    gridViewItemClickEvent(view, position);
+                }
+        );
+
+        // Delete Tag button
+        Button deleteButton = findViewById(R.id.ImageDeleteButton);
+        deleteButton.setOnClickListener(v -> {
+            deleteButtonClickEvent();
+        });
         // Set the click listeners for the buttons
         backButton.setOnClickListener(view -> finish());
         cameraButton.setOnClickListener(view -> photoManager.TakePhoto());
@@ -113,8 +123,14 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * Method called when the user clicks on the camera button, to take a photo
+     * The photo is then saved to the user's device after being taken.
+     * This method requires an ImageView "hiddenImage" to be present in the activity
+     * @param resultCode the result code of the activity
+     * @param requestCode the request code of the activity
+     * @Intent data the intent of the activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -129,7 +145,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
                     ///TODO: add the uri to the list
                     uri.add(imageUri);
                     ///TODO: add the uri to the database
-                    SaveToDatabase(imageUri);
+                    //SaveToDatabase(imageUri);
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
@@ -155,42 +171,86 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
     //// ------------------------ ////
 
-    /**
-     * Saves a single image to the database
-     */
-    private void SaveToDatabase(Uri uriToAdd) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Request the permission if not granted
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-        } else {
-            // Permission is granted, proceed with saving to database
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference itemRef = db.collection("items").document(stringIdentifier);
-            Map<String, Object> photoData = new HashMap<>();
-            photoData.put("photo", uriToAdd.toString());
-            itemRef.collection("photos").add(photoData);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        LoadPhotos();
+        //LoadPhotos();
+    }
+
+    /**
+     * Method called when the user clicks on the gallery button, to select images from the gallery
+     * to add to the items photo list
+     */
+    private void OpenGallery() {
+        if (ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        }
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+
+    }
+
+    /**
+     * Method called when the user clicks on the delete button, to allow the user to delete images
+     * (multiple images can be selected)
+     */
+    private void deleteButtonClickEvent() {
+        Button deleteButton = findViewById(R.id.ImageDeleteButton);
+        if (!deleteMode) {
+            deleteMode = true;
+            Toast.makeText(this, "Select Pictures to delete", Toast.LENGTH_SHORT).show();
+            deleteButton.setBackgroundColor(Color.GRAY); // Change button color to indicate delete mode
+        } else {
+            // Delete selected tags
+            uri.removeAll(UriToDelete);
+            photoGridAdapter.notifyDataSetChanged(); // Refresh the adapter
+            UriToDelete.clear(); // Clear the selection
+            deleteMode = false; // Exit delete mode
+            deleteButton.setBackgroundColor(Color.WHITE); // Reset button color
+            // set the test of how many photos are left
+            recyclerViewText.setText("Total Photos: " + uri.size());
+        }
+    }
+
+    /**
+     * Method called when the user clicks on an image in the grid view.
+     * it will either allow the user to delete the image, or open the image in full screen
+     * @param view the view that was clicked
+     * @param position the position of the view in the grid view
+     */
+    private void gridViewItemClickEvent(View view, int position) {
+        if (deleteMode) {
+            Uri selectedTag = uri.get(position);
+            if (UriToDelete.contains(selectedTag)) {
+                UriToDelete.remove(selectedTag);
+                view.setBackgroundColor(Color.TRANSPARENT);
+            } else {
+                UriToDelete.add(selectedTag);
+                view.setBackgroundColor(Color.LTGRAY);
+            }
+        } else {
+            // Handle non-delete mode item click if necessary
+            // Open a new activity to view the image in full screen
+            Intent intent = new Intent(this, activity_fullscreen_image.class);
+            intent.putExtra("imageUri", uri.get(position).toString());
+            // also put the name of the item so we can pass it back here
+            intent.putExtra("itemId", stringIdentifier);
+            //startActivity(intent);
+        }
     }
 
 
+    // -- Saving and Loading Photos -- //
     private void LoadPhotos() {
         if (stringIdentifier == null) {
             return;
         }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Request the permission if not granted
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-            // You might want to handle the case where the permission is not granted immediately.
-            return;
-        }
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("items").document(stringIdentifier).collection("photos")
                 .get()
@@ -214,19 +274,17 @@ public class ImageGalleryActivity extends AppCompatActivity {
                     }
                 });
     }
+    private void SaveToDatabase(Uri uriToAdd) {
 
-    private void OpenGallery() {
-        if (ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
-            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-        }
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference itemRef = db.collection("items").document(stringIdentifier);
+        Map<String, Object> photoData = new HashMap<>();
+        photoData.put("photo", uriToAdd.toString());
+        itemRef.collection("photos").add(photoData);
 
     }
+
+    // -- Work in Progress -- //
+
+
 }
