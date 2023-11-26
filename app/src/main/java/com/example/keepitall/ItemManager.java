@@ -222,4 +222,13 @@ public class ItemManager{
 
         Collections.sort(items, comparator);
     }
+
+    public Item getItemByName(String name) {
+        for (Item item : itemList) {
+            if (item.getName().equals(name)) {
+                return item;
+            }
+        }
+        return null;
+    }
 }

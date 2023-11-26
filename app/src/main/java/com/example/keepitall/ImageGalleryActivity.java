@@ -47,7 +47,7 @@ import java.util.Objects;
  */
 public class ImageGalleryActivity extends AppCompatActivity {
 
-    private PhotoManager photoManager;
+    private PhotoManager photoManager = new PhotoManager(this);
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
     static final int REQUEST_IMAGE_CAPTURE = 3;
@@ -59,6 +59,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private ImageView hiddenImage;
     private static final int Read_Permission = 1;
     private static final int PICK_IMAGE = 1;
+    private Item item;
+
+    private User user;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,18 +76,15 @@ public class ImageGalleryActivity extends AppCompatActivity {
         imageRecyclerAdapter = new ImageRecyclerAdapter(uri);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(imageRecyclerAdapter);
-        photoManager = new PhotoManager(this);
+        Bundle extras = getIntent().getExtras();
+        String userName = extras.getString("username");
+        user = KeepItAll.getInstance().getUserByName(userName);
+
+
         // Set the click listeners for the buttons
         backButton.setOnClickListener(view -> finish());
         cameraButton.setOnClickListener(view -> photoManager.TakePhoto());
         galleryButton.setOnClickListener(view -> OpenGallery());
-
-
-
-
-        ///
-
-
         // Registers a photo picker activity launcher in single-select mode.
         pickMultipleMedia =
                 registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
@@ -97,6 +97,14 @@ public class ImageGalleryActivity extends AppCompatActivity {
                     }
                 });
 
+
+        // Retrieve the Item object sent from the previous activity
+        item = (Item) getIntent().getSerializableExtra("item");
+        if (item == null) {
+            Toast.makeText(this, "Item data is not available.", Toast.LENGTH_LONG).show();
+        } else {
+            displayUriList();
+        }
 
     }
 
@@ -125,8 +133,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
             if(data.getClipData() != null){
                 int x = data.getClipData().getItemCount();
 
-                for(int i=0; i < x; i++){
-                    uri.add(data.getClipData().getItemAt(i).getUri());
+                for(int i=0; i < x; i++) {
+                    Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                    uri.add(imageUri);
+                    // add the uri to the list
+                    user.getItemManager().getItemByName(item.getName()).getPhotoList().add(imageUri);
                 }
                 imageRecyclerAdapter.notifyDataSetChanged();
                 recyclerViewText.setText("Total Photos: " + uri.size());
@@ -152,5 +163,21 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
     //// ------------------------ ////
 
+    private void fillUriList(){
+
+    }
+
+    private void displayUriList(){
+        // Loop through the list of photo URIs that are associated with the item
+        if (item ==null || item.getPhotoList() == null) {
+            Toast.makeText(this, "Item data is not available.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        for (Uri uri : user.getItemManager().getItemByName(item.getName()).getPhotoList()) {
+            // Add the URI to the list
+            this.uri.add(uri);
+        }
+        imageRecyclerAdapter.notifyDataSetChanged();
+    }
 }
 

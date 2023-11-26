@@ -56,7 +56,16 @@ public class PhotoManager {
     public PhotoManager(Context context) {
         this.context = context;
         this.activity = (Activity) context;
-        this.PhotoList = new ArrayList<>();
+        this.PhotoList = new ArrayList<Uri>();
+    }
+
+    public PhotoManager() {
+        this.PhotoList = new ArrayList<Uri>();
+    }
+
+    public void Initialize(Context context){
+        this.context = context;
+        this.activity = (Activity) context;
     }
 
     /**
@@ -109,6 +118,18 @@ public class PhotoManager {
 
     }
 
+    /**
+     * Add a photo to the list of photos held by the manager
+     */
+    public void addPhoto(Uri uri){
+        if(!PhotoList.contains(uri) && uri != null){
+            PhotoList.add(uri);
+        }
+
+    }
+
+
+    public ArrayList<Uri> getPhotoList(){ return PhotoList;}
 
 }
 

@@ -45,6 +45,7 @@ public class HomePageActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 2; // For taking picture
     private ImageView TempImageView;
     private TextView usernameView;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class HomePageActivity extends AppCompatActivity {
         // Gets username (which is passed from the login screen as an extra)
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String userName = extras.getString("username");
+            userName = extras.getString("username");
 
             // Ensure that the username is not null or empty
             if (userName != null && !userName.isEmpty()) {
@@ -177,6 +178,7 @@ public class HomePageActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
             intent.putExtra("item", userItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
+            intent.putExtra("username", userName);
             startActivity(intent);
         }
     }
