@@ -37,18 +37,11 @@ import java.util.Objects;
  * - syncing with the cloud (firebase)
  */
 public class PhotoManager {
-    private static PhotoManager instance;
-    private Map<String, List<Uri>> itemPhotosMap;
     // --- Request codes --- //
     private static final int PERMISSION_REQUEST_CODE = 2;
 
-    // --- Class variables --- //
-    // The list of photos that are currently held by the manager
-    private ArrayList<Uri> PhotoList;
     private Context context;
     private Activity activity;
-
-
 
 
     /**
@@ -59,16 +52,6 @@ public class PhotoManager {
      * @param context the context of the activity that is using the PhotoManager
      */
     public PhotoManager(Context context) {
-        this.context = context;
-        this.activity = (Activity) context;
-        this.PhotoList = new ArrayList<Uri>();
-    }
-
-    public PhotoManager() {
-        this.PhotoList = new ArrayList<Uri>();
-    }
-
-    public void Initialize(Context context){
         this.context = context;
         this.activity = (Activity) context;
     }
@@ -120,21 +103,6 @@ public class PhotoManager {
             //pass
             // not added to gallery
         }
-
     }
-
-    /**
-     * Add a photo to the list of photos held by the manager
-     */
-    public void addPhoto(Uri uri){
-        if(!PhotoList.contains(uri) && uri != null){
-            PhotoList.add(uri);
-        }
-
-    }
-
-
-    public ArrayList<Uri> getPhotoList(){ return PhotoList;}
-
 }
 
