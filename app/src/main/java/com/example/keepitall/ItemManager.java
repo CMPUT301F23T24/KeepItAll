@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -185,41 +184,37 @@ public class ItemManager{
     }
 
     /**
-     * Sorts the items in the list by the specified parameter
-     * @param items - the list of items to be sorted
-     * @param sortBy - the parameter to sort by
-     * @param sortOrder - the order to sort by (asc or desc)
+     *
+     * @param sortBy: what the itemManager will be sorted by (tag, description, date, etc.)
+     * @param sortOrder: order of sort, either descending or ascending
      */
-    public void sortItems(List<Item> items, String sortBy, String sortOrder) {
-        //TODO: Implement sorting by specific parameters
-        Comparator<Item> comparator;
-        switch (sortBy.toLowerCase()) {
-            case "purchasedate":
+    public void sortItems(String sortBy, String sortOrder) {
+        Comparator<Item> comparator = null;
+
+        switch (sortBy) {
+            case "DATE":
                 comparator = Comparator.comparing(Item::getPurchaseDate);
                 break;
-            case "description":
+            case "DESCRIPTION":
                 comparator = Comparator.comparing(Item::getDescription);
                 break;
-            case "make":
+            case "MAKE":
                 comparator = Comparator.comparing(Item::getMake);
                 break;
-            case "model":
+            case "MODEL":
                 comparator = Comparator.comparing(Item::getModel);
                 break;
-            case "serialnumber":
-                comparator = Comparator.comparing(Item::getSerialNumber);
-                break;
-            case "value":
+            case "VALUE":
                 comparator = Comparator.comparing(Item::getValue);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid sortBy parameter");
         }
 
-        if (sortOrder.equalsIgnoreCase("desc")) {
+        if (sortOrder.equalsIgnoreCase("DESCENDING")) {
             comparator = comparator.reversed();
         }
 
-        Collections.sort(items, comparator);
+        Collections.sort(this.itemList, comparator);
     }
 }
