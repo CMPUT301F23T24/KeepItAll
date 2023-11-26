@@ -100,6 +100,16 @@ public class Item implements Serializable {
     public void setValue(Float value) { this.value = value;}
     // Tag
     public List<Tag> getTags() { return tags; }
+
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }
+
+
+    public boolean matchesQuery(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+        return name.toLowerCase().contains(lowerCaseQuery) ||
+                make.toLowerCase().contains(lowerCaseQuery) ||
+                description.toLowerCase().contains(lowerCaseQuery);
+    }
 }
+
