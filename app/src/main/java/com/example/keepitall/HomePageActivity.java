@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,11 +15,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class HomePageActivity extends AppCompatActivity implements SortOptions.SortOptionsListener {
@@ -34,11 +37,12 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private Button logoutButton;
     private TextView usernameView;
-    private Button filterButton;
+    private Button filterDateButton;
     private Button sortButton;
     private SearchView searchText;
     private ItemManager currentItemManager;
-    private ConstraintLayout fullLayout;
+    private Date startDate;
+    private Date endDate;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -46,12 +50,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
-
-        fullLayout = findViewById(R.id.homePageLayout);
-        fullLayout.setOnTouchListener((v, event) -> {
-            hideKeyboard();
-            return false;
-        });
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -64,7 +62,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                 user = keepItAll.getUserByName(userName);
                 if (user != null) {
                     userItemManager = user.getItemManager();
-                    updateTotalValue(); // Gets the total Value
 
                     // sets username
                     usernameView = findViewById(R.id.nameText);
@@ -74,6 +71,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     gridView = findViewById(R.id.gridView);
                     homePageAdapter = new HomePageAdapter(this, userItemManager);
                     gridView.setAdapter(homePageAdapter);
+
+                    updateTotalValue(); // Gets the total Value
 
                     // gridView onClickListener for deletion or view item properties
                     gridView.setOnItemClickListener((parent, view, position, id) -> {
@@ -97,8 +96,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
 
                     // Filter the items
-                    filterButton = findViewById(R.id.filterButton);
-                    filterButton.setOnClickListener(v -> filterClickEvent());
+                    filterDateButton = findViewById(R.id.filterButton);
+                    filterDateButton.setOnClickListener(v -> filterClickEvent(true));
 
                     // Sort the items
                     sortButton = findViewById(R.id.sortButton);
@@ -117,13 +116,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                         public boolean onQueryTextChange(String newText) {
                             performSearch(newText);
                             return true;
-                        }
-                    });
-                    View view = findViewById(R.id.view);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(HomePageActivity.this, "why", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -236,7 +228,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         // update the homePage
         homePageAdapter.updateItems(filteredItems);
         homePageAdapter.notifyDataSetChanged();
-        // TODO: search
+        updateTotalValue();
     }
 
     /**
@@ -248,11 +240,56 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     }
 
     /**
-     * Displays filterFragment (date)
+     * Allows user to pick two dates and filter out items (startDate, endDate)
+     * @param isStartDate
      */
-    private void filterClickEvent() {
-        FilterOptions filterFragment = new FilterOptions();
-        filterFragment.show(getSupportFragmentManager(), "filterDialog");
+    private void filterClickEvent(final boolean isStartDate) {
+        if (isStartDate) {
+            Toast.makeText(this, "Choose Start Date:", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Choose End Date:", Toast.LENGTH_SHORT).show();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                HomePageActivity.this,
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar newDate = Calendar.getInstance();
+                    newDate.set(year, monthOfYear, dayOfMonth);
+                    if (isStartDate) {
+                        startDate = newDate.getTime();
+                        // Once start date is selected, show DatePickerDialog for the end date
+                        filterClickEvent(false);
+                    } else {
+                        endDate = newDate.getTime();
+                        // After end date is selected, filter the items
+                        filterItemsByDateRange();
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        datePickerDialog.show();
+    }
+
+    /**
+     * Gets items that are dated between the given dates
+     */
+    private void filterItemsByDateRange() {
+        if (startDate == null || endDate == null) {
+            Toast.makeText(HomePageActivity.this, "Please select both start and end dates.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        ItemManager filteredItems = new ItemManager();
+        for (Item item : userItemManager.getAllItems()) {
+            if (!item.getPurchaseDate().before(startDate) && !item.getPurchaseDate().after(endDate)) {
+                filteredItems.addItem(item);
+            }
+        }
+        homePageAdapter.updateItems(filteredItems);
+        homePageAdapter.notifyDataSetChanged();
+        updateTotalValue();
     }
 
     /**
@@ -260,33 +297,44 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
      */
     private void updateTotalValue() {
         float totalValue = 0;
-        ArrayList<Item> allItems = userItemManager.getAllItems();
+        ArrayList<Item> allItems = homePageAdapter.getItemList().getAllItems();
         for (Item item: allItems) {
             totalValue += item.getValue();
         }
         totalValueView.setText(String.format("Total Value: $%.2f", totalValue));
     }
 
+    /**
+     *
+     * @param sortBy: what property is being used to sort the items
+     * @param order: descending or ascending
+     */
     @Override
     public void onSortOptionSelected(String sortBy, String order) {
         currentItemManager = homePageAdapter.getItemList();
-        if (userItemManager != null) {
-            // Assuming userItemManager has a method to sort items, you would call it here.
+        if (currentItemManager != null) {
+            // Sort the items on the currentItemManager
             currentItemManager.sortItems(sortBy, order);
 
             // After sorting, notify the adapter that the underlying data has changed.
             homePageAdapter.notifyDataSetChanged();
-        } else {
-            // Handle the case where userItemManager is not initialized.
-            Toast.makeText(this, "Error: Item manager is not initialized.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Logic for hiding the keyboard
+     */
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
     }
 
+    /**
+     * Hides keyboard if user clicks anywhere else on the screen
+     * @param event The touch screen event.
+     *
+     * @return super.dispatchTouchEvent(event): boolean
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

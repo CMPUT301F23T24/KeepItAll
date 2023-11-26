@@ -147,7 +147,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/white_button"
-        android:text="Filter By:"
+        android:text=" Filter Date:"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/sortButton" />
 
