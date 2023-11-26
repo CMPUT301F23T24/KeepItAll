@@ -119,6 +119,13 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                             return true;
                         }
                     });
+                    View view = findViewById(R.id.view);
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(HomePageActivity.this, "why", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                 } else {
                     // Handle the case where the user is not found
