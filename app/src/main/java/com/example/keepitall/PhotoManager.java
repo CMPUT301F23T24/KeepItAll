@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,7 +37,8 @@ import java.util.Objects;
  * - syncing with the cloud (firebase)
  */
 public class PhotoManager {
-
+    private static PhotoManager instance;
+    private Map<String, List<Uri>> itemPhotosMap;
     // --- Request codes --- //
     private static final int PERMISSION_REQUEST_CODE = 2;
 
@@ -44,6 +47,8 @@ public class PhotoManager {
     private ArrayList<Uri> PhotoList;
     private Context context;
     private Activity activity;
+
+
 
 
     /**
