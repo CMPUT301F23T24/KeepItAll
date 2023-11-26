@@ -29,9 +29,7 @@ public class ItemPhotoManager {
 
     public void addPhotoToItem(String itemId, Uri photo) {
         List<Uri> photos = itemPhotosMap.getOrDefault(itemId, new ArrayList<>());
-        if (!photos.contains(photo)) {
-            photos.add(photo);
-        }
+        photos.add(photo);
         itemPhotosMap.put(itemId, photos);
     }
 

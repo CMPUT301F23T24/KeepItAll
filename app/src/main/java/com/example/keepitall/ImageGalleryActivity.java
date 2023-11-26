@@ -153,9 +153,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
                 for (int i = 0; i < x; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
                     ///TODO: add the uri to the list
-                    uri.add(imageUri);
+                    //uri.add(imageUri);
+                    ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
+                    itemPhotoManager.addPhotoToItem(stringIdentifier, imageUri);
                     ///TODO: add the uri to the database
-                    //SaveToDatabase(imageUri);
+                    SaveToDatabase(imageUri);
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
@@ -166,6 +168,8 @@ public class ImageGalleryActivity extends AppCompatActivity {
                 String imageURL = data.getData().getPath();
                 uri.add(Uri.parse(imageURL));
             }
+
+            ///TODO: Refresh the adapter + update local uri list
         }
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -178,6 +182,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         photoGridAdapter.notifyDataSetChanged();
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
+        LoadPhotosTest();
     }
 
     @Override
@@ -219,13 +224,21 @@ public class ImageGalleryActivity extends AppCompatActivity {
             deleteButton.setBackgroundColor(Color.GRAY); // Change button color to indicate delete mode
         } else {
             // Delete selected Images
-            uri.removeAll(UriToDelete);
+            for (Uri uriToDelete : UriToDelete) {
+                ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
+                itemPhotoManager.removePhotoFromItem(stringIdentifier, uriToDelete);
+            }
+            ///TODO: remove the uri from the database
+
             photoGridAdapter.notifyDataSetChanged(); // Refresh the adapter
             UriToDelete.clear(); // Clear the selection
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundColor(Color.WHITE); // Reset button color
             // Update the UI
             TotalPhotos.setText("Total Photos: " + uri.size());
+
+            ///TODO: Refresh the adapter + update local uri list
+            LoadPhotosTest();
         }
     }
 
@@ -312,6 +325,19 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     }
 
+    private void LoadPhotosTest(){
+        ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
+        // update the list of photos
+        if(itemPhotoManager.getPhotosForItem(stringIdentifier) != null){
+            uri.clear();
+            uri.addAll(itemPhotoManager.getPhotosForItem(stringIdentifier));
+        }
+        // Notify the adapter of the data change
+        photoGridAdapter.notifyDataSetChanged();
+        // Update the UI of the total number of photos
+        TotalPhotos.setText("Total Photos: " + uri.size());
+
+    }
     // -- Work in Progress -- //
 
 
