@@ -62,63 +62,73 @@ import java.util.Objects;
  */
 public class ImageGalleryActivity extends AppCompatActivity {
 
-    private PhotoManager photoManager = new PhotoManager(this);
-
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
+    // == Request Codes == //
     static final int REQUEST_IMAGE_CAPTURE = 3;
-    private TextView recyclerViewText;
-    private ArrayList<Uri> uri = new ArrayList<>();
-    private PhotoGridAdapter photoGridAdapter;
-    private ImageView hiddenImage;
     private static final int Read_Permission = 1;
     private static final int PICK_IMAGE = 1;
-    private String stringIdentifier;
-    private ItemPhotoManager itemPhotoManager;
-    private boolean deleteMode = false;
-    private GridView gridView;
-    private ArrayList<Uri> UriToDelete = new ArrayList<>();
 
+    // -- Variables -- //
+    // PhotoManager object used for TAKING photos
+    private PhotoManager photoManager = new PhotoManager(this);
+    // ActivityResultLauncher used for PICKING photos
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
+    // TextView used to display the number of photos
+    private TextView TotalPhotos;
+    // ArrayList used to store the URIs of the images
+    private ArrayList<Uri> uri = new ArrayList<>();
+    // Adapter used to display the images in the grid view
+    private PhotoGridAdapter photoGridAdapter;
+    // The hidden image view used to save the image to the gallery (this is not displayed to user)
+    private ImageView hiddenImage;
+    // ID Identifier of the item (which is passed from the previous activity)
+    private String stringIdentifier;
+    //
+    private ItemPhotoManager itemPhotoManager;
+    // Grid View
+    private GridView gridView;
+
+    // Delete Variables
+    private boolean deleteMode = false;
+    private ArrayList<Uri> UriToDelete = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // ---------- INITIALIZATION ---------- //
+
+        // Set the content view
         setContentView(R.layout.image_gallery);
+
+        // Initialize the UI elements
+        TotalPhotos = findViewById(R.id.totalPhotos);
+        hiddenImage = findViewById(R.id.hiddenImage);
+        stringIdentifier = getIntent().getStringExtra("itemId");
+        itemPhotoManager = new ItemPhotoManager();
+        uri = new ArrayList<>(itemPhotoManager.getPhotosForItem(stringIdentifier));
+        /// Gridview
+        gridView = findViewById(R.id.imageGridView);
+        photoGridAdapter = new PhotoGridAdapter(this, uri);
+        gridView.setAdapter(photoGridAdapter);
+
         // Connect the buttons to their respective views
         Button backButton = findViewById(R.id.viewBackButton);
         Button cameraButton = findViewById(R.id.cameraButton);
         Button galleryButton = findViewById(R.id.galleryOpenButton);
-        recyclerViewText = findViewById(R.id.totalPhotos);
-        hiddenImage = findViewById(R.id.hiddenImage);
-        gridView = findViewById(R.id.imageGridView);
-        stringIdentifier = getIntent().getStringExtra("itemId");
-        itemPhotoManager = new ItemPhotoManager();
-        uri = new ArrayList<>(itemPhotoManager.getPhotosForItem(stringIdentifier));
-        photoGridAdapter = new PhotoGridAdapter(this, uri);
-        gridView.setAdapter(photoGridAdapter);
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-                    gridViewItemClickEvent(view, position);
-                }
-        );
-
-        // Delete Tag button
         Button deleteButton = findViewById(R.id.ImageDeleteButton);
-        deleteButton.setOnClickListener(v -> {
-            deleteButtonClickEvent();
-        });
-        // Set the click listeners for the buttons
+
+        // Connect Buttons to their respective Functions
+        deleteButton.setOnClickListener(v -> deleteButtonClickEvent());
         backButton.setOnClickListener(view -> finish());
         cameraButton.setOnClickListener(view -> photoManager.TakePhoto());
         galleryButton.setOnClickListener(view -> OpenGallery());
-        // Registers a photo picker activity launcher in single-select mode.
-        pickMultipleMedia =
-                registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
-                    // Callback is invoked after the user selects media items or closes the
-                    // photo picker.
-                    if (!uris.isEmpty()) {
-                        Log.d("PhotoPicker", "Number of items selected: " + uris.size());
-                    } else {
-                        Log.d("PhotoPicker", "No media selected");
-                    }
-                });
+        gridView.setOnItemClickListener((parent, view, position, id) -> gridViewItemClickEvent(view, position));
+
+        // Register the photo picker activity
+        registerPhotoPickerActivity();
+
+        // ---------- POST INITIALIZATION ---------- //
+
+
         //LoadPhotos();
     }
 
@@ -149,7 +159,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
-                recyclerViewText.setText("Total Photos: " + uri.size());
+                TotalPhotos.setText("Total Photos: " + uri.size());
             } else if (data.getData() != null) {
                 Toast.makeText(getApplicationContext(), "Single image selected", Toast.LENGTH_SHORT).show();
                 // get the URI of the image
@@ -169,7 +179,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
         photoGridAdapter.notifyDataSetChanged();
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
     }
-    //// ------------------------ ////
 
     @Override
     protected void onResume() {
@@ -201,20 +210,22 @@ public class ImageGalleryActivity extends AppCompatActivity {
      * (multiple images can be selected)
      */
     private void deleteButtonClickEvent() {
+        // Get the delete button
         Button deleteButton = findViewById(R.id.ImageDeleteButton);
+        // Toggle delete mode
         if (!deleteMode) {
             deleteMode = true;
             Toast.makeText(this, "Select Pictures to delete", Toast.LENGTH_SHORT).show();
             deleteButton.setBackgroundColor(Color.GRAY); // Change button color to indicate delete mode
         } else {
-            // Delete selected tags
+            // Delete selected Images
             uri.removeAll(UriToDelete);
             photoGridAdapter.notifyDataSetChanged(); // Refresh the adapter
             UriToDelete.clear(); // Clear the selection
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundColor(Color.WHITE); // Reset button color
-            // set the test of how many photos are left
-            recyclerViewText.setText("Total Photos: " + uri.size());
+            // Update the UI
+            TotalPhotos.setText("Total Photos: " + uri.size());
         }
     }
 
@@ -225,26 +236,43 @@ public class ImageGalleryActivity extends AppCompatActivity {
      * @param position the position of the view in the grid view
      */
     private void gridViewItemClickEvent(View view, int position) {
+        // Check if we are in delete mode
         if (deleteMode) {
+            // get the uri of the selected image
             Uri selectedTag = uri.get(position);
             if (UriToDelete.contains(selectedTag)) {
+                // remove the tag from the list
                 UriToDelete.remove(selectedTag);
                 view.setBackgroundColor(Color.TRANSPARENT);
             } else {
+                // add the tag to the list
                 UriToDelete.add(selectedTag);
                 view.setBackgroundColor(Color.LTGRAY);
             }
         } else {
-            // Handle non-delete mode item click if necessary
             // Open a new activity to view the image in full screen
             Intent intent = new Intent(this, activity_fullscreen_image.class);
-            intent.putExtra("imageUri", uri.get(position).toString());
-            // also put the name of the item so we can pass it back here
-            intent.putExtra("itemId", stringIdentifier);
-            //startActivity(intent);
+            // Save the uri of the image to the intent
+            Uri imageUri = uri.get(position);
+            intent.putExtra("image", imageUri.toString());
+            // Start the full screen image activity
+            startActivity(intent);
         }
     }
 
+    private void registerPhotoPickerActivity(){
+        // Registers a photo picker activity launcher in single-select mode.
+        pickMultipleMedia =
+                registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
+                    // Callback is invoked after the user selects media items or closes the
+                    // photo picker.
+                    if (!uris.isEmpty()) {
+                        Log.d("PhotoPicker", "Number of items selected: " + uris.size());
+                    } else {
+                        Log.d("PhotoPicker", "No media selected");
+                    }
+                });
+    }
 
     // -- Saving and Loading Photos -- //
     private void LoadPhotos() {
@@ -268,7 +296,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
                         // Notify the adapter of the data change
                         photoGridAdapter.notifyDataSetChanged();
                         // Update the UI or perform additional tasks as needed
-                        recyclerViewText.setText("Total Photos: " + uri.size());
+                        TotalPhotos.setText("Total Photos: " + uri.size());
                     } else {
                         // Handle failure
                     }

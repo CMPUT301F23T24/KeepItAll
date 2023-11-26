@@ -1,9 +1,6 @@
 package com.example.keepitall;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
-
 import static com.example.keepitall.ImageGalleryActivity.REQUEST_IMAGE_CAPTURE;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -13,13 +10,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -39,7 +33,6 @@ import java.util.Objects;
 public class PhotoManager {
     // --- Request codes --- //
     private static final int PERMISSION_REQUEST_CODE = 2;
-
     private Context context;
     private Activity activity;
 
@@ -79,19 +72,21 @@ public class PhotoManager {
      * @param hiddenImage the ImageView that will be used to pass the information of the image (invisible to the user)
      */
     public void SaveImageToGallery(ImageView hiddenImage){
+        // Create a new ContentValues object and put the image's data into it
         Uri images;
         ContentResolver contentResolver = activity.getContentResolver();
-
+        // Check if the WRITE_EXTERNAL_STORAGE permission is not granted
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             images = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
         } else{
             images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         }
+        // Create a new ContentValues object and put the image's data into it
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
         contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
         Uri uri = contentResolver.insert(images, contentValues);
-
+        // Save the image to the gallery
         try {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) hiddenImage.getDrawable();
             Bitmap bitmap = bitmapDrawable.getBitmap();
