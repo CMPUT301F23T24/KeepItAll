@@ -18,7 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KeepItAll"
         tools:targetApi="31">
-
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.keepitall.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"></meta-data>
+        </provider>
         <activity
             android:name=".ImageGalleryActivity"
             android:exported="false" />
@@ -55,15 +63,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddItemActivity" />
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.Fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"></meta-data>
-        </provider>
+
     </application>
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />

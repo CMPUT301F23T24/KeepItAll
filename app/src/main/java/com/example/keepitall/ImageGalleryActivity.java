@@ -20,6 +20,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.GridView;
@@ -35,10 +37,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -60,6 +65,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
     static final int REQUEST_IMAGE_CAPTURE = 3;
     private static final int PERMISSION_REQUEST_CODE = 2;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     private RecyclerView recyclerView;
     private TextView recyclerViewText;
     private ArrayList<Uri> uri = new ArrayList<>();
@@ -103,24 +109,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
                         Log.d("PhotoPicker", "No media selected");
                     }
                 });
-        LoadPhotos();
+        //LoadPhotos();
     }
 
 
-    private void OpenGallery(){
-        if(ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
-            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-        }
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
 
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,21 +121,20 @@ public class ImageGalleryActivity extends AppCompatActivity {
         // Check if the result comes from the correct activity
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
 
-            if(data.getClipData() != null){
+            if (data.getClipData() != null) {
                 int x = data.getClipData().getItemCount();
 
-                for(int i=0; i < x; i++) {
+                for (int i = 0; i < x; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                    uri.add(imageUri);
                     ///TODO: add the uri to the list
-
+                    uri.add(imageUri);
                     ///TODO: add the uri to the database
-                    //SaveToDatabase(imageUri);
+                    SaveToDatabase(imageUri);
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
                 recyclerViewText.setText("Total Photos: " + uri.size());
-            } else if(data.getData() != null){
+            } else if (data.getData() != null) {
                 Toast.makeText(getApplicationContext(), "Single image selected", Toast.LENGTH_SHORT).show();
                 // get the URI of the image
                 String imageURL = data.getData().getPath();
@@ -150,7 +142,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
             }
         }
 
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // save the value of the images to hiddenImage, which we will use to save to the gallery
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -166,46 +158,75 @@ public class ImageGalleryActivity extends AppCompatActivity {
     /**
      * Saves a single image to the database
      */
-    private void SaveToDatabase(Uri uriToAdd){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference itemRef = db.collection("items").document(stringIdentifier);
-        Map<String, Uri> photoData = new HashMap<>();
-        photoData.put("photo", uriToAdd);
-        itemRef.collection("photos").add(photoData);
+    private void SaveToDatabase(Uri uriToAdd) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        } else {
+            // Permission is granted, proceed with saving to database
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference itemRef = db.collection("items").document(stringIdentifier);
+            Map<String, Object> photoData = new HashMap<>();
+            photoData.put("photo", uriToAdd.toString());
+            itemRef.collection("photos").add(photoData);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        //LoadPhotos();
+        LoadPhotos();
     }
 
-    private void LoadPhotos(){
-        if(stringIdentifier == null){
+
+    private void LoadPhotos() {
+        if (stringIdentifier == null) {
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            // You might want to handle the case where the permission is not granted immediately.
             return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         db.collection("items").document(stringIdentifier).collection("photos")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        uri.clear();
+                        uri.clear(); // Clear the existing list before adding new items
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // get the URI of the image
-                            String photoUri = document.getString("photo");
-                            //uri.add(Uri.parse(photoUri));
+                            // Get the URL of the image
+                            String photoUrl = document.getString("photo");
+                            if (photoUrl != null) {
+                                //TODO: Figure out how to gain permission to access the image
+                                //uri.add(Uri.parse(photoUrl));
+                            }
                         }
+                        // Notify the adapter of the data change
                         photoGridAdapter.notifyDataSetChanged();
+                        // Update the UI or perform additional tasks as needed
+                        recyclerViewText.setText("Total Photos: " + uri.size());
                     } else {
                         // Handle failure
                     }
                 });
-        photoGridAdapter.notifyDataSetChanged();
-        recyclerViewText.setText("Total Photos: " + uri.size());
     }
 
-}
+    private void OpenGallery() {
+        if (ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
+            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+        }
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
 
+    }
+}
