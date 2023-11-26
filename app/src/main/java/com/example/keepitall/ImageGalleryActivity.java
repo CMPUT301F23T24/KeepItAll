@@ -1,5 +1,6 @@
 package com.example.keepitall;
 
+import static android.app.appsearch.SetSchemaRequest.READ_EXTERNAL_STORAGE;
 import static com.example.keepitall.HomePageActivity.REQUEST_IMAGE_CAPTURE;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -136,7 +137,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
                     ///TODO: add the uri to the list
 
                     ///TODO: add the uri to the database
-                    SaveToDatabase(imageUri);
+                    //SaveToDatabase(imageUri);
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
@@ -154,7 +155,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             hiddenImage.setImageBitmap(imageBitmap);
-
             photoManager.SaveImageToGallery(hiddenImage);
         }
 
@@ -163,34 +163,32 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
     //// ------------------------ ////
 
-    private void fillUriList(){
-
-    }
-
-    private void displayUriList(){
-
-    }
-
     /**
      * Saves a single image to the database
      */
     private void SaveToDatabase(Uri uriToAdd){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference itemRef = db.collection("items").document(stringIdentifier);
-        Map<String, Object> photoData = new HashMap<>();
+        Map<String, Uri> photoData = new HashMap<>();
         photoData.put("photo", uriToAdd);
         itemRef.collection("photos").add(photoData);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //LoadPhotos();
+    }
 
     private void LoadPhotos(){
         if(stringIdentifier == null){
             return;
         }
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String itemId = getIntent().getStringExtra("itemId");
 
-        db.collection("items").document(itemId).collection("photos")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("items").document(stringIdentifier).collection("photos")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -198,7 +196,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // get the URI of the image
                             String photoUri = document.getString("photo");
-                            uri.add(Uri.parse(photoUri));
+                            //uri.add(Uri.parse(photoUri));
                         }
                         photoGridAdapter.notifyDataSetChanged();
                     } else {
@@ -208,5 +206,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
         photoGridAdapter.notifyDataSetChanged();
         recyclerViewText.setText("Total Photos: " + uri.size());
     }
+
 }
 

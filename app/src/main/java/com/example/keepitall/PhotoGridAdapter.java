@@ -40,7 +40,7 @@ public class PhotoGridAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.image_grid, parent, false);
 
-        ImageView photoImageView = convertView.findViewById(R.id.imagePhoto);
+        ImageView photoImageView = convertView.findViewById(R.id.PhotoIcon);
 
         Uri photo = getItem(position);
         if (photo != null) {
