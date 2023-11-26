@@ -128,8 +128,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         // ---------- POST INITIALIZATION ---------- //
 
-
-        //LoadPhotos();
     }
 
 
@@ -153,11 +151,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
                 for (int i = 0; i < x; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
                     ///TODO: add the uri to the list
-                    //uri.add(imageUri);
-                    ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-                    itemPhotoManager.addPhotoToItem(stringIdentifier, imageUri);
+                    uri.add(imageUri);
+                    //ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
+                    //itemPhotoManager.addPhotoToItem(stringIdentifier, imageUri);
                     ///TODO: add the uri to the database
-                    SaveToDatabase(imageUri);
+                    //SaveToDatabase(imageUri);
 
                 }
                 photoGridAdapter.notifyDataSetChanged();
@@ -182,13 +180,12 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         photoGridAdapter.notifyDataSetChanged();
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
-        LoadPhotosTest();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //LoadPhotos();
+        //LoadFromDatabase();
     }
 
     /**
@@ -224,10 +221,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
             deleteButton.setBackgroundColor(Color.GRAY); // Change button color to indicate delete mode
         } else {
             // Delete selected Images
-            for (Uri uriToDelete : UriToDelete) {
-                ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-                itemPhotoManager.removePhotoFromItem(stringIdentifier, uriToDelete);
-            }
+            uri.removeAll(UriToDelete);
+            //for (Uri uriToDelete : UriToDelete) {
+                //ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
+                //itemPhotoManager.removePhotoFromItem(stringIdentifier, uriToDelete);
+            //}
             ///TODO: remove the uri from the database
 
             photoGridAdapter.notifyDataSetChanged(); // Refresh the adapter
@@ -238,7 +236,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
             TotalPhotos.setText("Total Photos: " + uri.size());
 
             ///TODO: Refresh the adapter + update local uri list
-            LoadPhotosTest();
         }
     }
 
@@ -288,30 +285,26 @@ public class ImageGalleryActivity extends AppCompatActivity {
     }
 
     // -- Saving and Loading Photos -- //
-    private void LoadPhotos() {
+    private void LoadFromDatabase() {
         if (stringIdentifier == null) {
             return;
         }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Load the photos from the database into the uri list
         db.collection("items").document(stringIdentifier).collection("photos")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        uri.clear(); // Clear the existing list before adding new items
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Get the URL of the image
-                            String photoUrl = document.getString("photo");
-                            if (photoUrl != null) {
-                                //TODO: Figure out how to gain permission to access the image
-                                //uri.add(Uri.parse(photoUrl));
-                            }
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            String photo = document.getString("photo");
+                            uri.add(Uri.parse(photo));
                         }
                         // Notify the adapter of the data change
                         photoGridAdapter.notifyDataSetChanged();
-                        // Update the UI or perform additional tasks as needed
+                        // Update the UI of the total number of photos
                         TotalPhotos.setText("Total Photos: " + uri.size());
                     } else {
-                        // Handle failure
+                        Log.d("PhotoPicker", "Error getting documents: ", task.getException());
                     }
                 });
     }
@@ -339,6 +332,4 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     }
     // -- Work in Progress -- //
-
-
 }
