@@ -1,18 +1,17 @@
 package com.example.keepitall;
 
 import android.nfc.Tag;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 
-
-
 /**
  * Represents an item with various attributes and tags.
+ * Implements Serializable to allow for passing between activities.
  */
 public class Item implements Serializable {
+    // Private variables
     private Date purchaseDate;
     private String description;
     private String make;
@@ -21,7 +20,6 @@ public class Item implements Serializable {
     private Float value;
     private List<Tag> tags;
     private String name;
-
 
     /**
      * Constructs an Item object with all attributes.
@@ -42,76 +40,59 @@ public class Item implements Serializable {
         this.tags = new ArrayList<>();  // Initialize tags list
         this.name = name;
     }
+
+    // Tags //
+    /**
+     * Adds a tag to the item.
+     * @param tag The tag to add.
+
+     */
+    public void addTag(Tag tag) {
+        //TODO: More functionality for tags soon
+        tags.add(tag);
+    }
+
+    /**
+     * Removes a tag from the item.
+     * @param tag - The tag to remove.
+
+     */
+    public void removeTag(Tag tag) {
+        //TODO: More functionality for tags soon
+        tags.remove(tag);
+    }
+
+    /**
+     * Default constructor for Item object. with no parameters
+     */
     public Item(){
         this.tags = new ArrayList<>();  // Initialize tags list
     }
 
-    public Date getPurchaseDate() {
-        return purchaseDate;
-    }
-
-    public void setPurchaseDate(Date purchaseDate) {
-        this.purchaseDate = purchaseDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getMake() {
-        return make;
-    }
-
-    public void setMake(String make) {
-        this.make = make;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public Integer getSerialNumber() {
-        return serialNumber;
-    }
-
-    public void setSerialNumber(Integer serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
-    }
-     public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    // Getters and setters //
+    // Name
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    // Purchase date
+    public Date getPurchaseDate() { return purchaseDate;}
+    public void setPurchaseDate(Date purchaseDate) { this.purchaseDate = purchaseDate; }
+    // Description
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    // Make
+    public String getMake() { return make; }
+    public void setMake(String make) { this.make = make; }
+    // Model
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+    // Serial number
+    public Integer getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(Integer serialNumber) { this.serialNumber = serialNumber; }
+    // Value
+    public Float getValue() { return value; }
+    public void setValue(Float value) { this.value = value;}
+    // Tag
+    public List<Tag> getTags() { return tags; }
 
     public boolean matchesQuery(String query) {
         String lowerCaseQuery = query.toLowerCase();

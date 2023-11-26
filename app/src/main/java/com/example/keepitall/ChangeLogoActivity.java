@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AlertDialog; // Import AlertDialog class
 
+/**
+ * Class used to for the ChangeLogoActivity
+ * This activity allows the user to change the logo of the item
+ */
 public class ChangeLogoActivity extends AppCompatActivity {
     // creating a index for the users to choose the logo from
     private int  currentIndex = -1;
@@ -31,17 +34,20 @@ public class ChangeLogoActivity extends AppCompatActivity {
         //created the functionality to traverse to the GalleryButton
         Button galleryButton = findViewById(R.id.galleryButton);
         galleryButton.setOnClickListener(view -> moveToActivity(ImageGalleryActivity.class));
-
-
-
-
     }
-    // a functional intent created to move between activities
+
+    /**
+     * This function is used to move to the activity passed in the parameter
+     * @param activityClass - the activity to move to
+     */
     private void moveToActivity(Class<?> activityClass) {
         Intent intent = new Intent(ChangeLogoActivity.this, activityClass);
         startActivity(intent);
     }
-    // function created to give users option to choose from to update the logo
+
+    /**
+     * This function is used to show the dialog box to the user to choose the logo
+     */
     private void showLogoOptionsDialog() {
         // giving three options to appear in the Dialog
         String[] logoOptions = {"OPTION A", "OPTION B", "OPTION C "};
@@ -57,20 +63,16 @@ public class ChangeLogoActivity extends AppCompatActivity {
                 });
         builder.create().show();
     }
-    // This function is used to set the chosen index to the image resource to replace it with the image
+    /**
+     * This function is used to update the logo of the item
+     */
     private void updateLogoImage() {
-
         ImageView imageView = findViewById(R.id.imageView);
-
-
         if (currentIndex == 0) {
             //need to have new icons rn using the ones in drawable
             imageView.setImageResource(R.drawable.save_icon);
         } else if (currentIndex == 1) {
-
-
             imageView.setImageResource(R.drawable.logout_icon);
-
         } else if (currentIndex == 2) {
             imageView.setImageResource(R.drawable.gallery_icon);
         }

@@ -1,7 +1,6 @@
 package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,12 +8,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Date;
 
+/**
+ * Class used to for the ViewItemActivity
+ * This activity allows the user to view the item's properties
+ * This view will be where we can edit / view the item's properties
+ */
 public class ViewItemActivity extends AppCompatActivity {
+    // Private variables
     private Item item;
-    private static final int REQUEST_CODE_EDIT_ITEM = 1;
+    private static final int REQUEST_CODE_EDIT_ITEM = 1; // Request code for editing an item
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +59,26 @@ public class ViewItemActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: delete functionality, tag functionality, edit properties functionality
+        // Set up OnClickListener for the tagButton
+        Button tagButton = findViewById(R.id.tagButton);
+        tagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start ItemTagsActivity
+                Intent intent = new Intent(ViewItemActivity.this, ItemTagsActivity.class);
+                intent.putExtra("itemId", item.getName());
+                startActivity(intent);
+            }
+        });
+
     }
 
+    /**
+     * Called when the EditItemActivity finishes and returns to this activity
+     * @param requestCode - the request code used to start the activity
+     * @param resultCode - the result code returned from the activity
+     * @param data - the intent returned from the activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -107,7 +128,7 @@ public class ViewItemActivity extends AppCompatActivity {
 
     /**
      * Changes the activity based on clicked button
-     * @param activity
+     * @param activity - the activity to change to
      */
     private void changeActivity(Class activity) {
         Intent intent = new Intent(ViewItemActivity.this, activity);

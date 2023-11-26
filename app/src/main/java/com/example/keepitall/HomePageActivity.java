@@ -3,27 +3,39 @@ package com.example.keepitall;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Activity used for displaying the user's items (HomePage)
+ * This page has multiple functionalities:
+ *     1) Add an item
+ *     2) Delete an item
+ *     3) View an item's properties
+ *     4) Sort items (soon)
+ *     5) Filter items (soon)
+ *     6) Search items (soon)
+ *     7) Logout
+ * Whenever an item is added or deleted, the total value of all items is updated
+ * Whenever an item is added or deleted, the adapter is notified and the gridView is refreshed
+ * Whenever an item is added or deleted, the itemManager is updated and synced with the database
+ */
 public class HomePageActivity extends AppCompatActivity implements SortOptions.SortOptionsListener {
 
     private GridView gridView;
@@ -36,6 +48,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private User user;
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private Button logoutButton;
+    private Button pictureButton;
+    static final int REQUEST_IMAGE_CAPTURE = 2; // For taking pictures
+    private ImageView TempImageView;
     private TextView usernameView;
     private Button filterDateButton;
     private Button sortButton;
@@ -50,6 +65,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
+        pictureButton = findViewById(R.id.take_picture_button);
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -86,6 +102,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                         startActivityForResult(intent, 1);
                     });
 
+                    // Take picture button
+                    pictureButton.setOnClickListener(v -> takePictureClickEvent());
+
                     // Go back to login screen if back button is pressed
                     logoutButton = findViewById(R.id.logoutButton);
                     logoutButton.setOnClickListener(v -> finish());
@@ -93,7 +112,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     // Delete an item
                     deleteButton = findViewById(R.id.deleteButton);
                     deleteButton.setOnClickListener(v -> deleteButtonClickEvent());
-
 
                     // Filter the items
                     filterDateButton = findViewById(R.id.filterButton);
@@ -136,6 +154,14 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         }
     }
 
+    /**
+     * Called when the user returns from AddItemActivity, it will check the result code
+     * and add the new item to the item list if the result code is RESULT_OK
+     * onSuccess, the item will be added to the database, and the homepage will be updated
+     * @param requestCode - the code that was passed to startActivityForResult
+     * @param resultCode - the result code that was passed back from AddItemActivity
+     * @param data - the intent that was passed back from AddItemActivity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -157,12 +183,18 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                 homePageAdapter.notifyDataSetChanged();
             }
         }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            //TempImageView.setImageBitmap(imageBitmap);
+        }
     }
 
     /**
      * Click Listener for grid, either delete or view item property
-     * @param view: current view
-     * @param position: position clicked
+     * @param view - the view that was clicked
+     * @param position - the position of the view in the grid
      */
     private void gridViewClickEvent(View view, int position) {
         currentItemManager = homePageAdapter.getItemList();
@@ -237,6 +269,13 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private void sortClickEvent() {
         SortOptions sortFragment = new SortOptions();
         sortFragment.show(getSupportFragmentManager(), "sortDialog");
+    }
+
+    private void takePictureClickEvent() {
+        Toast.makeText(HomePageActivity.this, "Take picture", Toast.LENGTH_SHORT).show();
+        // Opens the camera on the phone
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
     /**

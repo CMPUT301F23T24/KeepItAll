@@ -1,34 +1,28 @@
 package com.example.keepitall;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import android.nfc.Tag;
-import android.widget.Toast;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
-public class ItemManager implements Serializable {
-    private ArrayList<Item> itemList;
-    private FirebaseFirestore Database = FirebaseFirestore.getInstance();
-    private CollectionReference userCollection;
+/**
+ * Class used to Manage all of a user's items.
+ * Contains methods for adding, deleting, and editing items. both locally and in the database.
+ * This class will link up to firestore to be able to add, delete, and edit items from the database.
+ * and will be called from the HomePageActivity.
+ */
+public class ItemManager{
+    // Private variables
+    private final ArrayList<Item> itemList;
+    private final FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private final CollectionReference userCollection;
 
     /**
      * Constructor for the User Object
@@ -41,13 +35,12 @@ public class ItemManager implements Serializable {
 
     /**
      * Adds an item to the the item list and syncs it with the database (fireStore)
-     * @param item
-     * @param user
+     * @param item - the item to be added
+     * @param user - the user to add the item to
      */
     public void addItem_DataSync(Item item, User user) {
-        if (item == null || user == null || user.getUserName() == null) {
-            return;
-        }
+        // Ensure that the item and user are not null
+        if (item == null || user == null || user.getUserName() == null) { return; }
         // Create a reference to the Firestore collection
         CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
         // Use the item's name as the document ID
@@ -57,15 +50,15 @@ public class ItemManager implements Serializable {
         itemList.add(item);
     }
 
-    /**'
+    /**
      * Edits an item from the item list and syncs with the database (fireStore)
-     * @param item
-     * @param user
+     * @param item - the item to be edited
+     * @param user - the user to edit the item from
      */
     public void editItem_DataSync(Item item, User user) {
-        if (item == null) {
-            return;
-        }
+        // Ensure that the item and user are not null
+        if (item == null || user == null || user.getUserName() == null) { return; }
+        //TODO: Ensure the item is properly updated in the database
 
         CollectionReference itemsCollection = userCollection.document(user.getUserName()).collection("items");
 
@@ -106,9 +99,9 @@ public class ItemManager implements Serializable {
     }
 
     /**
-     * Deletes an item frm the item list and syncs with the database (fireStore)
-     * @param item
-     * @param user
+     * Deletes an item from the item list and syncs with the database (fireStore)
+     * @param item - the item to be deleted
+     * @param user - the user to delete the item from
      */
     public void deleteItem_DataSync(Item item, User user) {
         if (item == null){
@@ -128,7 +121,7 @@ public class ItemManager implements Serializable {
     }
 
     /**
-     * adds an item to the the item list
+     * adds an item to the the item list (locally)
      * @param item to be added
      */
     public void addItem(Item item) {
@@ -136,15 +129,15 @@ public class ItemManager implements Serializable {
     }
 
     /**
-     * deletes  item to the the item list
+     * deletes  item to the the item list (locally)
      * @param item to be deleted
      */
+
     public void deleteItem(Item item) {
         itemList.remove(item);
     }
     /**
      *  used to edit the given properties of the item
-     *
      *
      * @param item           The item to be edited. Must not be null.
      * @param newPurchaseDate The new purchase date of the item.
@@ -155,6 +148,7 @@ public class ItemManager implements Serializable {
      * @param newValue        The new value of the item.
      *
      */
+
     public void editItem(Item item, Date newPurchaseDate, String newDescription, String newMake, String newModel, Integer newSerialNumber, Float newValue) {
         item.setPurchaseDate(newPurchaseDate);
         item.setDescription(newDescription);
@@ -174,22 +168,25 @@ public class ItemManager implements Serializable {
 
     /**
      * the output is the list containg all the items
-     *
      * @return a new array list containng all the items by itemManager
      */
-
     public ArrayList<Item> getAllItems() {
-
         return new ArrayList<>(itemList);
     }
 
+    /**
+     * Checks if the item is in the list
+     * @param position - the position of the item to be checked (index)
+     * @return true if the item is in the list, false otherwise
+     */
     public boolean itemInList(int position) {
         return itemList.contains(position);
     }
 
     /**
-     * sorts the list in asc/desc order based on different cases
      *
+     * @param sortBy: what the itemManager will be sorted by (tag, description, date, etc.)
+     * @param sortOrder: order of sort, either descending or ascending
      */
     public void sortItems(String sortBy, String sortOrder) {
         Comparator<Item> comparator = null;
