@@ -86,6 +86,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/scanbutton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="132dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/white_button"
+                android:text="Scan"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/deleteButton" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
