@@ -1,5 +1,6 @@
 package com.example.keepitall;
 
+import android.net.Uri;
 import android.nfc.Tag;
 import java.io.Serializable;
 import java.util.Date;
@@ -20,6 +21,7 @@ public class Item implements Serializable {
     private Float value;
     private List<Tag> tags;
     private String name;
+    private ArrayList<Uri> PhotoList;
 
     /**
      * Constructs an Item object with all attributes.
@@ -38,6 +40,7 @@ public class Item implements Serializable {
         this.serialNumber = serialNumber;
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
+        this.PhotoList = new ArrayList<Uri>();
         this.name = name;
     }
 
@@ -50,6 +53,10 @@ public class Item implements Serializable {
     public void addTag(Tag tag) {
         //TODO: More functionality for tags soon
         tags.add(tag);
+    }
+
+    public void addPhoto(Uri photo) {
+        PhotoList.add(photo);
     }
 
     /**
@@ -94,6 +101,10 @@ public class Item implements Serializable {
     // Tag
     public List<Tag> getTags() { return tags; }
 
+    // Photo
+    public ArrayList<Uri> getPhotoList() { return PhotoList; }
+
+
     public boolean matchesQuery(String query) {
         String lowerCaseQuery = query.toLowerCase();
         return name.toLowerCase().contains(lowerCaseQuery) ||
@@ -101,3 +112,4 @@ public class Item implements Serializable {
                 description.toLowerCase().contains(lowerCaseQuery);
     }
 }
+

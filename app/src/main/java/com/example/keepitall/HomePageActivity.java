@@ -52,6 +52,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     static final int REQUEST_IMAGE_CAPTURE = 2; // For taking pictures
     private ImageView TempImageView;
     private TextView usernameView;
+    private String userName;
     private Button filterDateButton;
     private Button sortButton;
     private SearchView searchText;
@@ -70,7 +71,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         // Gets username
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String userName = extras.getString("username");
+            userName = extras.getString("username");
 
             // Ensure that the username is not null or empty
             if (userName != null && !userName.isEmpty()) {
@@ -212,6 +213,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
             intent.putExtra("item", currentItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
+            intent.putExtra("username", userName);
             startActivity(intent);
         }
     }

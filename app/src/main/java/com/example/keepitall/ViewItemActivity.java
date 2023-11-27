@@ -46,7 +46,15 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // If gallery button is clicked, go to item gallery page
         Button galleryButton = findViewById(R.id.galleryButton);
-        galleryButton.setOnClickListener(v -> changeActivity(ImageGalleryActivity.class));
+        galleryButton.setOnClickListener(v -> {
+            if (item != null) {
+                Intent intent = new Intent(ViewItemActivity.this, ImageGalleryActivity.class);
+                intent.putExtra("itemId", item.getName());
+                startActivity(intent);
+            } else {
+                Toast.makeText(ViewItemActivity.this, "Item data is not available.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Button editButton = findViewById(R.id.editButton);
         editButton.setOnClickListener(v -> {
