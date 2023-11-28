@@ -147,9 +147,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
 
         // ---------- POST INITIALIZATION ---------- //
-
     }
-
     /**
      * Method that will take in the item passed in from the previous activity, and connect it to the user
      * due to the way that info is passed, we need to do this to ensure that the item variable we are changing
@@ -324,64 +322,4 @@ public class ImageGalleryActivity extends AppCompatActivity {
                 });
     }
 
-    // -- Saving and Loading Photos -- //
-    private void LoadFromDatabase() {
-        if (stringIdentifier == null) {
-            return;
-        }
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Load the photos from the database into the uri list
-        db.collection("items").document(stringIdentifier).collection("photos")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            String photo = document.getString("photo");
-                            uri.add(Uri.parse(photo));
-                        }
-                        // Notify the adapter of the data change
-                        photoGridAdapter.notifyDataSetChanged();
-                        // Update the UI of the total number of photos
-                        TotalPhotos.setText("Total Photos: " + uri.size());
-                    } else {
-                        Log.d("PhotoPicker", "Error getting documents: ", task.getException());
-                    }
-                });
-    }
-    private void SaveToDatabase(Uri uriToAdd) {
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference itemRef = db.collection("items").document(stringIdentifier);
-        Map<String, Object> photoData = new HashMap<>();
-        photoData.put("photo", uriToAdd.toString());
-        itemRef.collection("photos").add(photoData);
-
-    }
-
-    private void LoadPhotosTest(){
-        ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-        // update the list of photos
-        if(itemPhotoManager.getPhotosForItem(stringIdentifier) != null){
-            uri.clear();
-            uri.addAll(itemPhotoManager.getPhotosForItem(stringIdentifier));
-        }
-        // Notify the adapter of the data change
-        photoGridAdapter.notifyDataSetChanged();
-        // Update the UI of the total number of photos
-        TotalPhotos.setText("Total Photos: " + uri.size());
-
-    }
-
-    //// TODO: New Methods ////
-
-    /**
-     * Sets the uri
-     *
-     */
-    private void LoadUserPhotos(){
-
-    }
-
-    ///
-    // -- Work in Progress -- //
 }

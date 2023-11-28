@@ -1,5 +1,6 @@
 package com.example.keepitall;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 import java.io.Serializable;
@@ -22,7 +23,6 @@ public class Item implements Serializable {
     private List<Tag> tags;
     private String name;
     private ArrayList<Uri> PhotoList;
-
     /**
      * Constructs an Item object with all attributes.
      * @param purchaseDate The date the item was purchased.
