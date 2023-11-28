@@ -1,3 +1,6 @@
+/**
+ * Resource: https://www.w3schools.com/java/java_hashset.asp
+ */
 package com.example.keepitall;
 
 import java.util.ArrayList;
