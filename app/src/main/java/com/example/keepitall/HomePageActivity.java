@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -23,6 +24,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import androidx.appcompat.app.AlertDialog;
@@ -64,8 +68,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private ItemManager currentItemManager;
     private Date startDate;
     private Date endDate;
-    private Button scanbutton;
 
+    private Button selectButton;
+    private Button scanbutton;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -74,6 +79,14 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
+
+        selectButton = findViewById(R.id.selectButton);
+        selectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectButtonClickEvent();
+            }
+        });
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -230,7 +243,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-       homePageAdapter.updateItems(userItemManager);
+        homePageAdapter.updateItems(userItemManager);
 
         // Check which request we're responding to
         if (requestCode == 1) {
@@ -273,7 +286,15 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                 itemsToRemove.add(currentItemManager.getItem(position));
                 view.setBackgroundColor(Color.LTGRAY); // change color if selected
             }
-        } else { // if user wants to view property item
+        } else if (homePageAdapter.isSelectionMode()) {
+            // Selection mode logic for applying tags
+            homePageAdapter.toggleItemSelection(position);
+            if (homePageAdapter.getSelectedItems().contains(position)) {
+                view.setBackgroundColor(Color.LTGRAY);
+            } else {
+                view.setBackgroundColor(Color.TRANSPARENT);
+            }
+            } else { // if user wants to view property item
             Intent intent = new Intent(getApplicationContext(), ViewItemActivity.class);
             intent.putExtra("item", currentItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
@@ -307,6 +328,69 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
+    }
+
+    /**
+     * This method is to fetch tags and show the dialog.
+     */
+    private void showTagSelectionDialog(List<String> tagNames) {
+        TagSelectionDialog dialog = new TagSelectionDialog();
+        dialog.setAvailableTags(tagNames); // Corrected variable name
+        dialog.setTagSelectionListener(selectedTags -> {
+            // Logic to apply selectedTags to selected items
+            for (int position : homePageAdapter.getSelectedItems()) {
+                Item item = userItemManager.getItem(position);
+                for (String tag : selectedTags) {
+                    item.addTag(new Tag(tag));
+                }
+                // Update items in Firebase
+                //...
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "TagSelectionDialog");
+    }
+
+    private void selectButtonClickEvent() {
+        if (!homePageAdapter.isSelectionMode()) {
+            homePageAdapter.toggleSelectionMode();
+            selectButton.setText("Apply Tags");
+            Toast.makeText(HomePageActivity.this, "Select items for applying tags", Toast.LENGTH_SHORT).show();
+        } else {
+            Set<Integer> selectedItems = homePageAdapter.getSelectedItems();
+            if (!selectedItems.isEmpty()) {
+                TagsManager tagsManager = TagsManager.getInstance();
+                Set<String> uniqueTagNames = new HashSet<>(); // To store unique tags
+
+                for (int position : selectedItems) {
+                    String itemId = userItemManager.getItem(position).getName();
+                    tagsManager.fetchTagsFromFirestore(itemId, fetchedTags -> {
+                        for (Tag tag : fetchedTags) {
+                            uniqueTagNames.add(tag.getTagName());
+                        }
+                        // Once all tags are fetched, show the dialog
+                        if (position == selectedItems.size() - 1) {
+                            showTagSelectionDialog(new ArrayList<>(uniqueTagNames));
+                        }
+                    });
+                }
+            } else {
+                Toast.makeText(HomePageActivity.this, "No items selected", Toast.LENGTH_SHORT).show();
+                selectButton.setText("Select");
+            }
+        }
+    }
+
+    private List<String> getAvailableTags() {
+        List<String> tags = new ArrayList<>();
+
+        TagsManager tagsManager = TagsManager.getInstance();
+        List<String> allTags = tagsManager.getAllTags();
+
+        for (String tag : allTags) {
+            tags.add(tag);
+        }
+
+        return tags;
     }
 
     /**

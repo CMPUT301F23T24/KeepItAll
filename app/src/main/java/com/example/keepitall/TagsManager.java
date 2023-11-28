@@ -1,4 +1,10 @@
+/**
+ * Resource: https://www.w3schools.com/java/java_hashset.asp
+ */
 package com.example.keepitall;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +14,32 @@ import java.util.Map;
 public class TagsManager {
     private static TagsManager instance;
     private Map<String, List<Tag>> itemTagsMap;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    /**
+     * Fetch tags from Firestore and update the local tag list.
+     */
+    public void fetchTagsFromFirestore(String itemId, OnTagsFetchedListener listener) {
+        db.collection("items").document(itemId).collection("tags")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Tag> fetchedTags = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String tagName = document.getString("tagName");
+                            fetchedTags.add(new Tag(tagName));
+                        }
+                        itemTagsMap.put(itemId, fetchedTags);
+                        listener.onTagsFetched(fetchedTags);
+                    } else {
+                        listener.onTagsFetched(new ArrayList<>()); // Return an empty list in case of failure
+                    }
+                });
+    }
+
+    public interface OnTagsFetchedListener {
+        void onTagsFetched(List<Tag> tags);
+    }
 
     public static synchronized TagsManager getInstance() {
         if (instance == null) {
@@ -40,5 +72,17 @@ public class TagsManager {
                 itemTagsMap.remove(itemId);
             }
         }
+    }
+
+    public List<String> getAllTags() {
+        List<String> allTags = new ArrayList<>();
+        for (String itemId : itemTagsMap.keySet()) {
+            for (Tag tag : itemTagsMap.get(itemId)) {
+                if (!allTags.contains(tag.getTagName())) {
+                    allTags.add(tag.getTagName());
+                }
+            }
+        }
+        return allTags;
     }
 }
