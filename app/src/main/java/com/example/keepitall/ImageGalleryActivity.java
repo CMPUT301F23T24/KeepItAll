@@ -91,6 +91,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private boolean deleteMode = false;
     private ArrayList<Uri> UriToDelete = new ArrayList<>();
 
+    // Private variables
+    KeepItAll keepItAll = KeepItAll.getInstance();
+    User user;
+    Item item;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -103,13 +108,27 @@ public class ImageGalleryActivity extends AppCompatActivity {
         TotalPhotos = findViewById(R.id.totalPhotos);
         hiddenImage = findViewById(R.id.hiddenImage);
         stringIdentifier = getIntent().getStringExtra("itemId");
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String userName = extras.getString("username");
+            user = keepItAll.getUserByName(userName);
+
+        }
+        item = (Item) getIntent().getSerializableExtra("item");
+        connectItemToUser();
         itemPhotoManager = new ItemPhotoManager();
-        uri = new ArrayList<>(itemPhotoManager.getPhotosForItem(stringIdentifier));
+        uri = item.getPhotoList();
         /// Gridview
         gridView = findViewById(R.id.imageGridView);
-        photoGridAdapter = new PhotoGridAdapter(this, uri);
-        gridView.setAdapter(photoGridAdapter);
-
+        if(uri != null){
+            photoGridAdapter = new PhotoGridAdapter(this, uri);
+            gridView.setAdapter(photoGridAdapter);
+        } else {
+            uri = new ArrayList<>();
+            item.setPhotoList(uri);
+            photoGridAdapter = new PhotoGridAdapter(this, uri);
+            gridView.setAdapter(photoGridAdapter);
+        }
         // Connect the buttons to their respective views
         Button backButton = findViewById(R.id.viewBackButton);
         Button cameraButton = findViewById(R.id.cameraButton);
@@ -126,8 +145,29 @@ public class ImageGalleryActivity extends AppCompatActivity {
         // Register the photo picker activity
         registerPhotoPickerActivity();
 
+
         // ---------- POST INITIALIZATION ---------- //
 
+    }
+
+    /**
+     * Method that will take in the item passed in from the previous activity, and connect it to the user
+     * due to the way that info is passed, we need to do this to ensure that the item variable we are changing
+     * is the same as the one in the user's list of items, which is within the KeepItAll class (singleton)
+     */
+    private void connectItemToUser(){
+        // find the Item object in the user's list of items that is equal to the item passed in from the previous activity
+        if (item != null && user != null) {
+            // loop through the user's list of items
+            for (Item userItem : user.getItemManager().getAllItems()) {
+                // check if the item is equal to the item passed in from the previous activity
+                if (userItem.isEqual(item)) {
+                    // if it is, set the item variable to the item in the user's list of items
+                    item = userItem;
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -331,5 +371,17 @@ public class ImageGalleryActivity extends AppCompatActivity {
         TotalPhotos.setText("Total Photos: " + uri.size());
 
     }
+
+    //// TODO: New Methods ////
+
+    /**
+     * Sets the uri
+     *
+     */
+    private void LoadUserPhotos(){
+
+    }
+
+    ///
     // -- Work in Progress -- //
 }

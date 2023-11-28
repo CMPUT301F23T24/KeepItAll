@@ -58,6 +58,9 @@ public class Item implements Serializable {
     public void addPhoto(Uri photo) {
         PhotoList.add(photo);
     }
+    public void removePhoto(Uri photo) {
+        PhotoList.remove(photo);
+    }
 
     /**
      * Removes a tag from the item.
@@ -103,13 +106,29 @@ public class Item implements Serializable {
 
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }
-
+    public void setPhotoList(ArrayList<Uri> photoList) { PhotoList = photoList; }
 
     public boolean matchesQuery(String query) {
         String lowerCaseQuery = query.toLowerCase();
         return name.toLowerCase().contains(lowerCaseQuery) ||
                 make.toLowerCase().contains(lowerCaseQuery) ||
                 description.toLowerCase().contains(lowerCaseQuery);
+    }
+
+    /**
+     * Checks if two items are equal.
+     * @param item
+     * @return true if the items are equal, false otherwise.
+     */
+    public boolean isEqual(Item item) {
+        return this.name.equals(item.name) &&
+                this.purchaseDate.equals(item.purchaseDate) &&
+                this.description.equals(item.description) &&
+                this.make.equals(item.make) &&
+                this.model.equals(item.model) &&
+                this.serialNumber.equals(item.serialNumber) &&
+                this.value.equals(item.value) &&
+                this.tags.equals(item.tags);
     }
 }
 
