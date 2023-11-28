@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -59,6 +60,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private ItemManager currentItemManager;
     private Date startDate;
     private Date endDate;
+    private Button selectButton;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -67,6 +69,14 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
+
+        selectButton = findViewById(R.id.selectButton);
+        selectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectButtonClickEvent();
+            }
+        });
 
         // Gets username
         Bundle extras = getIntent().getExtras();
@@ -243,6 +253,20 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundResource(R.drawable.white_button);
         }
+    }
+
+    private void selectButtonClickEvent() {
+        // Toggle the selection mode in the adapter
+        homePageAdapter.toggleSelectionMode();
+
+        // Update the UI based on the new state of the selection mode
+        if (homePageAdapter.isSelectionMode()) {
+            selectButton.setBackgroundResource(R.drawable.gray_button);
+            Toast.makeText(HomePageActivity.this, "Select items to be applied tags", Toast.LENGTH_SHORT).show();
+        } else {
+            selectButton.setBackgroundResource(R.drawable.white_button);
+        }
+        homePageAdapter.notifyDataSetChanged();
     }
 
     /**

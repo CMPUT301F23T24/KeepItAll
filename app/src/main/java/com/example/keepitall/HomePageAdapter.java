@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 /**
  * Adapter used for displaying the user's items (HomePage)
  */
@@ -16,6 +18,7 @@ public class HomePageAdapter extends BaseAdapter {
     private Context context;
     private ItemManager itemList;
     private LayoutInflater inflater;
+    private boolean isSelectionMode = false;
 
     /**
      * Constructor for the HomePageAdapter
@@ -76,8 +79,22 @@ public class HomePageAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.item_grid, null);
         TextView name = view.findViewById(R.id.gridDataName);
         ImageView image = view.findViewById(R.id.gridDataImage);
+        Item item = itemList.getItem(position);
         name.setText(itemList.getItem(position).getName());
         image.setImageResource(R.drawable.app_icon);
+        if(item.isSelected()) {
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.grey));
+        } else {
+            view.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
+        }
         return view;
+    }
+    public void toggleSelectionMode() {
+        isSelectionMode = !isSelectionMode;
+        notifyDataSetChanged();
+    }
+
+    public boolean isSelectionMode() {
+        return isSelectionMode;
     }
 }
