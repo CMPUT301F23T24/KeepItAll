@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Adapter used for displaying the user's items (HomePage)
  */
@@ -19,6 +22,7 @@ public class HomePageAdapter extends BaseAdapter {
     private ItemManager itemList;
     private LayoutInflater inflater;
     private boolean isSelectionMode = false;
+    private Set<Integer> selectedItems = new HashSet<>();
 
     /**
      * Constructor for the HomePageAdapter
@@ -53,8 +57,8 @@ public class HomePageAdapter extends BaseAdapter {
      * @return - item at the specified position (as an object)
      */
     @Override
-    public Object getItem(int position) {
-        return null;
+    public Item getItem(int position) {
+        return itemList.getAllItems().get(position);
     }
 
     /**
@@ -82,15 +86,35 @@ public class HomePageAdapter extends BaseAdapter {
         Item item = itemList.getItem(position);
         name.setText(itemList.getItem(position).getName());
         image.setImageResource(R.drawable.app_icon);
-        if(item.isSelected()) {
+
+        if (selectedItems.contains(position)) {
             view.setBackgroundColor(ContextCompat.getColor(context, R.color.grey));
         } else {
             view.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
         }
+
         return view;
     }
     public void toggleSelectionMode() {
         isSelectionMode = !isSelectionMode;
+        notifyDataSetChanged();
+    }
+
+    public void toggleItemSelection(int position) {
+        if (selectedItems.contains(position)) {
+            selectedItems.remove(position);
+        } else {
+            selectedItems.add(position);
+        }
+        notifyDataSetChanged();
+    }
+
+    public Set<Integer> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void clearSelection() {
+        selectedItems.clear();
         notifyDataSetChanged();
     }
 

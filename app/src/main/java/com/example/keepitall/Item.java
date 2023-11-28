@@ -19,7 +19,7 @@ public class Item implements Serializable {
     private String model;
     private Integer serialNumber;
     private Float value;
-    private List<Tag> tags;
+    private List<com.example.keepitall.Tag> tags;
     private String name;
     private ArrayList<Uri> PhotoList;
     private boolean isSelected = false;
@@ -40,7 +40,7 @@ public class Item implements Serializable {
         this.model = model;
         this.serialNumber = serialNumber;
         this.value = value;
-        this.tags = new ArrayList<>();  // Initialize tags list
+        this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
         this.PhotoList = new ArrayList<Uri>();
         this.name = name;
     }
@@ -51,9 +51,10 @@ public class Item implements Serializable {
      * @param tag The tag to add.
 
      */
-    public void addTag(Tag tag) {
-        //TODO: More functionality for tags soon
-        tags.add(tag);
+    public void addTag(com.example.keepitall.Tag tag) {
+        if (!this.tags.contains(tag)) {
+            this.tags.add(tag);
+        }
     }
 
     public void addPhoto(Uri photo) {
@@ -66,15 +67,14 @@ public class Item implements Serializable {
 
      */
     public void removeTag(Tag tag) {
-        //TODO: More functionality for tags soon
-        tags.remove(tag);
+        this.tags.remove(tag);
     }
 
     /**
      * Default constructor for Item object. with no parameters
      */
     public Item(){
-        this.tags = new ArrayList<>();  // Initialize tags list
+        this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
     }
 
     // Getters and setters //
@@ -100,7 +100,7 @@ public class Item implements Serializable {
     public Float getValue() { return value; }
     public void setValue(Float value) { this.value = value;}
     // Tag
-    public List<Tag> getTags() { return tags; }
+    public List<com.example.keepitall.Tag> getTags() { return tags; }
 
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }
