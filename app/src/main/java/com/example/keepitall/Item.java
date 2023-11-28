@@ -22,6 +22,7 @@ public class Item implements Serializable {
     private List<Tag> tags;
     private String name;
     private ArrayList<Uri> PhotoList;
+    private boolean isSelected = false;
 
     /**
      * Constructs an Item object with all attributes.
@@ -110,6 +111,14 @@ public class Item implements Serializable {
         return name.toLowerCase().contains(lowerCaseQuery) ||
                 make.toLowerCase().contains(lowerCaseQuery) ||
                 description.toLowerCase().contains(lowerCaseQuery);
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 
