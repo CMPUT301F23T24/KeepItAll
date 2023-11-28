@@ -1,4 +1,6 @@
 package com.example.keepitall;
+import android.util.Log;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -109,9 +111,6 @@ public class KeepItAll{
      * down to fit our desired needs.View top of class for more information.
      */
     public void retrieveUsers() {
-        if (userCollection == null) {
-            return;
-        }
         userCollection.get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -134,9 +133,14 @@ public class KeepItAll{
                                                 item.setDescription(itemDoc.getString("description"));
                                                 item.setMake(itemDoc.getString("make"));
                                                 item.setModel(itemDoc.getString("model"));
-                                                // null check serial number
-                                                if (itemDoc.getLong("serialNumber") != null){
-                                                    item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
+                                                Long serialNumberLong = itemDoc.getLong("serialNumber");
+                                                if (serialNumberLong != null) {
+                                                    item.setSerialNumber(serialNumberLong.intValue());
+                                                } else {
+                                                    // Handle the case where serialNumberLong is null
+                                                    // For example, set a default serial number or log a warning
+                                                    item.setSerialNumber(0);
+                                                    Log.w("KeepItAll", "Serial number is null for item: " + itemDoc.getString("name"));
                                                 }
                                                 item.setValue(itemDoc.getDouble("value").floatValue());
                                                 ///TODO: Add tags to the item
