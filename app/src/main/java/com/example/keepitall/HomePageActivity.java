@@ -1,5 +1,7 @@
 package com.example.keepitall;
 
+
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
@@ -25,6 +27,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+import androidx.appcompat.app.AlertDialog;
 
 /**
  * Activity used for displaying the user's items (HomePage)
@@ -63,7 +68,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private ItemManager currentItemManager;
     private Date startDate;
     private Date endDate;
+
     private Button selectButton;
+    private Button scanbutton;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -166,7 +173,64 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             Toast.makeText(this, "No data received.", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        scanbutton = findViewById(R.id.scanbutton);
+        scanbutton.setOnClickListener(v ->
+        {
+            scanCode();
+        });
     }
+
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume  up to to flash flash onon");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->
+    {
+        if(result.getContents() != null) {
+            // Extract information from the scan result
+            String scannedContent = result.getContents();
+            String[] scannedParts = scannedContent.split("-");
+
+
+            // Assuming userItemManager is the ItemManager instance in your HomePageActivity
+            Item newItem = new Item();
+            if (scannedParts.length >= 5) {
+                newItem.setName(scannedParts[0]);
+                newItem.setMake(scannedParts[1]);
+                newItem.setModel(scannedParts[2]);
+                newItem.setValue(Float.parseFloat(scannedParts[3]));
+                newItem.setDescription(scannedParts[4]);
+            }
+
+
+            // Add the new item directly to the item manager
+            userItemManager.addItem_DataSync(newItem, user);
+
+            // Update total value
+            updateTotalValue();
+
+            // Notify the adapter that the data set has changed
+            homePageAdapter.notifyDataSetChanged();
+
+            // Optionally, display a dialog or perform other actions based on the scanned content
+            AlertDialog.Builder builder = new AlertDialog.Builder(HomePageActivity.this);
+            builder.setTitle("Scanned Item");
+            builder.setMessage("Name: " + newItem.getName() +
+                    "\nDescription: " + newItem.getDescription() +
+                    "\nMake: " + newItem.getMake() +
+                    "\nModel: " + newItem.getModel() +
+                    "\nValue: $" + newItem.getValue() +
+                    "\nPurchase Date: " + newItem.getPurchaseDate());
+            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+            builder.show();
+        }
+    });
 
     /**
      * Called when the user returns from AddItemActivity, it will check the result code

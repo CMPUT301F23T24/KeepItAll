@@ -55,4 +55,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
 }
