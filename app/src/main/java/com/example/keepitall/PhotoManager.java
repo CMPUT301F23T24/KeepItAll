@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -17,8 +18,16 @@ import android.widget.ImageView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,6 +44,9 @@ public class PhotoManager {
     private static final int PERMISSION_REQUEST_CODE = 2;
     private Context context;
     private Activity activity;
+    private KeepItAll keepItAll = KeepItAll.getInstance();
+    private final FirebaseFirestore Database = FirebaseFirestore.getInstance();
+    private final CollectionReference userCollection;
 
 
     /**
@@ -47,6 +59,7 @@ public class PhotoManager {
     public PhotoManager(Context context) {
         this.context = context;
         this.activity = (Activity) context;
+        this.userCollection = Database.collection("users");
     }
 
     /**
@@ -98,6 +111,73 @@ public class PhotoManager {
             //pass
             // not added to gallery
         }
+    }
+
+    /**
+     * Method called when the user wants to save an image to the database
+     * it will access firestore and save the image to the user's database (specifically to the "images" collection of the item)
+     * @param user the user that is currently logged in
+     * @param item the item that the image is being saved to
+     * @param uri the uri of the image that is being saved
+     */
+    public void SaveImageToDataBase(User user, Item item, Uri uri) {
+        // Ensure that the user and item are not null
+        if (user == null || item == null || uri == null) {
+            // Handle the null cases
+            return;
+        }
+
+        // Get a reference to the "images" collection of the item
+        CollectionReference imagesCollection = userCollection.document(user.getUserName())
+                .collection("items")
+                .document(item.getName())
+                .collection("images");
+
+        // Create a new image document with a unique ID
+        String imageId = imagesCollection.document().getId();
+
+        // Create a map to store the image data
+        Map<String, Object> imageData = new HashMap<>();
+        imageData.put("imageId", imageId);
+        imageData.put("imageUrl", uri.toString()); // Save the image URI as a string
+
+        // Add the image data to the "images" collection
+        imagesCollection.document(imageId).set(imageData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Image URI successfully saved
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle the failure to save the image URI
+                    }
+                });
+    }
+
+
+
+    /**
+     * Method called when the user wants to load images from the database
+     * it will access firestore and load the images from the user's database (specifically from the "images" collection of the item)
+     * it will create a new ArrayList of the URIs saved in the database and return it
+     * @param user
+     * @param item
+     * @return
+     */
+    public void LoadImagesFromDataBase(){
+
+
+        // Loop Through all of the Users in the database
+        // Loop through each Item that a user has
+        // Loop through each of the Images that an Item Has
+        // Add the Image URI to a local ArrayList
+        // set the ArrayList to the Item using the setImages method
+        // Repeat for each Item
+        // Repeat for each User
+
     }
 }
 
