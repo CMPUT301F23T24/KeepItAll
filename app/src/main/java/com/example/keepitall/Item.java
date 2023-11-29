@@ -2,7 +2,10 @@ package com.example.keepitall;
 
 import android.net.Uri;
 import android.nfc.Tag;
+import android.widget.Toast;
+
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -105,12 +108,23 @@ public class Item implements Serializable {
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }
 
+    // For searching
+    public ArrayList<String> getKeywords(String string) {
+        String[] keywords  = string.toLowerCase().split("[,\\s]");
+        return new ArrayList<>(Arrays.asList(keywords));
+    }
 
     public boolean matchesQuery(String query) {
-        String lowerCaseQuery = query.toLowerCase();
-        return name.toLowerCase().contains(lowerCaseQuery) ||
-                make.toLowerCase().contains(lowerCaseQuery) ||
-                description.toLowerCase().contains(lowerCaseQuery);
+        ArrayList<String> queryKeywords = getKeywords(query);
+        ArrayList<String> descriptionKeywords = getKeywords(description);
+        for (String word: queryKeywords) {
+            if (!(name.toLowerCase().contains(word) ||
+                    make.toLowerCase().contains(word) ||
+                    descriptionKeywords.contains(word))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isSelected() {

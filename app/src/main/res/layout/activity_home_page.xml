@@ -44,7 +44,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/deleteButton"
                 android:layout_width="100dp"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/white_button"
                 android:text="Delete"
@@ -54,7 +54,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/addButton"
                 android:layout_width="100dp"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/white_button"
                 android:text="Add"
@@ -77,7 +77,7 @@
                 android:id="@+id/titlePageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="50dp"
                 android:text="ItemManager"
                 android:textColor="@color/white"
                 android:textSize="24sp"
@@ -89,7 +89,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/selectButton"
                 android:layout_width="100dp"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:background="@drawable/white_button"
                 android:text="Select"
                 app:layout_constraintEnd_toStartOf="@+id/addButton"
