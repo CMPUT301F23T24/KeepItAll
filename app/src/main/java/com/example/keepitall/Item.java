@@ -3,6 +3,9 @@ package com.example.keepitall;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +25,7 @@ public class Item implements Serializable {
     private Float value;
     private List<Tag> tags;
     private String name;
-    private ArrayList<Uri> PhotoList;
+    private ArrayList<Uri> photoList;
     /**
      * Constructs an Item object with all attributes.
      * @param purchaseDate The date the item was purchased.
@@ -40,7 +43,7 @@ public class Item implements Serializable {
         this.serialNumber = serialNumber;
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
-        this.PhotoList = new ArrayList<Uri>();
+        this.photoList = new ArrayList<Uri>();
         this.name = name;
     }
 
@@ -56,10 +59,10 @@ public class Item implements Serializable {
     }
 
     public void addPhoto(Uri photo) {
-        PhotoList.add(photo);
+        photoList.add(photo);
     }
     public void removePhoto(Uri photo) {
-        PhotoList.remove(photo);
+        photoList.remove(photo);
     }
 
     /**
@@ -77,6 +80,7 @@ public class Item implements Serializable {
      */
     public Item(){
         this.tags = new ArrayList<>();  // Initialize tags list
+        this.photoList = new ArrayList<>(); // Initialize photo list
     }
 
     // Getters and setters //
@@ -105,8 +109,8 @@ public class Item implements Serializable {
     public List<Tag> getTags() { return tags; }
 
     // Photo
-    public ArrayList<Uri> getPhotoList() { return PhotoList; }
-    public void setPhotoList(ArrayList<Uri> photoList) { PhotoList = photoList; }
+    public ArrayList<Uri> getPhotoList() { return photoList; }
+    public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
 
     public boolean matchesQuery(String query) {
         String lowerCaseQuery = query.toLowerCase();

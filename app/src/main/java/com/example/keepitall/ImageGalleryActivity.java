@@ -109,7 +109,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
         }
         item = (Item) getIntent().getSerializableExtra("item");
         connectItemToUser();
-        LoadItemPhotoList();
         uri = item.getPhotoList();
         /// Gridview
         gridView = findViewById(R.id.imageGridView);
@@ -141,23 +140,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         // ---------- POST INITIALIZATION ---------- //
     }
-
-    /**
-     * Updates the PhotoList of the item based off the information stored in the database
-     */
-    private void LoadItemPhotoList() {
-        photoManager.LoadImagesFromDataBase(user, item);
-        // wait 3 seconds for the images to load
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ///TODO: we need to be able to access this list
-        //uri = photoList;
-    }
-
     /**
      * Method that will take in the item passed in from the previous activity, and connect it to the user
      * due to the way that info is passed, we need to do this to ensure that the item variable we are changing
