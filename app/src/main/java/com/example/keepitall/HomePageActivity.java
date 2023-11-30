@@ -174,7 +174,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             finish();
         }
 
-        scanbutton = findViewById(R.id.scanbutton);
+        scanbutton = findViewById(R.id.scanButton);
         scanbutton.setOnClickListener(v ->
         {
             scanCode();

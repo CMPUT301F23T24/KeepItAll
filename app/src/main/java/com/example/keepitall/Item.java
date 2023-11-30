@@ -25,7 +25,7 @@ public class Item implements Serializable {
     private Float value;
     private List<com.example.keepitall.Tag> tags;
     private String name;
-    private ArrayList<Uri> photoList;
+    private ArrayList<String> photoList;
     private boolean isSelected = false;
     /**
      * Constructs an Item object with all attributes.
@@ -44,7 +44,7 @@ public class Item implements Serializable {
         this.serialNumber = serialNumber;
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
-        this.photoList = new ArrayList<Uri>();
+        this.photoList = new ArrayList<String>();
         this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
         this.name = name;
     }
@@ -62,7 +62,7 @@ public class Item implements Serializable {
     }
 
     public void addPhoto(Uri photo) {
-        photoList.add(photo);
+        photoList.add(photo.toString());
     }
     public void removePhoto(Uri photo) {
         photoList.remove(photo);
@@ -111,7 +111,7 @@ public class Item implements Serializable {
     public List<com.example.keepitall.Tag> getTags() { return tags; }
 
     // Photo
-    public ArrayList<Uri> getPhotoList() { return photoList; }
+    public ArrayList<String> getPhotoList() { return photoList; }
     public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
 
     public boolean matchesQuery(String query) {

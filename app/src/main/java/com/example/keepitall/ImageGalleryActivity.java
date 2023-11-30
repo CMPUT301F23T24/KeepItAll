@@ -109,13 +109,14 @@ public class ImageGalleryActivity extends AppCompatActivity {
         }
         item = (Item) getIntent().getSerializableExtra("item");
         connectItemToUser();
-        uri = item.getPhotoList();
+        ///TODO: MAKE THIS WORK
+        filluriList();
         /// Gridview
         gridView = findViewById(R.id.imageGridView);
         if(uri != null){
             photoGridAdapter = new PhotoGridAdapter(this, uri);
             ///TODO: This is where it breaks
-            gridView.setAdapter(photoGridAdapter);
+            LoadURI();
             ///TODO: This is where it breaks
         } else {
             uri = new ArrayList<>();
@@ -140,6 +141,19 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         // ---------- POST INITIALIZATION ---------- //
     }
+
+    private void filluriList() {
+        // loop through the user's list of items and parse the photoList strings into URIs
+        ArrayList<Uri> uriList = new ArrayList<>();
+        if (item != null) {
+            for (String photo : item.getPhotoList()) {
+                uriList.add(Uri.parse(photo));
+            }
+        }
+        // this is the magic line that breaks it all
+        uri = uriList;
+    }
+
     /**
      * Method that will take in the item passed in from the previous activity, and connect it to the user
      * due to the way that info is passed, we need to do this to ensure that the item variable we are changing
@@ -292,6 +306,25 @@ public class ImageGalleryActivity extends AppCompatActivity {
             intent.putExtra("image", imageUri.toString());
             // Start the full screen image activity
             startActivity(intent);
+        }
+    }
+
+
+
+    /////// --------------------- ///////
+
+    /**
+     * This is where ill be doing all my testing to try to bypass the issue
+     */
+    public void LoadURI(){
+
+        // ask for permission to read Images
+        if (ContextCompat.checkSelfPermission(ImageGalleryActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ImageGalleryActivity.this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, Read_Permission);
+            Toast.makeText(ImageGalleryActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            gridView.setAdapter(photoGridAdapter);
+        } else{
+            Toast.makeText(ImageGalleryActivity.this, "Permission NOT Granted", Toast.LENGTH_SHORT).show();
         }
     }
 }
