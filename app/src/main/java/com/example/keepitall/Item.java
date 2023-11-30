@@ -105,10 +105,27 @@ public class Item implements Serializable {
     public void setValue(Float value) { this.value = value;}
     // Tag
     public List<com.example.keepitall.Tag> getTags() { return tags; }
+    // Sort the tags
     public void sortTags() {
         List<com.example.keepitall.Tag> tags = getTags();
         Collections.sort(tags);
         this.tags = tags;
+    }
+    // Get first tag
+    public String getItemFirstTag() {
+        sortTags();
+        if (tags.size() >= 1) {
+            return tags.get(0).getTagName();
+        }
+        return null;
+    }
+    // Get last tag
+    public String getItemLastTag() {
+        sortTags();
+        if (!tags.isEmpty()) {
+            return tags.get(tags.size() - 1).getTagName();
+        }
+        return null;
     }
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }

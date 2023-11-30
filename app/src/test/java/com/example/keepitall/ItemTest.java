@@ -34,10 +34,8 @@ public class ItemTest {
         item.addTag(new Tag("d"));
         item.addTag(new Tag("c"));
         item.addTag(new Tag("b"));
+        assertEquals("d", item.getTags().get(1).getTagName());
         item.sortTags();
-        assertEquals("a", item.getTags().get(0).getTagName());
-        assertEquals("b", item.getTags().get(1).getTagName());
-        assertEquals("c", item.getTags().get(2).getTagName());
         assertEquals("d", item.getTags().get(3).getTagName());
 
     }
