@@ -9,9 +9,13 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
 
     <application
         android:allowBackup="true"
@@ -78,6 +82,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddItemActivity" />
+        <activity android:name=".CaptureAct"
+            android:screenOrientation="unspecified"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"/>
     </application>
 
 </manifest>

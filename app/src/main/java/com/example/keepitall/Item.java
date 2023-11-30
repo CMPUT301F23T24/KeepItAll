@@ -23,9 +23,10 @@ public class Item implements Serializable {
     private String model;
     private Integer serialNumber;
     private Float value;
-    private List<Tag> tags;
+    private List<com.example.keepitall.Tag> tags;
     private String name;
     private ArrayList<Uri> photoList;
+    private boolean isSelected = false;
     /**
      * Constructs an Item object with all attributes.
      * @param purchaseDate The date the item was purchased.
@@ -44,6 +45,7 @@ public class Item implements Serializable {
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
         this.photoList = new ArrayList<Uri>();
+        this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
         this.name = name;
     }
 
@@ -53,9 +55,10 @@ public class Item implements Serializable {
      * @param tag The tag to add.
 
      */
-    public void addTag(Tag tag) {
-        //TODO: More functionality for tags soon
-        tags.add(tag);
+    public void addTag(com.example.keepitall.Tag tag) {
+        if (!this.tags.contains(tag)) {
+            this.tags.add(tag);
+        }
     }
 
     public void addPhoto(Uri photo) {
@@ -71,8 +74,7 @@ public class Item implements Serializable {
 
      */
     public void removeTag(Tag tag) {
-        //TODO: More functionality for tags soon
-        tags.remove(tag);
+        this.tags.remove(tag);
     }
 
     /**
@@ -106,7 +108,7 @@ public class Item implements Serializable {
     public Float getValue() { return value; }
     public void setValue(Float value) { this.value = value;}
     // Tag
-    public List<Tag> getTags() { return tags; }
+    public List<com.example.keepitall.Tag> getTags() { return tags; }
 
     // Photo
     public ArrayList<Uri> getPhotoList() { return photoList; }
@@ -133,6 +135,13 @@ public class Item implements Serializable {
                 this.serialNumber.equals(item.serialNumber) &&
                 this.value.equals(item.value) &&
                 this.tags.equals(item.tags);
+    }
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 

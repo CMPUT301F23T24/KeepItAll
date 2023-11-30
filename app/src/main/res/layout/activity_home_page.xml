@@ -86,6 +86,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+<<<<<<< HEAD
             <ImageView
                 android:id="@+id/HomescreenHiddenImageView"
                 android:layout_width="wrap_content"
@@ -99,6 +100,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@tools:sample/avatars" />
 
+=======
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/selectButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="@drawable/white_button"
+                android:text="Select"
+                tools:layout_editor_absoluteX="131dp"
+                tools:layout_editor_absoluteY="69dp" />
+>>>>>>> main
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
@@ -144,7 +155,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/sortButton"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="40dp"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="12dp"
@@ -155,7 +166,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/filterButton"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="12dp"
@@ -167,7 +178,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/take_picture_button"
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="40dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="12dp"
@@ -189,5 +200,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scanButton"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:background="@drawable/white_button"
+        android:text="Scan"
+        tools:layout_editor_absoluteX="212dp"
+        tools:layout_editor_absoluteY="679dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,15 +1,12 @@
 package com.example.keepitall;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Used for tags that would be used to categorize items
  * Not currently implemented
  */
 public class Tag implements Comparable<Tag> {
-    // Private variables
     private String tagName;
 
     /**
