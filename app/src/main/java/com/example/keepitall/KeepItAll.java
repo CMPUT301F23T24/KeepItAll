@@ -1,15 +1,11 @@
 package com.example.keepitall;
 import android.net.Uri;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Main class uses by the App to organize users and Items. This class is a singleton.
  * This class will link up to firestore to be able to add, delete, and edit items from the database,
