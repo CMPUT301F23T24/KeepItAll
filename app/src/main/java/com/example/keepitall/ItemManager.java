@@ -201,8 +201,8 @@ public class ItemManager{
             case "MAKE":
                 comparator = Comparator.comparing(Item::getMake);
                 break;
-            case "MODEL": // replace this with tag
-                comparator = Comparator.comparing(Item::getModel);
+            case "TAG":
+                comparator = Comparator.comparing(Item::getItemFirstTag);
                 break;
             case "VALUE":
                 comparator = Comparator.comparing(Item::getValue);

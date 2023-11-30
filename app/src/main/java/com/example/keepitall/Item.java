@@ -117,7 +117,7 @@ public class Item implements Serializable {
         if (tags.size() >= 1) {
             return tags.get(0).getTagName();
         }
-        return null;
+        return "ZZZZ";
     }
     // Get last tag
     public String getItemLastTag() {
