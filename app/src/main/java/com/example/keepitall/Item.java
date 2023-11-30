@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -104,7 +105,11 @@ public class Item implements Serializable {
     public void setValue(Float value) { this.value = value;}
     // Tag
     public List<com.example.keepitall.Tag> getTags() { return tags; }
-
+    public void sortTags() {
+        List<com.example.keepitall.Tag> tags = getTags();
+        Collections.sort(tags);
+        this.tags = tags;
+    }
     // Photo
     public ArrayList<Uri> getPhotoList() { return PhotoList; }
 
