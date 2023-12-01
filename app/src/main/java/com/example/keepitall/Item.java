@@ -61,10 +61,10 @@ public class Item implements Serializable {
         }
     }
 
-    public void addPhoto(Uri photo) {
-        photoList.add(photo.toString());
+    public void addPhoto(String photo) {
+        photoList.add(photo);
     }
-    public void removePhoto(Uri photo) {
+    public void removePhoto(String photo) {
         photoList.remove(photo);
     }
 

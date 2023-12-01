@@ -1,5 +1,6 @@
 package com.example.keepitall;
 
+import static android.content.ContentValues.TAG;
 import static com.example.keepitall.ImageGalleryActivity.REQUEST_IMAGE_CAPTURE;
 import android.Manifest;
 import android.app.Activity;
@@ -14,16 +15,23 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
+import android.widget.Toolbar;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -48,6 +56,7 @@ public class PhotoManager {
     private KeepItAll keepItAll = KeepItAll.getInstance();
     private final FirebaseFirestore Database = FirebaseFirestore.getInstance();
     private final CollectionReference userCollection;
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
 
     /**
@@ -127,58 +136,32 @@ public class PhotoManager {
             // Handle the null cases
             return;
         }
-
-        // Get a reference to the "images" collection of the item
-        CollectionReference imagesCollection = userCollection.document(user.getUserName())
-                .collection("items")
-                .document(item.getName())
-                .collection("images");
-
-        // Create a new image document with a unique ID
-        String imageId = imagesCollection.document().getId();
-
-        // Create a map to store the image data
-        Map<String, Object> imageData = new HashMap<>();
-        imageData.put("imageId", imageId);
-        imageData.put("imageUrl", uri.toString()); // Save the image URI as a string
-
-        // Add the image data to the "images" collection
-        imagesCollection.document(imageId).set(imageData)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Image URI successfully saved
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        // Handle the failure to save the image URI
-                    }
-                });
-    }
-
-
-
-    /**
-     * Method called when the user wants to load images from the database
-     * it will access firestore and load the images from the user's database (specifically from the "images" collection of the item)
-     * it will create a new ArrayList of the URIs saved in the database and return it
-     * @param user
-     * @param item
-     * @return
-     */
-    public void LoadImagesFromDataBase(){
-
-
-        // Loop Through all of the Users in the database
-        // Loop through each Item that a user has
-        // Loop through each of the Images that an Item Has
-        // Add the Image URI to a local ArrayList
-        // set the ArrayList to the Item using the setImages method
-        // Repeat for each Item
-        // Repeat for each User
-
+        String path = "/images/" + user.getUserName() + "/" + item.getName() + "/" + uri.getLastPathSegment();
+        StorageReference reference = storageReference.child(path);
+        reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<com.google.firebase.storage.UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(com.google.firebase.storage.UploadTask.TaskSnapshot taskSnapshot) {
+                // Save the path to the image in the database
+                Map<String, Object> data = new HashMap<>();
+                data.put("path", path);
+                userCollection.document(user.getUserName())
+                        .collection("items")
+                        .document(item.getName())
+                        .collection("images")
+                        .add(data);
+                Toast.makeText(context, "Image saved to Storage", Toast.LENGTH_SHORT).show();
+                // we need to update the local item object. (that is located in the keepItAll object)
+                // we need to get the item from the database again, and then update the local item object
+                // this is just to ensure that the local item object is up to date with the database
+                Item tempitem = keepItAll.getUserByName(user.getUserName()).getItemManager().getItemByName(item.getName());
+                if (tempitem != null) {
+                    tempitem.getPhotoList().add(path);
+                }
+            }
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
+            Log.e(TAG, "Error downloading image: " + exception.getMessage());
+        });
     }
 }
 

@@ -152,12 +152,11 @@ public class KeepItAll{
         // Retrieve the photoList for the item
         itemDoc.getReference().collection("images").get()
                 .addOnSuccessListener(imageSnapshots -> {
-                    ArrayList<Uri> photoList = new ArrayList<>();
+                    ArrayList<String> photoList = new ArrayList<>();
                     for (DocumentSnapshot imageDoc : imageSnapshots.getDocuments()) {
-                        String uriString = imageDoc.getString("imageUrl");
-                        Uri uri = Uri.parse(uriString);
-                        photoList.add(uri);
-                        item.addPhoto(uri);
+                        String uriPath = imageDoc.getString("path");
+                        photoList.add(uriPath);
+                        item.addPhoto(uriPath);
                     }
                     // Set the photoList for the item
                     //item.setPhotoList(photoList);

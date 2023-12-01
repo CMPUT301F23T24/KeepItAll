@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class PhotoGridAdapter extends BaseAdapter {
@@ -44,7 +46,7 @@ public class PhotoGridAdapter extends BaseAdapter {
 
         Uri photo = getItem(position);
         if (photo != null) {
-            photoImageView.setImageURI(photo);
+            Glide.with(context).load(photo).into(photoImageView);
         }
 
         return convertView;
