@@ -271,6 +271,10 @@ public class ImageGalleryActivity extends AppCompatActivity {
         } else {
             // Delete selected Images
             uri.removeAll(UriToDelete); // Remove the selected images from the list
+            // call the delete function in the photoManager
+            for (Uri uriToDelete : UriToDelete) {
+                photoManager.DeleteImageFromDataBase(user, item, uriToDelete);
+            }
             if (photoGridAdapter != null) {
                 photoGridAdapter.notifyDataSetChanged();
             }
@@ -332,6 +336,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
      */
     private void setUrisToAdapter(Item item){
 
+        if (item == null) {
+            return;
+        }
         // clear the list
         uri.clear();
         // if the item has no photos, return
@@ -360,7 +367,5 @@ public class ImageGalleryActivity extends AppCompatActivity {
                 }
             });
         }
-
-
     }
 }

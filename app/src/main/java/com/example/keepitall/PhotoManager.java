@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -162,6 +163,65 @@ public class PhotoManager {
             // Handle any errors
             Log.e(TAG, "Error downloading image: " + exception.getMessage());
         });
+    }
+
+    /**
+     * Deletes an image from the database at the given path (the path is stored in the item object)
+     */
+    public void DeleteImageFromDataBase(User user, Item item, Uri uriToDelete) {
+
+
+        if (item == null || uriToDelete == null || user == null) {
+            return;
+        }
+
+        // loop through all the images in the item object, and find the one that matches the uriToDelete
+        // then delete it from the database
+        // parse the uriToDelete to a string, and cut out everything except the file name
+        String path = uriToDelete.toString();
+        // parse at each %
+        String[] parts = path.split("%");
+        if(parts.length == 4){
+            path = parts[3];
+            // remove the first 2 characters
+            path = path.substring(2);
+            // only keep the first 10 characters
+            path = path.substring(0, 10);
+        }
+
+        String FinalPath = "/images/" + user.getUserName() + "/" + item.getName() + "/" + path;
+        StorageReference ref = storageReference.child(FinalPath);
+        // delete the image from the database
+        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // delete the image from the database
+                userCollection.document(user.getUserName())
+                        .collection("items")
+                        .document(item.getName())
+                        .collection("images")
+                        .whereEqualTo("path", FinalPath)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    document.getReference().delete();
+                                }
+                            }
+                        });
+                // delete the image from the local item object
+                Item tempitem = keepItAll.getUserByName(user.getUserName()).getItemManager().getItemByName(item.getName());
+                if (tempitem != null) {
+                    tempitem.getPhotoList().remove(uriToDelete.toString());
+                }
+                Toast.makeText(context, "Image deleted from Storage", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
+            Log.e(TAG, "Error deleting image: " + exception.getMessage());
+        });
+
+
     }
 }
 
