@@ -110,7 +110,6 @@ public class KeepItAll{
         if (userCollection == null) {
             return;
         }
-
         userCollection.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
@@ -148,6 +147,13 @@ public class KeepItAll{
                 });
     }
 
+    /**
+     * Retrieves the photoList for an item from the database
+     * @param user
+     * @param item
+     * @param itemManager
+     * @param itemDoc
+     */
     private void retrievePhotoList(User user, Item item, ItemManager itemManager, DocumentSnapshot itemDoc) {
         // Retrieve the photoList for the item
         itemDoc.getReference().collection("images").get()
