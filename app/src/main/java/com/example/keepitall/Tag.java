@@ -1,12 +1,13 @@
 package com.example.keepitall;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Used for tags that would be used to categorize items
  * Not currently implemented
  */
-public class Tag implements Comparable<Tag> {
+public class Tag implements Serializable, Comparable<Tag> {
     private String tagName;
 
     /**

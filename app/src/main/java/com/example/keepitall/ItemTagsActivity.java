@@ -113,9 +113,7 @@ public class ItemTagsActivity extends AppCompatActivity {
             return;
         }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String itemId = getIntent().getStringExtra("itemId");
-
-        db.collection("items").document(itemId).collection("tags")
+        db.collection("items").document(currentItemId).collection("tags")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -126,7 +124,7 @@ public class ItemTagsActivity extends AppCompatActivity {
                         }
                         tagAdapter.notifyDataSetChanged();
                     } else {
-                        // Handle failure
+                        Toast.makeText(this, "Error loading tags", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -145,6 +143,7 @@ public class ItemTagsActivity extends AppCompatActivity {
             tags.clear();
             tags.addAll(tagsManager.getTagsForItem(currentItemId));
             tagAdapter.notifyDataSetChanged();
+            loadTags();
         }
     }
 }

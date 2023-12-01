@@ -29,7 +29,7 @@ public class TagSelectionDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Convert your tag list to a CharSequence array for the dialog
+        // Convert tag list to a CharSequence array for the dialog
         CharSequence[] tagItems = availableTags.toArray(new CharSequence[0]);
         boolean[] checkedItems = new boolean[tagItems.length];
 
@@ -63,6 +63,10 @@ public class TagSelectionDialog extends DialogFragment {
                     }
                 });
 
+
+
         return builder.create();
     }
+
+
 }

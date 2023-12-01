@@ -8,13 +8,44 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TagsManager {
     private static TagsManager instance;
     private Map<String, List<Tag>> itemTagsMap;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private Set<String> appliedTags = new HashSet<>();
+
+    public void markTagAsApplied(String tagName) {
+        appliedTags.add(tagName);
+    }
+
+    public boolean isTagApplied(String tagName) {
+        return appliedTags.contains(tagName);
+    }
+
+
+    public void fetchAllTags(OnAllTagsFetchedListener listener) {
+        db.collectionGroup("tags").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Set<String> allTags = new HashSet<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String tagName = document.getString("tagName");
+                    allTags.add(tagName);
+                }
+                listener.onAllTagsFetched(new ArrayList<>(allTags));
+            } else {
+                listener.onAllTagsFetched(new ArrayList<>()); // Return an empty list in case of failure
+            }
+        });
+    }
+
+    public interface OnAllTagsFetchedListener {
+        void onAllTagsFetched(List<String> tags);
+    }
 
     /**
      * Fetch tags from Firestore and update the local tag list.
@@ -85,4 +116,5 @@ public class TagsManager {
         }
         return allTags;
     }
+
 }

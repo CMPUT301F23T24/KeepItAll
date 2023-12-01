@@ -52,6 +52,21 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/selectButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="131dp"
+                android:layout_marginTop="69dp"
+                android:layout_marginEnd="132dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/white_button"
+                android:text="Select"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/addButton"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
@@ -86,14 +101,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/selectButton"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:background="@drawable/white_button"
-                android:text="Select"
-                tools:layout_editor_absoluteX="131dp"
-                tools:layout_editor_absoluteY="69dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
@@ -161,6 +168,19 @@
         app:layout_constraintStart_toEndOf="@+id/sortButton" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/scanButton"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginTop="679dp"
+        android:layout_marginEnd="119dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/white_button"
+        android:text="Scan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/take_picture_button"
         android:layout_width="80dp"
         android:layout_height="40dp"
@@ -184,14 +204,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/scanButton"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:background="@drawable/white_button"
-        android:text="Scan"
-        tools:layout_editor_absoluteX="212dp"
-        tools:layout_editor_absoluteY="679dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

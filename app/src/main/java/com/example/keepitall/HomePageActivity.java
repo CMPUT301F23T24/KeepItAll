@@ -1,6 +1,5 @@
 package com.example.keepitall;
 
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -13,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,9 +24,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import androidx.appcompat.app.AlertDialog;
@@ -71,6 +76,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
     private Button selectButton;
     private Button scanbutton;
+    private TagsManager tagsManager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -79,6 +85,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         setContentView(R.layout.activity_home_page);
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
+        tagsManager = TagsManager.getInstance();
 
         selectButton = findViewById(R.id.selectButton);
         selectButton.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +181,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             finish();
         }
 
-        scanbutton = findViewById(R.id.scanbutton);
+        scanbutton = findViewById(R.id.scanButton);
         scanbutton.setOnClickListener(v ->
         {
             scanCode();
@@ -335,20 +342,36 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
      */
     private void showTagSelectionDialog(List<String> tagNames) {
         TagSelectionDialog dialog = new TagSelectionDialog();
-        dialog.setAvailableTags(tagNames); // Corrected variable name
+        dialog.setAvailableTags(tagNames);
         dialog.setTagSelectionListener(selectedTags -> {
-            // Logic to apply selectedTags to selected items
             for (int position : homePageAdapter.getSelectedItems()) {
                 Item item = userItemManager.getItem(position);
                 for (String tag : selectedTags) {
                     item.addTag(new Tag(tag));
+                    saveTagToFirestore(item.getName(), tag); // Save tag to Firestore
                 }
-                // Update items in Firebase
-                //...
             }
+            homePageAdapter.clearSelection();
+            homePageAdapter.toggleSelectionMode();
+            selectButton.setText("Select");
+            homePageAdapter.notifyDataSetChanged();
         });
         dialog.show(getSupportFragmentManager(), "TagSelectionDialog");
     }
+
+    private void saveTagToFirestore(String itemId, String tag) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> tagData = new HashMap<>();
+        tagData.put("tagName", tag);
+        db.collection("items").document(itemId).collection("tags").add(tagData)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("TAG", "Tag successfully written!");
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("TAG", "Error writing tag", e);
+                });
+    }
+
 
     private void selectButtonClickEvent() {
         if (!homePageAdapter.isSelectionMode()) {
@@ -358,40 +381,31 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         } else {
             Set<Integer> selectedItems = homePageAdapter.getSelectedItems();
             if (!selectedItems.isEmpty()) {
-                TagsManager tagsManager = TagsManager.getInstance();
-                Set<String> uniqueTagNames = new HashSet<>(); // To store unique tags
-
-                for (int position : selectedItems) {
-                    String itemId = userItemManager.getItem(position).getName();
-                    tagsManager.fetchTagsFromFirestore(itemId, fetchedTags -> {
-                        for (Tag tag : fetchedTags) {
-                            uniqueTagNames.add(tag.getTagName());
-                        }
-                        // Once all tags are fetched, show the dialog
-                        if (position == selectedItems.size() - 1) {
-                            showTagSelectionDialog(new ArrayList<>(uniqueTagNames));
-                        }
-                    });
-                }
+                fetchAndShowAllTags();
             } else {
                 Toast.makeText(HomePageActivity.this, "No items selected", Toast.LENGTH_SHORT).show();
-                selectButton.setText("Select");
             }
         }
     }
 
-    private List<String> getAvailableTags() {
-        List<String> tags = new ArrayList<>();
-
+    private void fetchAndShowAllTags() {
         TagsManager tagsManager = TagsManager.getInstance();
-        List<String> allTags = tagsManager.getAllTags();
+        tagsManager.fetchAllTags(allTags -> {
+            List<String> availableTags = new ArrayList<>();
+            for (String tag : allTags) {
+                if (!tagsManager.isTagApplied(tag)) {
+                    availableTags.add(tag);
+                }
+            }
 
-        for (String tag : allTags) {
-            tags.add(tag);
-        }
-
-        return tags;
+            if (!availableTags.isEmpty()) {
+                showTagSelectionDialog(availableTags);
+            } else {
+                Toast.makeText(HomePageActivity.this, "No available tags to apply", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     /**
      * Performs the search and displays it based on given query
