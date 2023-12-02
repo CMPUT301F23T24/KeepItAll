@@ -8,7 +8,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Class used to for the ViewItemActivity
@@ -19,6 +22,8 @@ public class ViewItemActivity extends AppCompatActivity {
     // Private variables
     private Item item;
     private static final int REQUEST_CODE_EDIT_ITEM = 1; // Request code for editing an item
+    private String userName = "No User Name";
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +51,17 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // If gallery button is clicked, go to item gallery page
         Button galleryButton = findViewById(R.id.galleryButton);
+        // Access the username
+        Bundle extras = getIntent().getExtras();
+        userName = extras.getString("username");
         galleryButton.setOnClickListener(v -> {
             if (item != null) {
                 Intent intent = new Intent(ViewItemActivity.this, ImageGalleryActivity.class);
                 intent.putExtra("itemId", item.getName());
+                // pass in the Item object to the ImageGalleryActivity
+                intent.putExtra("item", item);
+                // pass in the user's name to the ImageGalleryActivity
+                intent.putExtra("username", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(ViewItemActivity.this, "Item data is not available.", Toast.LENGTH_SHORT).show();
@@ -78,7 +90,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        displayText();
     }
 
     /**
@@ -114,6 +126,7 @@ public class ViewItemActivity extends AppCompatActivity {
         Float value = item.getValue();
         Integer serialNum = item.getSerialNumber();
         String description = item.getDescription();
+        String formattedDate = dateFormat.format(item.getPurchaseDate());
 
         // Get text views
         TextView nameView = findViewById(R.id.itemNameText);
@@ -125,8 +138,8 @@ public class ViewItemActivity extends AppCompatActivity {
         TextView descriptionView = findViewById(R.id.descriptionText);
 
         // Set text based on item properties
-        nameView.setText(name);
-        dateView.setText("Date of Purchase: " + date.toString());
+        nameView.setText(item.getName());
+        dateView.setText("Date of Purchase: " + formattedDate);
         makeView.setText("Item Make: " + make);
         modelView.setText("Item Model: " + model);
         valueView.setText("Estimated Value: " + value.toString());
