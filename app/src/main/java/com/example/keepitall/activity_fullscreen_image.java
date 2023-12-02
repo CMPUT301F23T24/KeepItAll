@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 public class activity_fullscreen_image extends AppCompatActivity {
 
     @Override
@@ -18,7 +20,7 @@ public class activity_fullscreen_image extends AppCompatActivity {
             String image = extras.getString("image");
             // Set the image
             ImageView imageView = findViewById(R.id.fullscreen_imageview);
-            imageView.setImageURI(Uri.parse(image));
+            Glide.with(this).load(Uri.parse(image)).into(imageView);
         }
         // setup the back button
         findViewById(R.id.fullscreenimage_backbutton).setOnClickListener(v -> finish());

@@ -174,7 +174,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             finish();
         }
 
-        scanbutton = findViewById(R.id.scanbutton);
+        scanbutton = findViewById(R.id.scanButton);
         scanbutton.setOnClickListener(v ->
         {
             scanCode();
@@ -264,8 +264,12 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            //TempImageView.setImageBitmap(imageBitmap);
+            // save the photo to the gallery
+            PhotoManager photoManager = new PhotoManager(this);
+            ImageView hiddenImage = findViewById(R.id.HomescreenHiddenImageView);
+            hiddenImage.setImageBitmap(imageBitmap);
+            photoManager.SaveImageToGallery(hiddenImage);
+            Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -422,7 +426,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     }
 
     private void takePictureClickEvent() {
-        Toast.makeText(HomePageActivity.this, "Take picture", Toast.LENGTH_SHORT).show();
         // Opens the camera on the phone
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);

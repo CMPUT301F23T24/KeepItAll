@@ -1,7 +1,11 @@
 package com.example.keepitall;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -21,9 +25,8 @@ public class Item implements Serializable {
     private Float value;
     private List<com.example.keepitall.Tag> tags;
     private String name;
-    private ArrayList<Uri> PhotoList;
+    private ArrayList<String> photoList;
     private boolean isSelected = false;
-
     /**
      * Constructs an Item object with all attributes.
      * @param purchaseDate The date the item was purchased.
@@ -40,8 +43,9 @@ public class Item implements Serializable {
         this.model = model;
         this.serialNumber = serialNumber;
         this.value = value;
+        this.tags = new ArrayList<>();  // Initialize tags list
+        this.photoList = new ArrayList<String>();
         this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
-        this.PhotoList = new ArrayList<Uri>();
         this.name = name;
     }
 
@@ -57,8 +61,11 @@ public class Item implements Serializable {
         }
     }
 
-    public void addPhoto(Uri photo) {
-        PhotoList.add(photo);
+    public void addPhoto(String photo) {
+        photoList.add(photo);
+    }
+    public void removePhoto(String photo) {
+        photoList.remove(photo);
     }
 
     /**
@@ -74,7 +81,8 @@ public class Item implements Serializable {
      * Default constructor for Item object. with no parameters
      */
     public Item(){
-        this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
+        this.tags = new ArrayList<>();  // Initialize tags list
+        this.photoList = new ArrayList<>(); // Initialize photo list
     }
 
     // Getters and setters //
@@ -103,8 +111,8 @@ public class Item implements Serializable {
     public List<com.example.keepitall.Tag> getTags() { return tags; }
 
     // Photo
-    public ArrayList<Uri> getPhotoList() { return PhotoList; }
-
+    public ArrayList<String> getPhotoList() { return photoList; }
+    public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
 
     public boolean matchesQuery(String query) {
         String lowerCaseQuery = query.toLowerCase();
@@ -113,6 +121,21 @@ public class Item implements Serializable {
                 description.toLowerCase().contains(lowerCaseQuery);
     }
 
+    /**
+     * Checks if two items are equal.
+     * @param item
+     * @return true if the items are equal, false otherwise.
+     */
+    public boolean isEqual(Item item) {
+        return this.name.equals(item.name) &&
+                this.purchaseDate.equals(item.purchaseDate) &&
+                this.description.equals(item.description) &&
+                this.make.equals(item.make) &&
+                this.model.equals(item.model) &&
+                this.serialNumber.equals(item.serialNumber) &&
+                this.value.equals(item.value) &&
+                this.tags.equals(item.tags);
+    }
     public boolean isSelected() {
         return isSelected;
     }
