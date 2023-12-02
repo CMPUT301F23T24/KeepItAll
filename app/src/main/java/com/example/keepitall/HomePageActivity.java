@@ -126,7 +126,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     // Add item button
                     AppCompatButton addButton = findViewById(R.id.addButton);
                     addButton.setOnClickListener(v -> {
-                        Intent intent = new Intent(HomePageActivity.this, AddItemActivity.class);
+                        Intent intent = new Intent(HomePageActivity.this,
+                                AddItemActivity.class);
                         startActivityForResult(intent, 1);
                     });
 
@@ -197,7 +198,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         barLauncher.launch(options);
 
     }
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
+            result->
     {
         if(result.getContents() != null) {
             // Extract information from the scan result
@@ -319,7 +321,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         currentItemManager = homePageAdapter.getItemList();
         if (!deleteMode) {
             deleteMode = true;
-            Toast.makeText(HomePageActivity.this, "Select items to be deleted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomePageActivity.this, "Select items to be deleted",
+                    Toast.LENGTH_SHORT).show();
             deleteButton.setBackgroundResource(R.drawable.gray_button);
         } else {
             // Delete selected items
@@ -338,19 +341,27 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     }
 
     /**
-     * This method is to fetch tags and show the dialog.
+     * Displays a dialog for selecting tags from a list.
+     * This method initializes and shows a TagSelectionDialog.
+     * When tags are selected and confirmed, it applies those tags to the selected items and updates
+     * Firestore.
+     *
+     * @param tagNames A list of tag names to be displayed in the dialog.
      */
     private void showTagSelectionDialog(List<String> tagNames) {
         TagSelectionDialog dialog = new TagSelectionDialog();
         dialog.setAvailableTags(tagNames);
         dialog.setTagSelectionListener(selectedTags -> {
+            // Loop through each selected item
             for (int position : homePageAdapter.getSelectedItems()) {
                 Item item = userItemManager.getItem(position);
+                // Apply each selected tag to the item
                 for (String tag : selectedTags) {
                     item.addTag(new Tag(tag));
                     saveTagToFirestore(item.getName(), tag); // Save tag to Firestore
                 }
             }
+            // Reset selection mode after tag application
             homePageAdapter.clearSelection();
             homePageAdapter.toggleSelectionMode();
             selectButton.setText("Select");
@@ -359,6 +370,13 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         dialog.show(getSupportFragmentManager(), "TagSelectionDialog");
     }
 
+    /**
+     * Saves a selected tag to Firestore.
+     * This method creates a new document in the 'tags' collection of the specified item in Firestore.
+     *
+     * @param itemId The ID of the item to which the tag is being added.
+     * @param tag    The tag name to be added.
+     */
     private void saveTagToFirestore(String itemId, String tag) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> tagData = new HashMap<>();
@@ -372,40 +390,54 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                 });
     }
 
-
+    /**
+     * Handles the click event for the 'Select' button.
+     * This method toggles the selection mode on the HomePageAdapter and fetches all tags to be
+     * displayed in a dialog.
+     */
     private void selectButtonClickEvent() {
         if (!homePageAdapter.isSelectionMode()) {
             homePageAdapter.toggleSelectionMode();
             selectButton.setText("Apply Tags");
-            Toast.makeText(HomePageActivity.this, "Select items for applying tags", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomePageActivity.this, "Select items for applying tags",
+                    Toast.LENGTH_SHORT).show();
         } else {
             Set<Integer> selectedItems = homePageAdapter.getSelectedItems();
             if (!selectedItems.isEmpty()) {
                 fetchAndShowAllTags();
             } else {
-                Toast.makeText(HomePageActivity.this, "No items selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomePageActivity.this, "No items selected",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     * Fetches all tags and displays them in a selection dialog.
+     * This method retrieves all available tags from the TagsManager and filters out those already
+     * applied.
+     * It then shows a dialog for the user to select from these tags.
+     */
     private void fetchAndShowAllTags() {
         TagsManager tagsManager = TagsManager.getInstance();
         tagsManager.fetchAllTags(allTags -> {
             List<String> availableTags = new ArrayList<>();
+            // Filter out already applied tags
             for (String tag : allTags) {
                 if (!tagsManager.isTagApplied(tag)) {
                     availableTags.add(tag);
                 }
             }
 
+            // Filter out already applied tags
             if (!availableTags.isEmpty()) {
                 showTagSelectionDialog(availableTags);
             } else {
-                Toast.makeText(HomePageActivity.this, "No available tags to apply", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomePageActivity.this, "No available tags to apply",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     /**
      * Performs the search and displays it based on given query
@@ -469,7 +501,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                         // After end date is selected, filter the items
                         filterItemsByDateRange();
                     }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
         );
 
         datePickerDialog.show();
@@ -480,7 +513,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
      */
     private void filterItemsByDateRange() {
         if (startDate == null || endDate == null) {
-            Toast.makeText(HomePageActivity.this, "Please select both start and end dates.", Toast.LENGTH_LONG).show();
+            Toast.makeText(HomePageActivity.this, "Please select both start and end dates.",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
