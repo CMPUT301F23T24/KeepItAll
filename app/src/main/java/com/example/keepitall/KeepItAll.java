@@ -1,15 +1,11 @@
 package com.example.keepitall;
-import android.util.Log;
-
+import android.net.Uri;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Main class uses by the App to organize users and Items. This class is a singleton.
  * This class will link up to firestore to be able to add, delete, and edit items from the database,
@@ -111,58 +107,72 @@ public class KeepItAll{
      * down to fit our desired needs.View top of class for more information.
      */
     public void retrieveUsers() {
+        if (userCollection == null) {
+            return;
+        }
         userCollection.get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
-                            User user = userDoc.toObject(User.class);
-                            // Retrieve the associated items for the user
-                            userDoc.getReference().collection("items").get()
-                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onSuccess(QuerySnapshot itemSnapshots) {
-                                            // Create a new ItemManager for the user
-                                            ItemManager itemManager = new ItemManager();
-                                            // Loop through all the items and add them to the ItemManager
-                                            for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
-                                                Item item = itemDoc.toObject(Item.class);
-                                                // Fill up Item with data using the setter methods
-                                                item.setName(itemDoc.getString("name"));
-                                                item.setPurchaseDate(itemDoc.getDate("purchaseDate"));
-                                                item.setDescription(itemDoc.getString("description"));
-                                                item.setMake(itemDoc.getString("make"));
-                                                item.setModel(itemDoc.getString("model"));
-                                                Long serialNumberLong = itemDoc.getLong("serialNumber");
-                                                if (serialNumberLong != null) {
-                                                    item.setSerialNumber(serialNumberLong.intValue());
-                                                } else {
-                                                    // Handle the case where serialNumberLong is null
-                                                    // For example, set a default serial number or log a warning
-                                                    item.setSerialNumber(0);
-                                                    Log.w("KeepItAll", "Serial number is null for item: " + itemDoc.getString("name"));
-                                                }
-                                                item.setValue(itemDoc.getDouble("value").floatValue());
-                                                ///TODO: Add tags to the item
-                                                itemManager.addItem(item);
-                                            }
-                                            // Add the user to the list after all items are fetched
-                                            user.setItemManager(itemManager);
-                                            // update the local list of users
-                                            users.add(user);
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
+                        User user = userDoc.toObject(User.class);
+                        // Retrieve the associated items for the user
+                        userDoc.getReference().collection("items").get()
+                                .addOnSuccessListener(itemSnapshots -> {
+                                    ItemManager itemManager = new ItemManager();
+                                    for (DocumentSnapshot itemDoc : itemSnapshots.getDocuments()) {
+                                        Item item = itemDoc.toObject(Item.class);
+                                        // Fill up Item with data using the setter methods
+                                        item.setName(itemDoc.getString("name"));
+                                        item.setPurchaseDate(itemDoc.getDate("purchaseDate"));
+                                        item.setDescription(itemDoc.getString("description"));
+                                        item.setMake(itemDoc.getString("make"));
+                                        item.setModel(itemDoc.getString("model"));
+                                        // null check serial number
+                                        if (itemDoc.getLong("serialNumber") != null) {
+                                            item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
                                         }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(Exception e) {
-                                            // Handle the failure to retrieve the items
-                                        }
-                                    });
-                        }
+                                        item.setValue(itemDoc.getDouble("value").floatValue());
+
+                                        // Retrieve the photoList for each item
+                                        retrievePhotoList(user, item, itemManager, itemDoc);
+                                    }
+                                    // Add the user to the list after all items are fetched
+                                    user.setItemManager(itemManager);
+                                    // update the local list of users
+                                    users.add(user);
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Handle the failure to retrieve the items
+                                });
                     }
                 });
     }
 
+    /**
+     * Retrieves the photoList for an item from the database
+     * @param user
+     * @param item
+     * @param itemManager
+     * @param itemDoc
+     */
+    private void retrievePhotoList(User user, Item item, ItemManager itemManager, DocumentSnapshot itemDoc) {
+        // Retrieve the photoList for the item
+        itemDoc.getReference().collection("images").get()
+                .addOnSuccessListener(imageSnapshots -> {
+                    ArrayList<String> photoList = new ArrayList<>();
+                    for (DocumentSnapshot imageDoc : imageSnapshots.getDocuments()) {
+                        String uriPath = imageDoc.getString("path");
+                        photoList.add(uriPath);
+                        item.addPhoto(uriPath);
+                    }
+                    // Set the photoList for the item
+                    //item.setPhotoList(photoList);
+                    // Add the item to the ItemManager
+                    itemManager.addItem(item);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the failure to retrieve the photoList
+                });
+    }
     /**
      * Checks an input string against all active usernames, to see if it's available
      * @param userName - the username to check

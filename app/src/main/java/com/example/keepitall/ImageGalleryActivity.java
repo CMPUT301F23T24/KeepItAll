@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -23,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -38,20 +40,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -66,12 +81,11 @@ public class ImageGalleryActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 3;
     private static final int Read_Permission = 1;
     private static final int PICK_IMAGE = 1;
-
     // -- Variables -- //
     // PhotoManager object used for TAKING photos
     private PhotoManager photoManager = new PhotoManager(this);
-    // ActivityResultLauncher used for PICKING photos
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    StorageReference storageRef2;
     // TextView used to display the number of photos
     private TextView TotalPhotos;
     // ArrayList used to store the URIs of the images
@@ -80,10 +94,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private PhotoGridAdapter photoGridAdapter;
     // The hidden image view used to save the image to the gallery (this is not displayed to user)
     private ImageView hiddenImage;
-    // ID Identifier of the item (which is passed from the previous activity)
-    private String stringIdentifier;
-    //
-    private ItemPhotoManager itemPhotoManager;
     // Grid View
     private GridView gridView;
 
@@ -91,25 +101,43 @@ public class ImageGalleryActivity extends AppCompatActivity {
     private boolean deleteMode = false;
     private ArrayList<Uri> UriToDelete = new ArrayList<>();
 
+    // Private variables
+    KeepItAll keepItAll = KeepItAll.getInstance();
+    private User user;
+    private Item item;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // ---------- INITIALIZATION ---------- //
-
         // Set the content view
         setContentView(R.layout.image_gallery);
 
         // Initialize the UI elements
         TotalPhotos = findViewById(R.id.totalPhotos);
         hiddenImage = findViewById(R.id.hiddenImage);
-        stringIdentifier = getIntent().getStringExtra("itemId");
-        itemPhotoManager = new ItemPhotoManager();
-        uri = new ArrayList<>(itemPhotoManager.getPhotosForItem(stringIdentifier));
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String userName = extras.getString("username");
+            user = keepItAll.getUserByName(userName);
+
+        }
+        item = (Item) getIntent().getSerializableExtra("item");
+        connectItemToUser();
         /// Gridview
         gridView = findViewById(R.id.imageGridView);
-        photoGridAdapter = new PhotoGridAdapter(this, uri);
-        gridView.setAdapter(photoGridAdapter);
-
+        if(uri != null){
+            ///TODO: This is where it breaks
+            setUrisToAdapter(item);
+            photoGridAdapter = new PhotoGridAdapter(this, uri);
+            gridView.setAdapter(photoGridAdapter);
+            ///TODO: This is where it breaks
+        } else {
+            uri = new ArrayList<>();
+            item.setPhotoList(uri);
+            photoGridAdapter = new PhotoGridAdapter(this, uri);
+            gridView.setAdapter(photoGridAdapter);
+        }
         // Connect the buttons to their respective views
         Button backButton = findViewById(R.id.viewBackButton);
         Button cameraButton = findViewById(R.id.cameraButton);
@@ -124,10 +152,29 @@ public class ImageGalleryActivity extends AppCompatActivity {
         gridView.setOnItemClickListener((parent, view, position, id) -> gridViewItemClickEvent(view, position));
 
         // Register the photo picker activity
-        registerPhotoPickerActivity();
 
         // ---------- POST INITIALIZATION ---------- //
+    }
 
+
+    /**
+     * Method that will take in the item passed in from the previous activity, and connect it to the user
+     * due to the way that info is passed, we need to do this to ensure that the item variable we are changing
+     * is the same as the one in the user's list of items, which is within the KeepItAll class (singleton)
+     */
+    private void connectItemToUser(){
+        // find the Item object in the user's list of items that is equal to the item passed in from the previous activity
+        if (item != null && user != null) {
+            // loop through the user's list of items
+            for (Item userItem : user.getItemManager().getAllItems()) {
+                // check if the item is equal to the item passed in from the previous activity
+                if (userItem.isEqual(item)) {
+                    // if it is, set the item variable to the item in the user's list of items
+                    item = userItem;
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -150,24 +197,20 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
                 for (int i = 0; i < x; i++) {
                     Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                    ///TODO: add the uri to the list
                     uri.add(imageUri);
-                    //ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-                    //itemPhotoManager.addPhotoToItem(stringIdentifier, imageUri);
-                    ///TODO: add the uri to the database
-                    //SaveToDatabase(imageUri);
-
+                    Toast.makeText(getApplicationContext(), "Calling Save function", Toast.LENGTH_SHORT).show();
+                    photoManager.SaveImageToDataBase(user, item, imageUri);
                 }
-                photoGridAdapter.notifyDataSetChanged();
+                if (photoGridAdapter != null) {
+                    photoGridAdapter.notifyDataSetChanged();
+                }
                 TotalPhotos.setText("Total Photos: " + uri.size());
             } else if (data.getData() != null) {
-                Toast.makeText(getApplicationContext(), "Single image selected", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Single image selected", Toast.LENGTH_SHORT).show();
                 // get the URI of the image
-                String imageURL = data.getData().getPath();
-                uri.add(Uri.parse(imageURL));
+                //String imageURL = data.getData().getPath();
+                //uri.add(Uri.parse(imageURL));
             }
-
-            ///TODO: Refresh the adapter + update local uri list
         }
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -176,16 +219,22 @@ public class ImageGalleryActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             hiddenImage.setImageBitmap(imageBitmap);
             photoManager.SaveImageToGallery(hiddenImage);
+            // get the URI of hiddenImage
+            Uri imageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "Title", null));
+            uri.add(imageUri); // adds the photo we just took a picture of to the list of photos
+            // update the UI
+            TotalPhotos.setText("Total Photos: " + uri.size());
         }
 
-        photoGridAdapter.notifyDataSetChanged();
+        if (photoGridAdapter != null) {
+            photoGridAdapter.notifyDataSetChanged();
+        }
         ///TODO: Change the itemLogo to the image that was selected (the first image in the list)
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //LoadFromDatabase();
     }
 
     /**
@@ -221,14 +270,14 @@ public class ImageGalleryActivity extends AppCompatActivity {
             deleteButton.setBackgroundColor(Color.GRAY); // Change button color to indicate delete mode
         } else {
             // Delete selected Images
-            uri.removeAll(UriToDelete);
-            //for (Uri uriToDelete : UriToDelete) {
-                //ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-                //itemPhotoManager.removePhotoFromItem(stringIdentifier, uriToDelete);
-            //}
-            ///TODO: remove the uri from the database
-
-            photoGridAdapter.notifyDataSetChanged(); // Refresh the adapter
+            uri.removeAll(UriToDelete); // Remove the selected images from the list
+            // call the delete function in the photoManager
+            for (Uri uriToDelete : UriToDelete) {
+                photoManager.DeleteImageFromDataBase(user, item, uriToDelete);
+            }
+            if (photoGridAdapter != null) {
+                photoGridAdapter.notifyDataSetChanged();
+            }
             UriToDelete.clear(); // Clear the selection
             deleteMode = false; // Exit delete mode
             deleteButton.setBackgroundColor(Color.WHITE); // Reset button color
@@ -270,66 +319,53 @@ public class ImageGalleryActivity extends AppCompatActivity {
         }
     }
 
-    private void registerPhotoPickerActivity(){
-        // Registers a photo picker activity launcher in single-select mode.
-        pickMultipleMedia =
-                registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
-                    // Callback is invoked after the user selects media items or closes the
-                    // photo picker.
-                    if (!uris.isEmpty()) {
-                        Log.d("PhotoPicker", "Number of items selected: " + uris.size());
-                    } else {
-                        Log.d("PhotoPicker", "No media selected");
-                    }
-                });
-    }
 
-    // -- Saving and Loading Photos -- //
-    private void LoadFromDatabase() {
-        if (stringIdentifier == null) {
+
+    /////// --------------------- ///////
+
+    /**
+     * This is where ill be doing all my testing to try to bypass the issue
+     */
+
+    /**
+     * Loops through all of a Users, items, photos, and adds them to to a list
+     * We are connecting to the database here
+     * We are saving into a New ArrayList<Uri> uri
+     * @param item the item that we are getting the photos from
+     *
+     */
+    private void setUrisToAdapter(Item item){
+
+        if (item == null) {
             return;
         }
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Load the photos from the database into the uri list
-        db.collection("items").document(stringIdentifier).collection("photos")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            String photo = document.getString("photo");
-                            uri.add(Uri.parse(photo));
-                        }
-                        // Notify the adapter of the data change
-                        photoGridAdapter.notifyDataSetChanged();
-                        // Update the UI of the total number of photos
-                        TotalPhotos.setText("Total Photos: " + uri.size());
-                    } else {
-                        Log.d("PhotoPicker", "Error getting documents: ", task.getException());
-                    }
-                });
-    }
-    private void SaveToDatabase(Uri uriToAdd) {
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference itemRef = db.collection("items").document(stringIdentifier);
-        Map<String, Object> photoData = new HashMap<>();
-        photoData.put("photo", uriToAdd.toString());
-        itemRef.collection("photos").add(photoData);
-
-    }
-
-    private void LoadPhotosTest(){
-        ItemPhotoManager itemPhotoManager = ItemPhotoManager.getInstance();
-        // update the list of photos
-        if(itemPhotoManager.getPhotosForItem(stringIdentifier) != null){
-            uri.clear();
-            uri.addAll(itemPhotoManager.getPhotosForItem(stringIdentifier));
+        // clear the list
+        uri.clear();
+        // if the item has no photos, return
+        if (item.getPhotoList() == null || item.getPhotoList().size() == 0) {
+            return;
         }
-        // Notify the adapter of the data change
-        photoGridAdapter.notifyDataSetChanged();
-        // Update the UI of the total number of photos
-        TotalPhotos.setText("Total Photos: " + uri.size());
+        for (int i=0; i<item.getPhotoList().size();i++) {
+            StorageReference ref = storageReference.child(item.getPhotoList().get(i));
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uriToAdd) {
+                    uri.add(uriToAdd);
+                    //Toast.makeText(ImageGalleryActivity.this, "This has succeeded",Toast.LENGTH_SHORT).show();
+                    // notifiy the adapter that the data has changed
+                    if (photoGridAdapter != null) {
+                        photoGridAdapter.notifyDataSetChanged();
+                        // update the UI
+                        TotalPhotos.setText("Total Photos: " + uri.size());
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
 
+                    Toast.makeText(ImageGalleryActivity.this, "bad",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
-    // -- Work in Progress -- //
 }

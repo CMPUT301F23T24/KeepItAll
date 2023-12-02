@@ -19,6 +19,7 @@ public class ViewItemActivity extends AppCompatActivity {
     // Private variables
     private Item item;
     private static final int REQUEST_CODE_EDIT_ITEM = 1; // Request code for editing an item
+    private String userName = "No User Name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,17 @@ public class ViewItemActivity extends AppCompatActivity {
 
         // If gallery button is clicked, go to item gallery page
         Button galleryButton = findViewById(R.id.galleryButton);
+        // Access the username
+        Bundle extras = getIntent().getExtras();
+        userName = extras.getString("username");
         galleryButton.setOnClickListener(v -> {
             if (item != null) {
                 Intent intent = new Intent(ViewItemActivity.this, ImageGalleryActivity.class);
                 intent.putExtra("itemId", item.getName());
+                // pass in the Item object to the ImageGalleryActivity
+                intent.putExtra("item", item);
+                // pass in the user's name to the ImageGalleryActivity
+                intent.putExtra("username", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(ViewItemActivity.this, "Item data is not available.", Toast.LENGTH_SHORT).show();
