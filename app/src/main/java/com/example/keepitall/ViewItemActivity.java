@@ -8,7 +8,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Class used to for the ViewItemActivity
@@ -20,6 +23,7 @@ public class ViewItemActivity extends AppCompatActivity {
     private Item item;
     private static final int REQUEST_CODE_EDIT_ITEM = 1; // Request code for editing an item
     private String userName = "No User Name";
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +90,7 @@ public class ViewItemActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        displayText();
     }
 
     /**
@@ -122,6 +126,7 @@ public class ViewItemActivity extends AppCompatActivity {
         Float value = item.getValue();
         Integer serialNum = item.getSerialNumber();
         String description = item.getDescription();
+        String formattedDate = dateFormat.format(item.getPurchaseDate());
 
         // Get text views
         TextView nameView = findViewById(R.id.itemNameText);
@@ -133,8 +138,8 @@ public class ViewItemActivity extends AppCompatActivity {
         TextView descriptionView = findViewById(R.id.descriptionText);
 
         // Set text based on item properties
-        nameView.setText(name);
-        dateView.setText("Date of Purchase: " + date.toString());
+        nameView.setText(item.getName());
+        dateView.setText("Date of Purchase: " + formattedDate);
         makeView.setText("Item Make: " + make);
         modelView.setText("Item Model: " + model);
         valueView.setText("Estimated Value: " + value.toString());
