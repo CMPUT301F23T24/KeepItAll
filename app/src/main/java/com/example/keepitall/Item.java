@@ -139,10 +139,12 @@ public class Item implements Serializable {
     public boolean matchesQuery(String query) {
         ArrayList<String> queryKeywords = getKeywords(query);
         ArrayList<String> descriptionKeywords = getKeywords(description);
+        List<com.example.keepitall.Tag> tags = getTags();
         for (String word: queryKeywords) {
             if (!(name.toLowerCase().contains(word) ||
                     make.toLowerCase().contains(word) ||
-                    descriptionKeywords.contains(word))) {
+                    descriptionKeywords.contains(word)) ||
+                    tags.contains(word)) {
                 return false;
             }
         }
