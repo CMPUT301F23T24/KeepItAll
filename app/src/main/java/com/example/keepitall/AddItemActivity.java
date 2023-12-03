@@ -59,7 +59,7 @@ public class AddItemActivity extends AppCompatActivity {
         String make = makeText.getText().toString();
         String model = modelText.getText().toString();
         Integer serialNumber = 0;
-        Float value = 0.0f;
+        Float value = 10.0f;
         String description = descriptionText.getText().toString();
         String name = itemNameText.getText().toString();
 

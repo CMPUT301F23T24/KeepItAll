@@ -191,7 +191,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
     private void scanCode() {
         ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume  up to to flash flash onon");
+        options.setPrompt("Volume  up to to flash flash on");
         options.setBeepEnabled(true);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);
@@ -209,12 +209,14 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
             // Assuming userItemManager is the ItemManager instance in your HomePageActivity
             Item newItem = new Item();
-            if (scannedParts.length >= 5) {
-                newItem.setName(scannedParts[0]);
-                newItem.setMake(scannedParts[1]);
-                newItem.setModel(scannedParts[2]);
-                newItem.setValue(Float.parseFloat(scannedParts[3]));
-                newItem.setDescription(scannedParts[4]);
+            if (scannedParts.length >= 2) {
+                newItem.setSerialNumber(Integer.valueOf(scannedParts[0]));
+                newItem.setDescription(scannedParts[1]);
+                newItem.setPurchaseDate(new Date());
+                newItem.setName("newItem");
+                newItem.setMake(" ");
+                newItem.setModel(" ");
+                newItem.setValue(10.0f);
             }
 
 
@@ -231,6 +233,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             AlertDialog.Builder builder = new AlertDialog.Builder(HomePageActivity.this);
             builder.setTitle("Scanned Item");
             builder.setMessage("Name: " + newItem.getName() +
+                    "\nSerial Number: " + newItem.getSerialNumber() +
                     "\nDescription: " + newItem.getDescription() +
                     "\nMake: " + newItem.getMake() +
                     "\nModel: " + newItem.getModel() +
