@@ -4,12 +4,22 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
+
+import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.K;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Represents an item with various attributes and tags.
@@ -23,7 +33,7 @@ public class Item implements Serializable {
     private String model;
     private Integer serialNumber;
     private Float value;
-    private List<com.example.keepitall.Tag> tags;
+    private ArrayList<com.example.keepitall.Tag> tags = new ArrayList<>();
     private String name;
     private ArrayList<String> photoList;
     private boolean isSelected = false;
@@ -108,17 +118,43 @@ public class Item implements Serializable {
     public Float getValue() { return value; }
     public void setValue(Float value) { this.value = value;}
     // Tag
-    public List<com.example.keepitall.Tag> getTags() { return tags; }
+    public ArrayList<com.example.keepitall.Tag> getTags() {
+        return tags;
+    }
+    public void sortTags() {
+        ArrayList<com.example.keepitall.Tag> tags = getTags();
+        Collections.sort(tags);
+        this.tags = tags;
+    }
+    // Get first tag
+    public String getItemFirstTag() {
+        sortTags();
+        if (tags.size() >= 1) {
+            return tags.get(0).getTagName();
+        }
+        return "ZZZZ";
+    }
 
     // Photo
     public ArrayList<String> getPhotoList() { return photoList; }
     public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
 
+    // For searching
+    public ArrayList<String> getKeywords(String string) {
+        String[] keywords  = string.toLowerCase().split("[,\\s]");
+        return new ArrayList<>(Arrays.asList(keywords));
+    }
     public boolean matchesQuery(String query) {
-        String lowerCaseQuery = query.toLowerCase();
-        return name.toLowerCase().contains(lowerCaseQuery) ||
-                make.toLowerCase().contains(lowerCaseQuery) ||
-                description.toLowerCase().contains(lowerCaseQuery);
+        ArrayList<String> queryKeywords = getKeywords(query);
+        ArrayList<String> descriptionKeywords = getKeywords(description);
+        for (String word: queryKeywords) {
+            if (!(name.toLowerCase().contains(word) ||
+                    make.toLowerCase().contains(word) ||
+                    descriptionKeywords.contains(word))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
