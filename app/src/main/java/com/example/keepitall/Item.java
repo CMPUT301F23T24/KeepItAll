@@ -33,7 +33,7 @@ public class Item implements Serializable {
     private String model;
     private Integer serialNumber;
     private Float value;
-    private ArrayList<com.example.keepitall.Tag> tags = new ArrayList<>();
+    private ArrayList<com.example.keepitall.Tag> tags;
     private String name;
     private ArrayList<String> photoList;
     private boolean isSelected = false;
@@ -150,7 +150,8 @@ public class Item implements Serializable {
         for (String word: queryKeywords) {
             if (!(name.toLowerCase().contains(word) ||
                     make.toLowerCase().contains(word) ||
-                    descriptionKeywords.contains(word))) {
+                    descriptionKeywords.contains(word) ||
+                    tags.contains(new com.example.keepitall.Tag(word)))) {
                 return false;
             }
         }

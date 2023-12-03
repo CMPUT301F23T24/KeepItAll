@@ -597,7 +597,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String tagName = document.getString("tagName");
                                 item.addTag(new Tag(tagName));
-                                Toast.makeText(this, item.getItemFirstTag(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
