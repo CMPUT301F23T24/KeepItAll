@@ -45,8 +45,8 @@ public class ImageGalleryTesting {
      * Login using test account to be able to test homePage functionalities
      */
     public void setup() {
-        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("test"));
-        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("test"));
+        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("TEMP"));
+        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("123"));
         onView(withId(R.id.login_Button)).perform(click());
 
         // click on the first element in the grid view

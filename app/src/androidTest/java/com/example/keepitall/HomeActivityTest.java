@@ -104,21 +104,6 @@ import org.junit.runner.RunWith;
         }
 
 
-        @Test
-        public void testSearch() {
-            // TODO: the feature isn't done yet
-        }
-
-        @Test
-        public void testFilter() {
-            // TODO: the feature isn't done yet
-        }
-
-        @Test
-        public void testSort() {
-            // TODO: the feature isn't done yet
-        }
-
         /**
          * Adds a delay for testing
          * @param millis: milliseconds
