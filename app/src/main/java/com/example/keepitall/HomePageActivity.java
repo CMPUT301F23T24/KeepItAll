@@ -599,7 +599,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String tagName = document.getString("tagName");
-                                item.addTag(new Tag(tagName));
+                                item.addTag(new Tag(tagName.toLowerCase()));
                             }
                         }
                     });
