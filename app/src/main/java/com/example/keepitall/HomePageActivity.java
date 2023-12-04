@@ -1,11 +1,13 @@
 package com.example.keepitall;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -79,11 +81,18 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private Button scanbutton;
     private TagsManager tagsManager;
 
+    private ActivityResultLauncher<Intent> viewItemActivityLauncher;
+
+    private static final int REQUEST_CODE_VIEW_ITEM = 2;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+
+
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
         tagsManager = TagsManager.getInstance();
@@ -191,7 +200,26 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         {
             scanCode();
         });
+
+        viewItemActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Item updatedItem = (Item) data.getSerializableExtra("updatedItem");
+                            if (updatedItem != null) {
+                                userItemManager.updateItem(updatedItem, user);
+                                homePageAdapter.notifyDataSetChanged();
+                                updateTotalValue();
+                            }
+                        }
+                    }
+                }
+        );
     }
+
+
 
     private void scanCode() {
         ScanOptions options = new ScanOptions();
@@ -287,6 +315,17 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             photoManager.SaveImageToGallery(hiddenImage);
             Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
         }
+
+        if (requestCode == REQUEST_CODE_VIEW_ITEM && resultCode == RESULT_OK && data != null) {
+            Item updatedItem = (Item) data.getSerializableExtra("updatedItem");
+            if (updatedItem != null) {
+                userItemManager.updateItem(updatedItem, user);
+                homePageAdapter.notifyDataSetChanged();
+                updateTotalValue();
+            }
+        }
+
+
     }
 
     /**
@@ -319,7 +358,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             intent.putExtra("item", currentItemManager.getItem(position));
             intent.putExtra("image", R.drawable.app_icon);
             intent.putExtra("username", userName);
-            startActivity(intent);
+            viewItemActivityLauncher.launch(intent);
         }
     }
 
