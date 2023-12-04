@@ -1,6 +1,10 @@
 package com.example.keepitall;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +28,23 @@ public class ViewItemActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_EDIT_ITEM = 1; // Request code for editing an item
     private String userName = "No User Name";
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+    private static final int REQUEST_CODE_CHANGE_LOGO = 2;
+
+    private ActivityResultLauncher<Intent> changeLogoLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        int selectedLogoId = data.getIntExtra("selectedLogo", -1);
+                        if (selectedLogoId != -1) {
+                            ImageView logoImageView = findViewById(R.id.itemIcon); // Make sure this ID matches your layout
+                            logoImageView.setImageResource(selectedLogoId);
+                        }
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +124,21 @@ public class ViewItemActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Handle result from EditItemActivity
         if (requestCode == REQUEST_CODE_EDIT_ITEM && resultCode == RESULT_OK && data != null) {
-            // Get the updated item from the result intent
             Item updatedItem = (Item) data.getSerializableExtra("updatedItem");
             if (updatedItem != null) {
-                // Update the item
                 this.item = updatedItem;
                 displayText();
+            }
+        }
+
+        // Handle result from ChangeLogoActivity
+        if (requestCode == REQUEST_CODE_CHANGE_LOGO && resultCode == RESULT_OK && data != null) {
+            int selectedLogoId = data.getIntExtra("selectedLogo", -1);
+            if (selectedLogoId != -1) {
+                ImageView logoImageView = findViewById(R.id.itemIcon); // Replace with your actual ImageView ID
+                logoImageView.setImageResource(selectedLogoId);
             }
         }
     }
@@ -149,10 +178,14 @@ public class ViewItemActivity extends AppCompatActivity {
 
     /**
      * Changes the activity based on clicked button
-     * @param activity - the activity to change to
+     * @param activityClass - the activity to change to
      */
-    private void changeActivity(Class activity) {
-        Intent intent = new Intent(ViewItemActivity.this, activity);
-        startActivity(intent);
+    private void changeActivity(Class<?> activityClass) {
+        Intent intent = new Intent(ViewItemActivity.this, activityClass);
+        if (activityClass == ChangeLogoActivity.class) {
+            changeLogoLauncher.launch(intent);
+        } else {
+            startActivity(intent);
+        }
     }
 }
