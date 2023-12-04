@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 import java.util.ArrayList;
 
+/**
+ * This fragment is used to display the sort options user can choose
+ * to sort the items in the HomePage
+ */
 public class SortOptions extends AppCompatDialogFragment {
     private SortOptionsListener listener;
     private String selectedSort;
@@ -70,16 +74,24 @@ public class SortOptions extends AppCompatDialogFragment {
         return dialog;
     }
 
+    // Setter for sort
     public void setSelectedSort(String selectedSort) {
         this.selectedSort = selectedSort;
     }
 
+    // Perform sort
     public void performSort() {
         if (listener != null && selectedSort != null) {
             listener.onSortOptionSelected(selectedSort, selectedSortOrder);
         }
     }
 
+    /**
+     * Handles the sort selection
+     * Sets the sort based on the selectedSort
+     * @param selectedButton: selected button, needed to change the colors
+     * @param sortType: type of sort the user has chosen
+     */
     private void handleSortSelection(Button selectedButton, String sortType) {
         // Reset the background of the previously selected button
         if (previouslySelectedButton != null) {
@@ -95,6 +107,8 @@ public class SortOptions extends AppCompatDialogFragment {
         // Keep a reference to the currently selected button
         previouslySelectedButton = selectedButton;
     }
+
+    // Interface for SortOptionsListener
     public interface SortOptionsListener {
         void onSortOptionSelected(String sortBy, String order);
     }
