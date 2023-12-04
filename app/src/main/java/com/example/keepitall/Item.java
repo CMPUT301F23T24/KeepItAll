@@ -1,25 +1,12 @@
 package com.example.keepitall;
-
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.Tag;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ktx.Firebase;
-
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.K;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Represents an item with various attributes and tags.
@@ -54,8 +41,8 @@ public class Item implements Serializable {
         this.serialNumber = serialNumber;
         this.value = value;
         this.tags = new ArrayList<>();  // Initialize tags list
-        this.photoList = new ArrayList<String>();
-        this.tags = new ArrayList<com.example.keepitall.Tag>();  // Initialize tags list
+        this.photoList = new ArrayList<>();
+        this.tags = new ArrayList<>();  // Initialize tags list
         this.name = name;
     }
 
@@ -121,7 +108,14 @@ public class Item implements Serializable {
     public ArrayList<com.example.keepitall.Tag> getTags() {
         return tags;
     }
+    // Photo
+    public ArrayList<String> getPhotoList() { return photoList; }
+    public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
 
+    /**
+     * Gets the tagNames of all tags into strings
+     * @return ArrayList: arrayList of all item's tag names
+     */
     public ArrayList<String> getTagNames() {
         ArrayList<String> tagNames = new ArrayList<>();
         for (com.example.keepitall.Tag tag: tags) {
@@ -129,12 +123,20 @@ public class Item implements Serializable {
         }
         return tagNames;
     }
+
+    /**
+     * Sorts the item's tags
+     */
     public void sortTags() {
         ArrayList<com.example.keepitall.Tag> tags = getTags();
         Collections.sort(tags);
         this.tags = tags;
     }
-    // Get first tag
+
+    /**
+     * Gets the item's first (best) tag alphabetically.
+     * @return string: item's best tagName
+     */
     public String getItemFirstTag() {
         sortTags();
         if (tags.size() >= 1) {
@@ -143,16 +145,24 @@ public class Item implements Serializable {
         return "ZZZZ";
     }
 
-    // Photo
-    public ArrayList<String> getPhotoList() { return photoList; }
-    public void setPhotoList(ArrayList<Uri> photoList) { photoList = photoList; }
-
     // For searching
+    /**
+     * Gets the keywords from strings
+     * @param string: original string where the keywords originate from
+     * @return ArrayList: arrayList of keywords of the given string
+     */
     public ArrayList<String> getKeywords(String string) {
         String[] keywords  = string.toLowerCase().split("[,\\s*]");
         return new ArrayList<>(Arrays.asList(keywords));
     }
+
+    /**
+     * Checks if an item matches the query that the user searched
+     * @param query: what the user searched in the searchbar
+     * @return boolean: if an item matches the query or not
+     */
     public boolean matchesQuery(String query) {
+        // Checks for the entire query first
         if (name.toLowerCase().contains(query.toLowerCase()) ||
                 make.toLowerCase().contains(query.toLowerCase()) ||
                 tags.contains(new com.example.keepitall.Tag(query.toLowerCase()))) {
@@ -160,7 +170,7 @@ public class Item implements Serializable {
             return true;
         }
 
-
+        // Gets keywords and see if it matches the query and item properties
         ArrayList<String> queryKeywords = getKeywords(query);
         ArrayList<String> descriptionKeywords = getKeywords(description);
         ArrayList<String> tagNames = getTagNames();
