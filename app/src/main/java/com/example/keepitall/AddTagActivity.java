@@ -14,6 +14,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity use for adding tags on an item
+ * Saves it in firebase, and will be displayed later on
+ */
 public class AddTagActivity extends AppCompatActivity {
 
     @Override
