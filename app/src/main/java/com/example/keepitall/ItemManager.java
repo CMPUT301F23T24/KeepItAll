@@ -192,6 +192,9 @@ public class ItemManager{
         Comparator<Item> comparator = null;
 
         switch (sortBy) {
+            case "MAKE":
+                comparator = Comparator.comparing(Item::getMake);
+                break;
             case "DATE":
                 comparator = Comparator.comparing(Item::getPurchaseDate);
                 break;
@@ -200,9 +203,6 @@ public class ItemManager{
                 break;
             case "TAG":
                 comparator = Comparator.comparing(Item::getItemFirstTag);
-                break;
-            case "MODEL":
-                comparator = Comparator.comparing(Item::getModel);
                 break;
             case "VALUE":
                 comparator = Comparator.comparing(Item::getValue);
