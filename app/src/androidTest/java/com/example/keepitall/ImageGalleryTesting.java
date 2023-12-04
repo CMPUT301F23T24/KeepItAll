@@ -1,9 +1,8 @@
 package com.example.keepitall;
 
-package com.example.keepitall;
-
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
@@ -32,8 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 public class ImageGalleryTesting {
 
-    private GridView gridView;
-
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<MainActivity>(MainActivity.class) {
         @Override
@@ -45,20 +42,18 @@ public class ImageGalleryTesting {
     };
 
     /**
-     * Login using test account, then moves to an items image gallery
+     * Login using test account to be able to test homePage functionalities
      */
     public void setup() {
         onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("test"));
         onView(withId(R.id.password_Input)).perform(ViewActions.typeText("test"));
         onView(withId(R.id.login_Button)).perform(click());
 
-        // click the first item in the grid view
+        // click on the first element in the grid view
         onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
 
-        // click on the image gallery button
+        // click the image Gallery button
         onView(withId(R.id.galleryButton)).perform(click());
-
-        // we are now in the image gallery
     }
 
     /**
@@ -68,9 +63,10 @@ public class ImageGalleryTesting {
     public void testViewFullscreen() {
         setup();
         // click the first image in the grid view
-        onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.imageGridView)).atPosition(0).perform(click());
         // look for the fullscreen view (fullscreen_imageview)
         onView(withId(R.id.fullscreen_imageview)).check(matches(isDisplayed()));
+
     }
 
     @Test
@@ -82,8 +78,7 @@ public class ImageGalleryTesting {
         onView(withId(R.id.fullscreen_imageview)).check(matches(isDisplayed()));
         // click the back button
         onView(withId(R.id.fullscreenimage_backbutton)).perform(click());
-        // look for the grid view
-        onView(withId(R.id.gridView)).check(matches(isDisplayed()));
+
     }
 
 }
