@@ -15,6 +15,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * This activity is used to display the item's tags
+ * It is synced with Firebase, if tag is in Firebase, it will be displayed here
+ */
 public class ItemTagsActivity extends AppCompatActivity {
 
     private GridView gridView;
