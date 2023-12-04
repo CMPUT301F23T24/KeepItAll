@@ -1,11 +1,15 @@
 package com.example.keepitall;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog; // Import AlertDialog class
 
 /**
@@ -15,6 +19,8 @@ import androidx.appcompat.app.AlertDialog; // Import AlertDialog class
 public class ChangeLogoActivity extends AppCompatActivity {
     // creating a index for the users to choose the logo from
     private int  currentIndex = -1;
+    int selectedLogoResourceId = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,9 @@ public class ChangeLogoActivity extends AppCompatActivity {
         //created the functionality to traverse to the GalleryButton
         Button galleryButton = findViewById(R.id.galleryButton);
         galleryButton.setOnClickListener(view -> moveToActivity(ImageGalleryActivity.class));
+
+        Button saveButton = findViewById(R.id.saveButton); // make sure you have a button with this ID in your layout
+        saveButton.setOnClickListener(view -> saveAndReturn());
     }
 
     /**
@@ -50,7 +59,7 @@ public class ChangeLogoActivity extends AppCompatActivity {
      */
     private void showLogoOptionsDialog() {
         // giving three options to appear in the Dialog
-        String[] logoOptions = {"OPTION A", "OPTION B", "OPTION C "};
+        String[] logoOptions = {"OPTION A", "OPTION B", "OPTION C ","DEFAULT"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose the logo")
                 .setItems(logoOptions, new DialogInterface.OnClickListener() {
@@ -71,10 +80,31 @@ public class ChangeLogoActivity extends AppCompatActivity {
         if (currentIndex == 0) {
             //need to have new icons rn using the ones in drawable
             imageView.setImageResource(R.drawable.save_icon);
+            selectedLogoResourceId = R.drawable.save_icon;
         } else if (currentIndex == 1) {
             imageView.setImageResource(R.drawable.logout_icon);
+            selectedLogoResourceId = R.drawable.logout_icon;
         } else if (currentIndex == 2) {
             imageView.setImageResource(R.drawable.gallery_icon);
+            selectedLogoResourceId = R.drawable.gallery_icon;
+        } else if (currentIndex == 3) {
+            imageView.setImageResource(R.drawable.app_icon);
+            selectedLogoResourceId = R.drawable.app_icon;
+        }
+        imageView.setImageResource(selectedLogoResourceId);
+    }
+
+    private void saveAndReturn() {
+        if (selectedLogoResourceId != -1) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("selectedLogo", selectedLogoResourceId);
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
+        } else {
+            Toast.makeText(this, "No logo selected", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 }
