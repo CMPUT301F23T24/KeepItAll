@@ -121,6 +121,14 @@ public class Item implements Serializable {
     public ArrayList<com.example.keepitall.Tag> getTags() {
         return tags;
     }
+
+    public ArrayList<String> getTagNames() {
+        ArrayList<String> tagNames = new ArrayList<>();
+        for (com.example.keepitall.Tag tag: tags) {
+            tagNames.add(tag.getTagName().toLowerCase());
+        }
+        return tagNames;
+    }
     public void sortTags() {
         ArrayList<com.example.keepitall.Tag> tags = getTags();
         Collections.sort(tags);
@@ -141,17 +149,26 @@ public class Item implements Serializable {
 
     // For searching
     public ArrayList<String> getKeywords(String string) {
-        String[] keywords  = string.toLowerCase().split("[,\\s]");
+        String[] keywords  = string.toLowerCase().split("[,\\s*]");
         return new ArrayList<>(Arrays.asList(keywords));
     }
     public boolean matchesQuery(String query) {
+        if (name.toLowerCase().contains(query.toLowerCase()) ||
+                make.toLowerCase().contains(query.toLowerCase()) ||
+                tags.contains(new com.example.keepitall.Tag(query.toLowerCase()))) {
+
+            return true;
+        }
+
+
         ArrayList<String> queryKeywords = getKeywords(query);
         ArrayList<String> descriptionKeywords = getKeywords(description);
+        ArrayList<String> tagNames = getTagNames();
         for (String word: queryKeywords) {
-            if (!(name.toLowerCase().contains(word) ||
-                    make.toLowerCase().contains(word) ||
-                    descriptionKeywords.contains(word) ||
-                    tags.contains(new com.example.keepitall.Tag(word)))) {
+            if (!(name.toLowerCase().contains(word.toLowerCase()) ||
+                    make.toLowerCase().contains(word.toLowerCase()) ||
+                    descriptionKeywords.contains(word.toLowerCase()) ||
+                    tagNames.contains(word.toLowerCase()))) {
                 return false;
             }
         }
