@@ -218,6 +218,11 @@ public class ItemManager{
         Collections.sort(this.itemList, comparator);
     }
 
+    /**
+     * Gets the Item object based on the item name
+     * @param name: item name
+     * @return Item: Item object
+     */
     public Item getItemByName(String name) {
         for (Item item : itemList) {
             if (item.getName().equals(name)) {
@@ -227,6 +232,11 @@ public class ItemManager{
         return null;
     }
 
+    /**
+     * Updates the item in the ItemManager, as well as updating it in Firebase
+     * @param updatedItem: updated Item
+     * @param user: user who owns the item
+     */
     public void updateItem(Item updatedItem, User user) {
         for (int i = 0; i < itemList.size(); i++) {
             Item currentItem = itemList.get(i);

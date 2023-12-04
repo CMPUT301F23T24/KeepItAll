@@ -192,6 +192,9 @@ public class ViewItemActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Returns to homepage and updates it if item is updated
+     */
     private void updateHomePage() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("updatedItem", item); // assuming 'item' contains the updated data

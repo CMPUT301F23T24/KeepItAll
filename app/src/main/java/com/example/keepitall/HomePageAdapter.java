@@ -95,11 +95,20 @@ public class HomePageAdapter extends BaseAdapter {
 
         return view;
     }
+
+    /**
+     * Toggles the selection mode for tag selection in HomePage
+     */
     public void toggleSelectionMode() {
         isSelectionMode = !isSelectionMode;
         notifyDataSetChanged();
     }
 
+    /**
+     * Adds the items into the itemSelection, if item is selected again,
+     * remove it from the selectedItems
+     * @param position: item position
+     */
     public void toggleItemSelection(int position) {
         if (selectedItems.contains(position)) {
             selectedItems.remove(position);
@@ -109,15 +118,26 @@ public class HomePageAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    /**
+     * Gets the selected items from the homepage
+     * @return items the user have selected
+     */
     public Set<Integer> getSelectedItems() {
         return selectedItems;
     }
 
+    /**
+     * Clears the selectedItems
+     */
     public void clearSelection() {
         selectedItems.clear();
         notifyDataSetChanged();
     }
 
+    /**
+     * Returns if homePage is in selection mode
+     * @return boolean: if homePage is in selection mode or not
+     */
     public boolean isSelectionMode() {
         return isSelectionMode;
     }

@@ -94,6 +94,9 @@ public class ChangeLogoActivity extends AppCompatActivity {
         imageView.setImageResource(selectedLogoResourceId);
     }
 
+    /**
+     * Saves the chosen logo for the item and return to previous activity
+     */
     private void saveAndReturn() {
         if (selectedLogoResourceId != -1) {
             Intent returnIntent = new Intent();

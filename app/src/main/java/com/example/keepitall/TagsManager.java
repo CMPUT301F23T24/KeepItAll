@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * This class is used to handle all functionalities regarding tags
+ * It is connected to Firebase, and handles all data fetching from Firebase
  */
 public class TagsManager {
     private static TagsManager instance;

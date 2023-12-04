@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter used to display the tags in the ItemTagActivity
+ */
 public class TagAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Tag> tags;
