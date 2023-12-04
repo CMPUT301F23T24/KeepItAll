@@ -12,6 +12,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter used to update the Photo Gallery of an item
+ */
 public class PhotoGridAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Uri> photos;
