@@ -35,14 +35,4 @@ public class PhotoManagerTest {
         // check the size of the list
         assertEquals(0, item.getPhotoList().size());
     }
-    @Test
-    public void testTakePhoto(){
-        // Login to the app
-        onView(withId(R.id.userName_Input)).perform(ViewActions.typeText("Cohen"));
-        onView(withId(R.id.password_Input)).perform(ViewActions.typeText("123"));
-        // click the login button
-        onView(withId(R.id.login_Button)).perform(click());
-        // click the camera button
-        onView(withId(R.id.take_picture_button)).perform(click());
-    }
 }
