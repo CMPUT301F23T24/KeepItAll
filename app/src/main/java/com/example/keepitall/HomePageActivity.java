@@ -67,7 +67,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     private Button logoutButton;
     private Button pictureButton;
     static final int REQUEST_IMAGE_CAPTURE = 2; // For taking pictures
-    private ImageView TempImageView;
     private TextView usernameView;
     private String userName;
     private Button filterDateButton;
@@ -79,7 +78,6 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
 
     private Button selectButton;
     private Button scanbutton;
-    private TagsManager tagsManager;
 
     private ActivityResultLauncher<Intent> viewItemActivityLauncher;
 
@@ -90,12 +88,8 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-
-
-
         totalValueView = findViewById(R.id.totalValueText);
         pictureButton = findViewById(R.id.take_picture_button);
-        tagsManager = TagsManager.getInstance();
 
         selectButton = findViewById(R.id.selectButton);
         selectButton.setOnClickListener(new View.OnClickListener() {
@@ -220,7 +214,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
     }
 
 
-
+    /**
+     * Allows users to scan the barcode,  and add an item into the user's itemManager
+     */
     private void scanCode() {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume  up to to flash flash on");
@@ -453,6 +449,7 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     Toast.LENGTH_SHORT).show();
         } else {
             Set<Integer> selectedItems = homePageAdapter.getSelectedItems();
+
             if (!selectedItems.isEmpty()) {
                 fetchAndShowAllTags();
             } else {
@@ -517,8 +514,10 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         sortFragment.show(getSupportFragmentManager(), "sortDialog");
     }
 
+    /**
+     * Opens the camera on the phone
+     */
     private void takePictureClickEvent() {
-        // Opens the camera on the phone
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
@@ -629,6 +628,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
         return super.dispatchTouchEvent(event);
     }
 
+    /**
+     * Fetch all the tags in firestore and attach it to the items itself
+     */
     public void fetchTags() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         for (Item item: userItemManager.getAllItems()) {
