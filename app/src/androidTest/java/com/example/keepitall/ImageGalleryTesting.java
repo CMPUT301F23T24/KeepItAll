@@ -73,7 +73,7 @@ public class ImageGalleryTesting {
     public void testBackButton() {
         setup();
         // click the first image in the grid view
-        onData(anything()).inAdapterView(withId(R.id.gridView)).atPosition(0).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.imageGridView)).atPosition(0).perform(click());
         // look for the fullscreen view (fullscreen_imageview)
         onView(withId(R.id.fullscreen_imageview)).check(matches(isDisplayed()));
         // click the back button
