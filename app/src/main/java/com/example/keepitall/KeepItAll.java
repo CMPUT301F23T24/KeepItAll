@@ -1,5 +1,7 @@
 package com.example.keepitall;
 import android.net.Uri;
+import android.util.Log;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -110,7 +112,6 @@ public class KeepItAll{
         if (userCollection == null) {
             return;
         }
-
         userCollection.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot userDoc : queryDocumentSnapshots.getDocuments()) {
@@ -131,8 +132,12 @@ public class KeepItAll{
                                         if (itemDoc.getLong("serialNumber") != null) {
                                             item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
                                         }
-                                        item.setValue(itemDoc.getDouble("value").floatValue());
+                                        if (itemDoc.getDouble("value") != null) {
+                                            item.setValue(itemDoc.getDouble("value").floatValue());
+                                        }else {
 
+                                            item.setValue(0.0f);
+                                        }
                                         // Retrieve the photoList for each item
                                         retrievePhotoList(user, item, itemManager, itemDoc);
                                     }
@@ -148,16 +153,22 @@ public class KeepItAll{
                 });
     }
 
+    /**
+     * Retrieves the photoList for an item from the database
+     * @param user
+     * @param item
+     * @param itemManager
+     * @param itemDoc
+     */
     private void retrievePhotoList(User user, Item item, ItemManager itemManager, DocumentSnapshot itemDoc) {
         // Retrieve the photoList for the item
         itemDoc.getReference().collection("images").get()
                 .addOnSuccessListener(imageSnapshots -> {
-                    ArrayList<Uri> photoList = new ArrayList<>();
+                    ArrayList<String> photoList = new ArrayList<>();
                     for (DocumentSnapshot imageDoc : imageSnapshots.getDocuments()) {
-                        String uriString = imageDoc.getString("imageUrl");
-                        Uri uri = Uri.parse(uriString);
-                        photoList.add(uri);
-                        item.addPhoto(uri);
+                        String uriPath = imageDoc.getString("path");
+                        photoList.add(uriPath);
+                        item.addPhoto(uriPath);
                     }
                     // Set the photoList for the item
                     //item.setPhotoList(photoList);

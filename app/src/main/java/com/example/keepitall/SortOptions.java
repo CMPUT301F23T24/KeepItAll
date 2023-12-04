@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import java.util.ArrayList;
+
 public class SortOptions extends AppCompatDialogFragment {
     private SortOptionsListener listener;
     private String selectedSort;
