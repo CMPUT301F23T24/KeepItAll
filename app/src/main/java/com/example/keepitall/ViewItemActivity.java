@@ -60,6 +60,9 @@ public class ViewItemActivity extends AppCompatActivity {
             displayText();
         }
 
+
+        Button updateInfoButton = findViewById(R.id.updateInfoButton);
+        updateInfoButton.setOnClickListener(v -> updateHomePage());
         // Go back to HomePage when back or homeButton is clicked
         Button backButton = findViewById(R.id.viewBackButton);
         backButton.setOnClickListener(v -> finish());
@@ -188,4 +191,12 @@ public class ViewItemActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+    private void updateHomePage() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("updatedItem", item); // assuming 'item' contains the updated data
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish(); // this will close the current activity and return to HomePage
+    }
+
 }
