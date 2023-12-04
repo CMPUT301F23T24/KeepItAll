@@ -198,8 +198,8 @@ public class ItemManager{
             case "DESCRIPTION":
                 comparator = Comparator.comparing(Item::getDescription);
                 break;
-            case "MAKE":
-                comparator = Comparator.comparing(Item::getMake);
+            case "TAG":
+                comparator = Comparator.comparing(Item::getItemFirstTag);
                 break;
             case "TAG":
                 comparator = Comparator.comparing(Item::getItemFirstTag);

@@ -1,5 +1,7 @@
 package com.example.keepitall;
 import android.net.Uri;
+import android.util.Log;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -130,8 +132,12 @@ public class KeepItAll{
                                         if (itemDoc.getLong("serialNumber") != null) {
                                             item.setSerialNumber(itemDoc.getLong("serialNumber").intValue());
                                         }
-                                        item.setValue(itemDoc.getDouble("value").floatValue());
+                                        if (itemDoc.getDouble("value") != null) {
+                                            item.setValue(itemDoc.getDouble("value").floatValue());
+                                        }else {
 
+                                            item.setValue(0.0f);
+                                        }
                                         // Retrieve the photoList for each item
                                         retrievePhotoList(user, item, itemManager, itemDoc);
                                     }
