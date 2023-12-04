@@ -105,6 +105,8 @@
                 android:layout_height="35dp"
                 android:background="@drawable/white_button"
                 android:text="Select"
+                tools:layout_editor_absoluteX="131dp"
+                tools:layout_editor_absoluteY="69dp"
                 app:layout_constraintEnd_toStartOf="@+id/addButton"
                 app:layout_constraintStart_toEndOf="@+id/deleteButton"
                 app:layout_constraintTop_toTopOf="@+id/deleteButton" />
