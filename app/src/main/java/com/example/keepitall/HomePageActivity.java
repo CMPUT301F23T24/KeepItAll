@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import androidx.appcompat.app.AlertDialog;
@@ -110,6 +111,9 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
                     // sets username
                     usernameView = findViewById(R.id.nameText);
                     usernameView.setText(userName);
+
+                    //
+                    fetchTags();
 
                     // set the Adapter for gridView
                     gridView = findViewById(R.id.gridView);
@@ -584,5 +588,21 @@ public class HomePageActivity extends AppCompatActivity implements SortOptions.S
             hideKeyboard();
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    public void fetchTags() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        for (Item item: userItemManager.getAllItems()) {
+            db.collection("items").document(item.getName()).collection("tags")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String tagName = document.getString("tagName");
+                                item.addTag(new Tag(tagName));
+                            }
+                        }
+                    });
+        }
     }
 }
