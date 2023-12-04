@@ -226,4 +226,15 @@ public class ItemManager{
         }
         return null;
     }
+
+    public void updateItem(Item updatedItem, User user) {
+        for (int i = 0; i < itemList.size(); i++) {
+            Item currentItem = itemList.get(i);
+            if (currentItem.getName().equals(updatedItem.getName())) {
+                itemList.set(i, updatedItem);
+                editItem_DataSync(updatedItem, user); // Sync with Firestore
+                break;
+            }
+        }
+    }
 }
